@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ProIonFlow</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -68,6 +70,17 @@
   }
   [data-rm="1"] .pif-shell.full{animation:none !important;box-shadow:0 0 16px rgba(47,227,154,.5)}
   [data-rm="1"] .pif-step{animation:none !important}
+  .pif-page{max-width:1120px;margin:0 auto;padding:24px 24px 72px}
+  .pif-col-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .pif-col-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .pif-nav{display:flex;gap:4px}
+  @media (max-width:768px){
+    .pif-page{padding:16px 14px 56px}
+    .pif-col-2,.pif-col-3{grid-template-columns:1fr}
+    .pif-nav{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+    .pif-btn-full{width:100%}
+  }
+  @media (max-width:480px){ .pif-page{padding:14px 12px 48px} }
 </style>
 </helmet>
 
@@ -348,7 +361,7 @@
 
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:20px">
       <a href="#" onClick="{{ onCompare }}" style="font-size:14px;font-weight:600">Compare all three</a>
-      <button onClick="{{ onContinuePay }}" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 28px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:48px" style-hover="filter:brightness(1.06)">Continue to payment →</button>
+      <button onClick="{{ onContinuePay }}" class="pif-btn-full" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 28px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:48px" style-hover="filter:brightness(1.06)">Continue to payment →</button>
     </div>
     <p id="pif-savings-note" style="font-size:12px;line-height:18px;color:var(--text-secondary);margin:20px 0 0;padding-top:16px;border-top:1px solid var(--border-subtle)"><span style="font-weight:700;color:var(--text-primary)">* Est. = estimate.</span> These are estimates, not promises. Real savings vary with your utility rates, your devices, the weather, and your daily habits. Once PIF is running, your ledger shows every dollar we actually save you — itemized.</p>
   </div>
@@ -543,7 +556,7 @@
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:660,&quot;height&quot;:820},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;system&quot;,&quot;tsType&quot;:&quot;'light'|'dark'|'system'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;resultDemo&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;off&quot;,&quot;basic&quot;,&quot;optimum&quot;,&quot;premium&quot;,&quot;nofit&quot;],&quot;default&quot;:&quot;optimum&quot;,&quot;tsType&quot;:&quot;'off'|'basic'|'optimum'|'premium'|'nofit'&quot;,&quot;section&quot;:&quot;Demo: recommendation screen&quot;},&quot;resultSelection&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;recommended&quot;,&quot;lower&quot;,&quot;higher&quot;],&quot;default&quot;:&quot;higher&quot;,&quot;tsType&quot;:&quot;'recommended'|'lower'|'higher'&quot;,&quot;section&quot;:&quot;Demo: recommendation screen&quot;},&quot;zipLookup&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;found&quot;,&quot;notfound&quot;],&quot;default&quot;:&quot;found&quot;,&quot;tsType&quot;:&quot;'found'|'notfound'&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;billingState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;empty&quot;,&quot;focused&quot;,&quot;invalid&quot;,&quot;valid&quot;,&quot;submitting&quot;],&quot;default&quot;:&quot;empty&quot;,&quot;tsType&quot;:&quot;'empty'|'focused'|'invalid'|'valid'|'submitting'&quot;,&quot;section&quot;:&quot;Demo: billing form&quot;},&quot;startReview&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;tzMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;resolved&quot;,&quot;ambiguous&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;'auto'|'resolved'|'ambiguous'&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;startCapture&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: multi-home capture&quot;},&quot;captureState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;form&quot;,&quot;sent&quot;],&quot;default&quot;:&quot;form&quot;,&quot;tsType&quot;:&quot;'form'|'sent'&quot;,&quot;section&quot;:&quot;Demo: multi-home capture&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:660,&quot;height&quot;:820},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;system&quot;,&quot;tsType&quot;:&quot;'light'|'dark'|'system'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;resultDemo&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;off&quot;,&quot;basic&quot;,&quot;optimum&quot;,&quot;premium&quot;,&quot;nofit&quot;],&quot;default&quot;:&quot;off&quot;,&quot;tsType&quot;:&quot;'off'|'basic'|'optimum'|'premium'|'nofit'&quot;,&quot;section&quot;:&quot;Demo: recommendation screen&quot;},&quot;resultSelection&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;recommended&quot;,&quot;lower&quot;,&quot;higher&quot;],&quot;default&quot;:&quot;higher&quot;,&quot;tsType&quot;:&quot;'recommended'|'lower'|'higher'&quot;,&quot;section&quot;:&quot;Demo: recommendation screen&quot;},&quot;zipLookup&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;found&quot;,&quot;notfound&quot;],&quot;default&quot;:&quot;found&quot;,&quot;tsType&quot;:&quot;'found'|'notfound'&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;billingState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;empty&quot;,&quot;focused&quot;,&quot;invalid&quot;,&quot;valid&quot;,&quot;submitting&quot;],&quot;default&quot;:&quot;empty&quot;,&quot;tsType&quot;:&quot;'empty'|'focused'|'invalid'|'valid'|'submitting'&quot;,&quot;section&quot;:&quot;Demo: billing form&quot;},&quot;startReview&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;tzMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;resolved&quot;,&quot;ambiguous&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;'auto'|'resolved'|'ambiguous'&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;startCapture&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: multi-home capture&quot;},&quot;captureState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;form&quot;,&quot;sent&quot;],&quot;default&quot;:&quot;form&quot;,&quot;tsType&quot;:&quot;'form'|'sent'&quot;,&quot;section&quot;:&quot;Demo: multi-home capture&quot;}}">
 class Component extends DCLogic {
   constructor(props){
     super(props);

@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ProIonFlow</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -82,7 +84,7 @@
 </helmet>
 
 <div data-theme="{{ theme }}" style="min-height:100vh;width:100%;background:var(--surface-base);color:var(--text-primary);font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;transition:background .32s cubic-bezier(.2,0,0,1),color .32s cubic-bezier(.2,0,0,1)">
-<div style="max-width:1120px;margin:0 auto;padding:40px 32px 96px">
+<div class="pif-page">
 
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
     <radialGradient id="pif-body" cx="42%" cy="36%" r="72%"><stop offset="0%" stop-color="#5CF3B6"></stop><stop offset="55%" stop-color="#2FE39A"></stop><stop offset="100%" stop-color="#0E7C7B"></stop></radialGradient>
@@ -859,7 +861,7 @@
     <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">16 · App-shell chrome</span>
     <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 14px;max-width:720px">The shared frame every product surface wears. <b style="color:var(--text-primary)">This section is the single source of truth</b> — same governance model as the §15 icon registry: batches copy from here, never redraw. Brand lockup and the <code style="font-family:'JetBrains Mono',monospace;font-size:12px">pif-tile.png</code> asset are canonical here; the Iona face is the launcher avatar only, never the brand mark.</p>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+    <div class="pif-col-2" style="gap:16px;align-items:start">
       <div style="background:var(--surface-raised);border:1px solid var(--accent);border-radius:16px;padding:20px;box-shadow:var(--elev-1)">
         <div style="font-size:13px;font-weight:700;margin-bottom:12px">Canonical brand lockup</div>
         <div style="background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:18px;display:flex;justify-content:center;margin-bottom:14px">
@@ -917,7 +919,7 @@
     <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">17 · Responsive</span>
     <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 14px;max-width:720px">Layout scaffolding lives in a small set of helper classes so every batch (and Batch 9) shares one breakpoint system. <b style="color:var(--text-primary)">This is the single source of truth</b> — copy the block verbatim; component styling stays inline as always, only structural layout is class-driven.</p>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+    <div class="pif-col-2" style="gap:16px;align-items:start">
       <div style="display:flex;flex-direction:column;gap:12px">
         <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 17px;box-shadow:var(--elev-1)">
           <div style="font-size:13px;font-weight:700;margin-bottom:5px">Breakpoints</div>

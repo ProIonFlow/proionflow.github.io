@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ProIonFlow</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -53,6 +55,17 @@
   @media (prefers-reduced-motion:reduce){
     *{animation-duration:.001ms !important;transition-duration:.001ms !important}
   }
+  .pif-page{max-width:1120px;margin:0 auto;padding:24px 24px 72px}
+  .pif-col-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .pif-col-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .pif-nav{display:flex;gap:4px}
+  @media (max-width:768px){
+    .pif-page{padding:16px 14px 56px}
+    .pif-col-2,.pif-col-3{grid-template-columns:1fr}
+    .pif-nav{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+    .pif-btn-full{width:100%}
+  }
+  @media (max-width:480px){ .pif-page{padding:14px 12px 48px} }
 </style>
 </helmet>
 
