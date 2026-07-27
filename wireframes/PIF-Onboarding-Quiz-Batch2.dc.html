@@ -371,16 +371,16 @@
   <sc-if value="{{ isNofit }}" hint-placeholder-val="{{ false }}">
   <div class="pif-step" style="width:100%;max-width:600px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:40px 32px;box-shadow:var(--elev-2);text-align:center;animation:pifStepIn .4s cubic-bezier(.2,0,0,1) both">
     <div style="display:flex;justify-content:center;margin-bottom:6px">{{ nofitFace }}</div>
-    <h1 style="font-family:'Space Grotesk',system-ui;font-size:26px;line-height:32px;font-weight:700;margin:0 0 10px">PIF isn't a fit for your home yet</h1>
-    <p style="font-size:15px;line-height:23px;color:var(--text-secondary);margin:0 auto 20px;max-width:420px">I want to be straight with you: right now I couldn't save you enough to comfortably clear even our $5 Basic fee — so I won't ask you to subscribe. Here's why:</p>
+    <h1 style="font-family:'Space Grotesk',system-ui;font-size:26px;line-height:32px;font-weight:700;margin:0 0 10px">{{ nofitTitle }}</h1>
+    <p style="font-size:15px;line-height:23px;color:var(--text-secondary);margin:0 auto 20px;max-width:420px">{{ nofitBody }}</p>
     <ul style="list-style:none;margin:0 auto 22px;padding:0;max-width:440px;display:flex;flex-direction:column;gap:9px;text-align:left">
       <sc-for list="{{ nofitReasons }}" as="r" hint-placeholder-count="2">
         <li style="display:flex;gap:10px;align-items:flex-start;background:var(--surface-sunken);border-radius:12px;padding:12px 14px;font-size:14px;line-height:20px"><span style="color:var(--text-secondary);flex:none;margin-top:2px">•</span><span>{{ r }}</span></li>
       </sc-for>
     </ul>
-    <p style="font-size:14px;line-height:21px;color:var(--text-secondary);margin:0 auto 24px;max-width:420px">If your rate plan or devices change, the math can change fast. I'll keep an eye out and re-check whenever you like — no charge, no pressure.</p>
+    <sc-if value="{{ nofitShowFooter }}" hint-placeholder-val="{{ true }}"><p style="font-size:14px;line-height:21px;color:var(--text-secondary);margin:0 auto 24px;max-width:420px">If your rate plan or devices change, the math can change fast. I'll keep an eye out and re-check whenever you like — no charge, no pressure.</p></sc-if>
     <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px">
-      <button style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 26px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:48px" style-hover="filter:brightness(1.06)">Keep me posted</button>
+      <button onClick="{{ onKeepPosted }}" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 26px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:48px" style-hover="filter:brightness(1.06)">Keep me posted</button>
       <button onClick="{{ onNofitRestart }}" style="appearance:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 22px;border-radius:999px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px" style-hover="background:var(--surface-sunken)">Re-check my answers</button>
     </div>
   </div>
@@ -391,17 +391,19 @@
     <sc-if value="{{ captureNotSent }}" hint-placeholder-val="{{ true }}">
     <div class="pif-step" style="width:100%;max-width:600px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:34px 30px;box-shadow:var(--elev-2);animation:pifStepIn .4s cubic-bezier(.2,0,0,1) both">
       <div style="display:flex;justify-content:center;margin-bottom:6px">{{ captureFace }}</div>
-      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;line-height:31px;font-weight:700;margin:0 0 10px;text-align:center">One home today — I'll tell you when there's more</h1>
-      <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:0 auto 22px;max-width:460px;text-align:center">I want to be straight with you: PIF optimizes a single home right now — the one you live in most. Multiple homes and business accounts are coming. Leave your details and I'll email you the moment they launch.</p>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;line-height:31px;font-weight:700;margin:0 0 10px;text-align:center">{{ captureTitle }}</h1>
+      <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:0 auto 22px;max-width:460px;text-align:center">{{ captureIntro }}</p>
       <div style="display:flex;flex-direction:column;gap:18px">
         <div style="display:flex;gap:12px;flex-wrap:wrap">
           <div style="flex:1;min-width:120px"><label for="cap-zip" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">ZIP <span style="color:var(--danger)">*</span></label><input id="cap-zip" inputmode="numeric" maxlength="5" value="{{ capZip }}" onInput="{{ onCaptureZip }}" placeholder="23220" style="width:100%;font:600 15px 'Space Grotesk',system-ui;letter-spacing:.08em;padding:12px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"><sc-if value="{{ capZipInvalid }}" hint-placeholder-val="{{ true }}"><p style="font-size:12px;color:var(--text-secondary);margin:7px 0 0">Enter your 5-digit ZIP</p></sc-if></div>
           <div style="flex:2;min-width:200px"><label for="cap-email" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Email <span style="color:var(--danger)">*</span></label><input id="cap-email" type="email" value="{{ capEmail }}" onInput="{{ onCaptureEmail }}" placeholder="you@email.com" style="width:100%;font:400 15px Inter,system-ui;padding:12px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></div>
         </div>
+        <sc-if value="{{ capShowMulti }}" hint-placeholder-val="{{ true }}">
         <div>
           <div style="font-size:13px;font-weight:600;margin-bottom:10px">What are you interested in?</div>
           <div role="radiogroup" aria-label="Interest" style="display:flex;flex-wrap:wrap;gap:10px"><sc-for list="{{ capInterest }}" as="o" hint-placeholder-count="3"><button role="radio" aria-checked="{{ o.selected }}" onClick="{{ o.onPick }}" style="{{ o.style }}" style-hover="border-color:var(--accent)">{{ o.label }}</button></sc-for></div>
         </div>
+        </sc-if>
         <sc-if value="{{ homesShow }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
           <span style="font-size:13px;font-weight:600;flex:1;min-width:140px">How many homes? <span style="font-weight:400;color:var(--text-secondary)">(optional)</span></span>
@@ -410,10 +412,11 @@
         </sc-if>
         <button role="checkbox" aria-checked="{{ capConsent }}" onClick="{{ onCaptureConsent }}" style="appearance:none;background:transparent;border:none;cursor:pointer;display:flex;align-items:flex-start;gap:12px;text-align:left;padding:2px 0">
           <span style="{{ consentBoxStyle }}"><sc-if value="{{ capConsentOn }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="var(--text-onfill)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></sc-if></span>
-          <span style="font-size:13.5px;line-height:19px;color:var(--text-primary)">Email me when multi-home / business support launches. <span style="color:var(--text-secondary)">Required to send you the notification — nothing else.</span></span>
+          <span style="font-size:13.5px;line-height:19px;color:var(--text-primary)"><sc-if value="{{ captureReq }}" hint-placeholder-val="{{ false }}">Email me when PIF becomes a fit for my home — nothing else.</sc-if><sc-if value="{{ captureMulti }}" hint-placeholder-val="{{ true }}">Email me when multi-home / business support launches. <span style="color:var(--text-secondary)">Required to send you the notification — nothing else.</span></sc-if></span>
         </button>
-        <button onClick="{{ onCaptureSubmit }}" aria-disabled="{{ capSubmitDisabled }}" style="{{ capSubmitStyle }}">Notify me when it launches</button>
-        <button onClick="{{ onCaptureContinue }}" style="appearance:none;cursor:pointer;background:transparent;border:1px solid var(--border-strong);color:var(--text-primary);font:600 15px Inter,system-ui,sans-serif;padding:13px 22px;border-radius:999px;min-height:50px;width:100%" style-hover="background:var(--surface-sunken)">Continue setting up my main home →</button>
+        <button onClick="{{ onCaptureSubmit }}" aria-disabled="{{ capSubmitDisabled }}" style="{{ capSubmitStyle }}">{{ capSubmitLabel }}</button>
+        <sc-if value="{{ captureReq }}" hint-placeholder-val="{{ false }}"><button onClick="{{ onCaptureBack }}" style="appearance:none;cursor:pointer;background:transparent;border:1px solid var(--border-strong);color:var(--text-primary);font:600 15px Inter,system-ui,sans-serif;padding:13px 22px;border-radius:999px;min-height:50px;width:100%" style-hover="background:var(--surface-sunken)"><span aria-hidden="true">←</span> Back</button></sc-if>
+        <sc-if value="{{ captureMulti }}" hint-placeholder-val="{{ true }}"><button onClick="{{ onCaptureContinue }}" style="appearance:none;cursor:pointer;background:transparent;border:1px solid var(--border-strong);color:var(--text-primary);font:600 15px Inter,system-ui,sans-serif;padding:13px 22px;border-radius:999px;min-height:50px;width:100%" style-hover="background:var(--surface-sunken)">Continue setting up my main home →</button></sc-if>
       </div>
     </div>
     </sc-if>
@@ -421,8 +424,9 @@
     <div class="pif-step" style="width:100%;max-width:600px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:40px 32px;box-shadow:var(--elev-2);text-align:center;animation:pifStepIn .4s cubic-bezier(.2,0,0,1) both">
       <div style="display:flex;justify-content:center;margin-bottom:6px">{{ captureFaceSent }}</div>
       <h1 style="font-family:'Space Grotesk',system-ui;font-size:26px;line-height:32px;font-weight:700;margin:0 0 10px">You're on the list</h1>
-      <p style="font-size:15px;line-height:23px;color:var(--text-secondary);margin:0 auto 26px;max-width:420px">We'll email you the moment multi-home and business support launch.</p>
-      <button onClick="{{ onCaptureContinue }}" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:14px 28px;border-radius:999px;background:var(--accent);color:var(--text-onfill);min-height:50px" style-hover="filter:brightness(1.05)">Continue setting up my main home →</button>
+      <p style="font-size:15px;line-height:23px;color:var(--text-secondary);margin:0 auto 26px;max-width:420px">{{ captureSentBody }}</p>
+      <sc-if value="{{ captureReq }}" hint-placeholder-val="{{ false }}"><button onClick="{{ onCaptureBack }}" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:14px 28px;border-radius:999px;background:var(--accent);color:var(--text-onfill);min-height:50px" style-hover="filter:brightness(1.05)"><span aria-hidden="true">←</span> Back</button></sc-if>
+      <sc-if value="{{ captureMulti }}" hint-placeholder-val="{{ true }}"><button onClick="{{ onCaptureContinue }}" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:14px 28px;border-radius:999px;background:var(--accent);color:var(--text-onfill);min-height:50px" style-hover="filter:brightness(1.05)">Continue setting up my main home →</button></sc-if>
     </div>
     </sc-if>
   </sc-if>
@@ -556,7 +560,7 @@
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:660,&quot;height&quot;:820},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;system&quot;,&quot;tsType&quot;:&quot;'light'|'dark'|'system'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;resultDemo&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;off&quot;,&quot;basic&quot;,&quot;optimum&quot;,&quot;premium&quot;,&quot;nofit&quot;],&quot;default&quot;:&quot;off&quot;,&quot;tsType&quot;:&quot;'off'|'basic'|'optimum'|'premium'|'nofit'&quot;,&quot;section&quot;:&quot;Demo: recommendation screen&quot;},&quot;resultSelection&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;recommended&quot;,&quot;lower&quot;,&quot;higher&quot;],&quot;default&quot;:&quot;higher&quot;,&quot;tsType&quot;:&quot;'recommended'|'lower'|'higher'&quot;,&quot;section&quot;:&quot;Demo: recommendation screen&quot;},&quot;zipLookup&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;found&quot;,&quot;notfound&quot;],&quot;default&quot;:&quot;found&quot;,&quot;tsType&quot;:&quot;'found'|'notfound'&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;billingState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;empty&quot;,&quot;focused&quot;,&quot;invalid&quot;,&quot;valid&quot;,&quot;submitting&quot;],&quot;default&quot;:&quot;empty&quot;,&quot;tsType&quot;:&quot;'empty'|'focused'|'invalid'|'valid'|'submitting'&quot;,&quot;section&quot;:&quot;Demo: billing form&quot;},&quot;startReview&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;tzMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;resolved&quot;,&quot;ambiguous&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;'auto'|'resolved'|'ambiguous'&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;startCapture&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: multi-home capture&quot;},&quot;captureState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;form&quot;,&quot;sent&quot;],&quot;default&quot;:&quot;form&quot;,&quot;tsType&quot;:&quot;'form'|'sent'&quot;,&quot;section&quot;:&quot;Demo: multi-home capture&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:660,&quot;height&quot;:820},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;system&quot;,&quot;tsType&quot;:&quot;'light'|'dark'|'system'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;resultDemo&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;off&quot;,&quot;basic&quot;,&quot;optimum&quot;,&quot;premium&quot;,&quot;nofit&quot;],&quot;default&quot;:&quot;nofit&quot;,&quot;tsType&quot;:&quot;'off'|'basic'|'optimum'|'premium'|'nofit'&quot;,&quot;section&quot;:&quot;Demo: recommendation screen&quot;},&quot;resultSelection&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;recommended&quot;,&quot;lower&quot;,&quot;higher&quot;],&quot;default&quot;:&quot;higher&quot;,&quot;tsType&quot;:&quot;'recommended'|'lower'|'higher'&quot;,&quot;section&quot;:&quot;Demo: recommendation screen&quot;},&quot;zipLookup&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;found&quot;,&quot;notfound&quot;],&quot;default&quot;:&quot;found&quot;,&quot;tsType&quot;:&quot;'found'|'notfound'&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;billingState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;empty&quot;,&quot;focused&quot;,&quot;invalid&quot;,&quot;valid&quot;,&quot;submitting&quot;],&quot;default&quot;:&quot;empty&quot;,&quot;tsType&quot;:&quot;'empty'|'focused'|'invalid'|'valid'|'submitting'&quot;,&quot;section&quot;:&quot;Demo: billing form&quot;},&quot;startReview&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;tzMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;resolved&quot;,&quot;ambiguous&quot;],&quot;default&quot;:&quot;ambiguous&quot;,&quot;tsType&quot;:&quot;'auto'|'resolved'|'ambiguous'&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;startCapture&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: multi-home capture&quot;},&quot;captureState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;form&quot;,&quot;sent&quot;],&quot;default&quot;:&quot;sent&quot;,&quot;tsType&quot;:&quot;'form'|'sent'&quot;,&quot;section&quot;:&quot;Demo: multi-home capture&quot;}}">
 class Component extends DCLogic {
   constructor(props){
     super(props);
@@ -573,6 +577,7 @@ class Component extends DCLogic {
       otherSearch: '',
       pay: {}, payErrors: {}, agreed: false,
       capture: { zip:'', email:'', interest:null, homes:2, consent:false },
+      captureMode: 'multihome',
       captureSent: props.captureState==='sent',
     };
   }
@@ -700,7 +705,7 @@ class Component extends DCLogic {
       ]},
       { title:'Heating & cooling', qs:[
         {id:'cooling', kind:'single', q:'How do you cool your home?', opts:[{k:'central',label:'Central AC',icon:'snow'},{k:'hp',label:'Heat pump',icon:'thermo'},{k:'window',label:'Window units',icon:'fan'},{k:'none',label:'None',icon:'ban'}]},
-        {id:'thermostat', kind:'single', q:'What thermostat do you have?', opts:[{k:'nest',label:'Nest',brand:1},{k:'ecobee',label:'Ecobee',brand:1},{k:'honeywell',label:'Honeywell',brand:1},{k:'other',search:1,label:'Other smart ▸ search',icon:'help'},{k:'prog',label:'Programmable',icon:'clock'},{k:'manual',label:'Manual dial',icon:'disc'},{k:'none',label:'None',icon:'ban'}], otherList:['Emerson Sensi','Wyze','Amazon Smart Thermostat','Mysa','tado°','Bosch','Sinopé','Lux/GEO'], otherPrompt:'it seeds our thermostat adapters'},
+        {id:'thermostat', kind:'multi', q:'What thermostat do you have?', opts:[{k:'nest',label:'Nest',brand:1},{k:'ecobee',label:'Ecobee',brand:1},{k:'honeywell',label:'Honeywell',brand:1},{k:'other',search:1,label:'Other smart ▸ search',icon:'help'},{k:'prog',label:'Programmable',icon:'clock'},{k:'manual',label:'Manual dial',icon:'disc'},{k:'none',label:'None',icon:'ban',exclusive:true}], otherList:['Emerson Sensi','Wyze','Amazon Smart Thermostat','Mysa','tado°','Bosch','Sinopé','Lux/GEO'], otherPrompt:'it seeds our thermostat adapters'},
         {id:'fuel', kind:'single', q:'What heats your home?', opts:[{k:'elec',label:'Electric',icon:'zap'},{k:'hp',label:'Heat pump',icon:'thermo'},{k:'gas',label:'Gas',icon:'flame'},{k:'ns',label:'Not sure',icon:'help'}]},
       ]},
       { title:'Big appliances', qs:[
@@ -715,8 +720,8 @@ class Component extends DCLogic {
       ]},
       { title:'Electric vehicle', qs:[
         {id:'ev', kind:'single', q:'Do you have an electric vehicle?', opts:[{k:'0',label:'None',icon:'ban'},{k:'1',label:'1',icon:'car'},{k:'2',label:'2 or more',icon:'car'}]},
-        {id:'charger', kind:'single', q:'What kind of charger?', showIf:a=>a.ev&&a.ev!=='0', opts:[{k:'smart',label:'Smart charger / EVSE',icon:'plug'},{k:'l2',label:'Standard Level 2',icon:'plug'},{k:'l1',label:'Level 1 outlet',icon:'zap'},{k:'public',label:'Public only',icon:'map'}]},
-        {id:'chargerbrand', kind:'single', q:'Which smart charger?', showIf:a=>a.ev&&a.ev!=='0'&&a.charger==='smart', opts:[{k:'tesla',label:'Tesla',brand:1},{k:'chargepoint',label:'ChargePoint',brand:1},{k:'wallbox',label:'Wallbox',brand:1},{k:'emporia',label:'Emporia',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'}], otherList:['Grizzl-E','JuiceBox / Enel X','Autel','Lectron','ClipperCreek','Enphase IQ','Pod Point'], otherPrompt:'it seeds our EVSE adapters'},
+        {id:'charger', kind:'multi', q:'What kind of charger?', showIf:a=>a.ev&&a.ev!=='0', opts:[{k:'smart',label:'Smart charger / EVSE',icon:'plug'},{k:'l2',label:'Standard Level 2',icon:'plug'},{k:'l1',label:'Level 1 outlet',icon:'zap'},{k:'public',label:'Public only',icon:'map'}]},
+        {id:'chargerbrand', kind:'multi', q:'Which smart charger?', showIf:a=>a.ev&&a.ev!=='0'&&!!(a.charger||{}).smart, opts:[{k:'tesla',label:'Tesla',brand:1},{k:'chargepoint',label:'ChargePoint',brand:1},{k:'wallbox',label:'Wallbox',brand:1},{k:'emporia',label:'Emporia',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'}], otherList:['Grizzl-E','JuiceBox / Enel X','Autel','Lectron','ClipperCreek','Enphase IQ','Pod Point'], otherPrompt:'it seeds our EVSE adapters'},
         {id:'needby', kind:'single', q:'Car usually needed by?', showIf:a=>a.ev&&a.ev!=='0', opts:[{k:'6',label:'6am',icon:'clock'},{k:'7',label:'7am',icon:'clock'},{k:'8',label:'8am',icon:'clock'},{k:'flex',label:'Flexible',icon:'shuffle'}]},
       ]},
       { title:'Solar', qs:[
@@ -858,10 +863,22 @@ class Component extends DCLogic {
     clearTimeout(this._adv);
     this._adv = setTimeout(()=> this.advance(), rm ? 80 : 300);
   }
-  toggleMulti(id, k){
+  toggleMulti(id, k, opts){
     this.setState(s=>{
       const prev = s.answers[id] || {};
-      const next = Object.assign({}, prev, { [k]: !prev[k] });
+      const exKeys = (opts||[]).filter(o=>o.exclusive).map(o=>o.k);
+      const turningOn = !prev[k];
+      let next;
+      if(turningOn){
+        if(exKeys.includes(k)){
+          next = { [k]: true };                              // exclusive -> only it
+        } else {
+          next = Object.assign({}, prev, { [k]: true });
+          exKeys.forEach(ek=>{ delete next[ek]; });          // clear any exclusive
+        }
+      } else {
+        next = Object.assign({}, prev); delete next[k];
+      }
       const patch = { answers: Object.assign({}, s.answers, { [id]: next }) };
       if(k==='other') patch.otherSearch = '';
       return patch;
@@ -992,17 +1009,19 @@ class Component extends DCLogic {
     appliance = appliance * spread * autoK;
 
     // Optimum: HVAC peak-shaving + EV smart-charge shifting
-    const smartStat = ['nest','ecobee','honeywell','other'].includes(a.thermostat);
+    const stat = a.thermostat || {};
+    const smartStat = ['nest','ecobee','honeywell','other'].some(k => stat[k]);
     const controllableHVAC = ['central','hp'].includes(a.cooling);
     let hvac = 0;
     if(controllableHVAC && smartStat) hvac = 10; else if(controllableHVAC) hvac = 3;
     hvac = hvac * spread * autoK;
+    const ch = a.charger || {};
     let ev = 0;
     if(a.ev && a.ev!=='0'){
-      if(a.charger==='smart') ev = 13;
-      else if(a.charger==='l2') ev = 6;
-      else if(a.charger==='l1' || a.charger==='public') ev = 2;
-      else ev = 6;
+      if(ch.smart)                 ev = 13;
+      else if(ch.l2)               ev = 6;
+      else if(ch.l1 || ch.public)  ev = 2;
+      else                         ev = 6;   // EV present, charger unspecified
     }
     ev = ev * spread * autoK;
 
@@ -1013,14 +1032,20 @@ class Component extends DCLogic {
     // Solar orchestration only pays under net-billing, OR if a battery can time-shift the surplus.
     let solar = (a.solar==='yes' && (nem==='net-billing' || a.battery==='yes')) ? 14 : 0;
     solar = solar * autoK;
-    let vpp = (a.vpp==='interested' || a.vpp==='enrolled') ? 9 : 0;   // 'ns'/'no' => 0
+    let vpp = 0;
+    if(a.vpp==='interested' || a.vpp==='enrolled'){
+      vpp = 9;
+      if((a.charger||{}).smart) vpp += 5;   // controllable EV charging = dispatchable VPP capacity
+    }
 
     const gross = [ appliance, appliance+hvac+ev, appliance+hvac+ev+battery+solar+vpp ];
-    const fees = [5,15,25];
+    const fees = [5,15,25];                                        // Basic, Optimum, Premium
+    const QUALIFY_PCT = [0.60, 0.33, 0.28];                        // required net margin as % of each tier's fee
+    const buffer = fees.map((f,i)=> Math.round(f * QUALIFY_PCT[i]));  // → [3,5,7] at current pricing
     const net = gross.map((g,i)=> g - fees[i]);
     let rec = -1;
-    for(let i=2;i>=0;i--){ if(net[i] > 10){ rec = i; break; } }   // highest tier comfortably cleared
-    return { a, meta, touActive, nem, suggest, gross, net, fees, rec,
+    for(let i=2;i>=0;i--){ if(net[i] >= buffer[i]){ rec = i; break; } }   // highest tier clearing its own buffer
+    return { a, meta, touActive, nem, suggest, gross, net, fees, buffer, rec,
       components:{ appliance, hvac, ev, battery, solar, vpp }, controllableHVAC, smartStat };
   }
 
@@ -1121,7 +1146,7 @@ class Component extends DCLogic {
           } else {
             const on = !!(a[q.id] && a[q.id][o.k]);
             return { label:o.label, selected:on, dot:this.checkDot(on), glyph: o.brand ? this.brandSquare(o.label) : this.ic(o.icon),
-              style:this.chipStyle(on), onSelect: ()=> this.toggleMulti(q.id, o.k) };
+              style:this.chipStyle(on), onSelect: ()=> this.toggleMulti(q.id, o.k, q.opts) };
           }
         });
       }
@@ -1257,14 +1282,40 @@ class Component extends DCLogic {
       if(sp.demo && rec<2 && !whyNot.length) whyNot.push('Your solar doesn\u2019t add value under your utility\u2019s full-retail net metering, so Premium wouldn\u2019t earn its fee.');
 
       if(view==='nofit'){
-        const reasons = [];
-        if(!sp.touActive) reasons.push('Your rate has little time-of-use price spread, so shifting energy earns very little.');
-        if(C.appliance<3 && C.hvac<3 && C.ev<3) reasons.push('We didn\u2019t find controllable, shiftable loads (HVAC, EV, or big appliances) that clear a monthly fee.');
-        if(a.solar==='yes' && C.solar<1) reasons.push('Your solar doesn\u2019t add value under ' + uname + '\u2019s full-retail net metering.');
-        if(a.battery==='yes' && C.battery<1) reasons.push('Battery arbitrage needs a price spread your rate doesn\u2019t have.');
-        if(!reasons.length) reasons.push('The savings we could make for your home don\u2019t comfortably clear even our $5 Basic fee right now.');
+        // best (closest-to-clearing) tier
+        const bestIdx = sp.net.indexOf(Math.max(...sp.net));
+        const grossEst = Math.round(sp.gross[bestIdx]);
+        const feeBest = sp.fees[bestIdx];
+        const netEst = grossEst - feeBest;
+        // near-miss: savings cover the fee but fall short of the qualifying buffer
+        const nearMiss = grossEst >= feeBest;
+
+        // secondary context (never the sole reason)
+        const secondary = [];
+        if(!sp.touActive) secondary.push('Your rate has little time-of-use price spread, so shifting energy earns very little.');
+        if(a.solar==='yes' && C.solar<1) secondary.push('Your solar doesn\u2019t add value under ' + uname + '\u2019s full-retail net metering.');
+        if(a.battery==='yes' && C.battery<1) secondary.push('Battery arbitrage needs a price spread your rate doesn\u2019t have.');
+
+        let reasons, nofitTitle, nofitBody, nofitShowFooter;
+        if(nearMiss){
+          nofitTitle = 'You\u2019re close \u2014 but not quite worth it yet.';
+          nofitBody = 'Based on your setup, I estimate PIF could save you around \u2248$'+grossEst+'/mo. But after the $'+feeBest+'/mo '+NAMES[bestIdx]+' fee, that leaves only about \u2248$'+netEst+' for you \u2014 and my estimates aren\u2019t exact. On a margin that thin, a small miss could mean you\u2019d pay more than you save, so I won\u2019t recommend it in good conscience yet. If your rate or devices change, the math can shift quickly \u2014 I\u2019ll keep an eye out and re-check whenever you like. No charge, no pressure.';
+          reasons = secondary;
+          nofitShowFooter = false;   // re-check line already in the body copy
+        } else {
+          nofitTitle = 'PIF isn\u2019t a fit for your home yet';
+          nofitBody = "I want to be straight with you: right now I couldn't save you enough to comfortably clear even our $5 Basic fee \u2014 so I won't ask you to subscribe. Here's why:";
+          reasons = [];
+          if(!sp.touActive) reasons.push('Your rate has little time-of-use price spread, so shifting energy earns very little.');
+          if(C.appliance<3 && C.hvac<3 && C.ev<3) reasons.push('We didn\u2019t find controllable, shiftable loads (HVAC, EV, or big appliances) that clear a monthly fee.');
+          if(a.solar==='yes' && C.solar<1) reasons.push('Your solar doesn\u2019t add value under ' + uname + '\u2019s full-retail net metering.');
+          if(a.battery==='yes' && C.battery<1) reasons.push('Battery arbitrage needs a price spread your rate doesn\u2019t have.');
+          if(!reasons.length) reasons.push('The savings we could make for your home don\u2019t comfortably clear even our $5 Basic fee right now.');
+          nofitShowFooter = true;
+        }
         nofitVM = {
           nofitFace: this.ionaEl('empathetic', 96),
+          nofitTitle, nofitBody, nofitShowFooter,
           nofitReasons: reasons,
           nofitUtil: uname,
           onNofitRestart: ()=> this.setState({ view:'welcome', si:0, qi:0, answers:{ priority:40 }, maxSection:0, selectedTier:null, editing:false }),
@@ -1369,7 +1420,16 @@ class Component extends DCLogic {
       capSubmitStyle: 'appearance:none;border:none;cursor:'+(capCanSubmit?'pointer':'not-allowed')+';font:600 15px Inter,system-ui,sans-serif;padding:14px 24px;border-radius:999px;background:'+(capCanSubmit?'var(--accent)':'var(--border-strong)')+';color:var(--text-onfill);min-height:50px;width:100%;opacity:'+(capCanSubmit?1:.65),
       onCaptureSubmit: ()=>{ if(!capCanSubmit) return; this.setState({ captureSent:true }); },
       onCaptureContinue: ()=> this.setState({ view:'quiz', si:0, qi:0 }),
-      onOpenCapture: ()=> this.setState({ view:'capture', captureSent:false }),
+      onOpenCapture: ()=> this.setState({ view:'capture', captureMode:'multihome', captureSent:false }),
+      onKeepPosted: ()=> this.setState({ view:'capture', captureMode:'requalify', captureSent:false }),
+      onCaptureBack: ()=> this.setState({ view:'nofit' }),
+      captureReq: this.state.captureMode==='requalify',
+      captureMulti: this.state.captureMode!=='requalify',
+      capShowMulti: this.state.captureMode!=='requalify',
+      captureTitle: this.state.captureMode==='requalify' ? "I'll keep an eye on your home." : "One home today \u2014 I'll tell you when there's more",
+      captureIntro: this.state.captureMode==='requalify' ? "You're not a fit today \u2014 but homes change. Leave your ZIP and email and I'll re-check yours as your rate and devices evolve, then reach out the moment PIF can save you enough." : "I want to be straight with you: PIF optimizes a single home right now \u2014 the one you live in most. Multiple homes and business accounts are coming. Leave your details and I'll email you the moment they launch.",
+      capSubmitLabel: this.state.captureMode==='requalify' ? 'Keep me posted' : 'Notify me when it launches',
+      captureSentBody: this.state.captureMode==='requalify' ? "Got it \u2014 I'll re-check your home and email you the moment PIF can save you enough. No charge, no pressure." : "We'll email you the moment multi-home and business support launch.",
     };
 
     return {
