@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- PIF-Onboarding-Quiz-Batch2 v10 — 26 Jul, B8 “Compare all three” → Batch 7 A11 -->
+<!-- §15 icon source: every option glyph resolves from the canonical Foundations §15 registry (same names + geometry). piggy/sofa are the two slider end-caps, quiz-only, not part of §15. -->
+<!-- BUILD NOTE — the Iona global launcher is intentionally absent here. During the quiz Iona is the
+     guide (in-flow), so a corner launcher would be a confusing second Iona, and most launcher tabs are
+     meaningless mid-onboarding. Only Help has value — surfaced as the "Need help?" affordance in Iona's
+     speech area. The launcher appears from the dashboard onward, once onboarding completes. -->
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#0B1220;font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--primary);text-decoration:none}
+  a:hover{color:var(--secondary);text-decoration:underline}
+  :root,[data-theme="light"],[data-theme="system"]{
+    --surface-base:#FFFFFF; --surface-raised:#F4F7FB; --surface-sunken:#E9EEF6;
+    --text-primary:#16233B; --text-secondary:#586378; --text-onfill:#FFFFFF;
+    --border-subtle:#C9D4E3; --border-strong:#7C8BA3;
+    --primary:#1B3A6B; --secondary:#0E7C7B; --accent:#077A46; --accent-bright:#0FA968;
+    --success:#077A46; --warning:#9A6400; --danger:#C22F2F; --info:#1B5FB8;
+    --elev-1:0 1px 2px rgba(22,35,59,.06),0 1px 3px rgba(22,35,59,.08);
+    --elev-2:0 2px 6px rgba(22,35,59,.08),0 4px 12px rgba(22,35,59,.10);
+    --elev-3:0 8px 24px rgba(22,35,59,.14);
+    --glow-accent:0 0 0 rgba(0,0,0,0);
+  }
+  [data-theme="dark"]{
+    --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+    --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+    --border-subtle:#2A3852; --border-strong:#62738F;
+    --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+    --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+    --elev-1:0 1px 2px rgba(0,0,0,.40);
+    --elev-2:0 4px 14px rgba(0,0,0,.50);
+    --elev-3:0 10px 30px rgba(0,0,0,.60);
+    --glow-accent:0 0 24px rgba(47,227,154,.45);
+  }
+  @media (prefers-color-scheme:dark){
+    [data-theme="system"]{
+      --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+      --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+      --border-subtle:#2A3852; --border-strong:#62738F;
+      --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+      --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+      --elev-1:0 1px 2px rgba(0,0,0,.40); --elev-2:0 4px 14px rgba(0,0,0,.50); --elev-3:0 10px 30px rgba(0,0,0,.60);
+      --glow-accent:0 0 24px rgba(47,227,154,.45);
+    }
+  }
+  @keyframes pifFlashHold{0%{box-shadow:0 0 0 rgba(47,227,154,0)}45%{box-shadow:0 0 34px rgba(47,227,154,.8)}100%{box-shadow:0 0 18px rgba(47,227,154,.5)}}
+  @keyframes pifStepIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes pifPop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+  @keyframes pifSpin{to{transform:rotate(360deg)}}
+  .pif-shell.full{animation:pifFlashHold .7s ease-out 1 forwards}
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+    .pif-shell.full{animation:none;box-shadow:0 0 16px rgba(47,227,154,.5)}
+  }
+  [data-rm="1"] .pif-shell.full{animation:none !important;box-shadow:0 0 16px rgba(47,227,154,.5)}
+  [data-rm="1"] .pif-step{animation:none !important}
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" data-rm="{{ rmFlag }}" style="min-height:100vh;width:100%;background:var(--surface-base);color:var(--text-primary);font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;padding:28px 20px 56px;transition:background .32s cubic-bezier(.2,0,0,1),color .32s cubic-bezier(.2,0,0,1)">
+
+  <!-- theme switch -->
+  <div style="width:100%;max-width:600px;display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+    <div style="display:inline-flex;align-items:center;gap:9px">
+      <img src="assets/pif-tile.png" alt="" aria-hidden="true" style="height:26px;width:auto;display:block;border-radius:6px">
+      <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+    </div>
+    <div role="radiogroup" aria-label="Theme" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px">
+      <sc-for list="{{ segs }}" as="s" hint-placeholder-count="3">
+        <button role="radio" aria-checked="{{ s.active }}" aria-label="{{ s.label }}" title="{{ s.label }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.icon }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- ============ PROGRESS CHROME: battery + Iona ============ -->
+  <sc-if value="{{ showChrome }}" hint-placeholder-val="{{ true }}">
+  <div style="width:100%;max-width:600px;margin-bottom:20px">
+    <div style="display:flex;align-items:flex-end;gap:12px;margin-bottom:14px">
+      <span style="flex:none;filter:drop-shadow(0 0 6px rgba(47,227,154,.5))">{{ ionaHeadFace }}</span>
+      <div style="position:relative;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;border-bottom-left-radius:4px;padding:11px 15px;box-shadow:var(--elev-1);font-size:14px;line-height:20px;font-weight:500;flex:1;min-width:0"><span>{{ ionaLine }}</span> <button onClick="{{ onQuizHelp }}" style="appearance:none;border:none;background:transparent;cursor:pointer;font:600 13px Inter,system-ui,sans-serif;color:var(--primary);padding:0;text-decoration:underline;white-space:nowrap">Need help?</button></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div class="pif-shell {{ shellFull }}" style="position:relative;flex:1;height:34px;border:3px solid var(--border-subtle);border-radius:11px;background:var(--surface-sunken);overflow:hidden">
+        <div style="{{ fillStyle }}"></div>
+        <div style="{{ b1Style }}"><svg viewBox="0 0 18 86" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><path d="M11,0 L3,44 L9,44 L7,86 L17,38 L11,38 Z" fill="currentColor"/></svg></div>
+        <div style="{{ b2Style }}"><svg viewBox="0 0 18 86" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><path d="M11,0 L3,44 L9,44 L7,86 L17,38 L11,38 Z" fill="currentColor"/></svg></div>
+      </div>
+      <div style="width:7px;height:14px;border-radius:0 4px 4px 0;background:var(--border-subtle);margin-left:-2px"></div>
+      <span style="font-size:12px;font-weight:600;color:var(--text-secondary);font-variant-numeric:tabular-nums;width:38px;text-align:right">{{ chargePct }}</span>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ B1 WELCOME ============ -->
+  <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ true }}">
+  <div class="pif-step" style="width:100%;max-width:600px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:40px 32px;box-shadow:var(--glow-accent),var(--elev-2);text-align:center;animation:pifStepIn .4s cubic-bezier(.2,0,0,1) both">
+    <div style="display:flex;justify-content:center;margin-bottom:6px">{{ welcomeFace }}</div>
+    <h1 style="font-family:'Space Grotesk',system-ui;font-size:28px;line-height:36px;font-weight:700;letter-spacing:-.02em;margin:0 0 12px">Hi, I'm Iona 👋</h1>
+    <p style="font-size:16px;line-height:24px;color:var(--text-secondary);margin:0 auto 8px;max-width:440px">Ready to build your savings? I'm your partner here — we're going to piece together the best plan to maximize what you save. It's tap-first — the only typing is your ZIP, or a name if yours isn't on the list.</p>
+    <p style="font-size:14px;line-height:20px;color:var(--text-primary);font-weight:600;margin:0 auto;max-width:440px">PIF optimizes one home right now — the place you live in most.</p>
+    <div style="display:inline-flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:16px 0 26px">
+      <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;padding:6px 12px">9 quick sets</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;padding:6px 12px">~3 minutes</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;padding:6px 12px">You stay in control</span>
+    </div>
+    <div>
+      <button onClick="{{ onStart }}" style="appearance:none;border:none;cursor:pointer;font:600 16px Inter,system-ui,sans-serif;padding:14px 34px;border-radius:999px;background:var(--accent);color:var(--text-onfill);min-height:52px;box-shadow:var(--glow-accent);transition:transform .2s cubic-bezier(.2,0,0,1.2)" style-active="transform:scale(.96)" style-hover="filter:brightness(1.05)">Let's jump in →</button>
+      <div style="margin-top:12px"><a href="PIF-Auth-Batch1.dc.html" style="font-size:13.5px;font-weight:600;color:var(--text-secondary)" style-hover="color:var(--text-primary)">Already have an account? Plug in →</a></div>
+    </div>
+    <div style="margin-top:16px">
+      <button onClick="{{ onOpenCapture }}" style="appearance:none;border:none;background:transparent;cursor:pointer;color:var(--text-secondary);font:600 13.5px Inter,system-ui,sans-serif;text-decoration:underline;text-underline-offset:3px" style-hover="color:var(--text-primary)">Have multiple homes or a business?</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ QUIZ STEP ============ -->
+  <sc-if value="{{ isQuiz }}" hint-placeholder-val="{{ false }}">
+  <div class="pif-step" style="width:100%;max-width:600px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:28px 28px 24px;box-shadow:var(--elev-2);animation:pifStepIn .32s cubic-bezier(.2,0,0,1) both" key="{{ stepKey }}">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px">
+      <span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-secondary)">{{ progressLabel }}</span>
+      <!-- mode pill -->
+      <sc-if value="{{ pillOne }}" hint-placeholder-val="{{ true }}">
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;padding:4px 10px;flex:none">
+          <span aria-hidden="true" style="width:11px;height:11px;border-radius:999px;border:2px solid var(--accent);display:inline-flex;align-items:center;justify-content:center"><span style="width:4px;height:4px;border-radius:999px;background:var(--accent)"></span></span>Pick one
+        </span>
+      </sc-if>
+      <sc-if value="{{ pillAll }}" hint-placeholder-val="{{ false }}">
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;padding:4px 10px;flex:none">
+          <span aria-hidden="true" style="width:11px;height:11px;border-radius:999px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;color:var(--text-onfill)"><svg width="8" height="8" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Pick all
+        </span>
+      </sc-if>
+    </div>
+
+    <h2 style="font-size:22px;line-height:30px;font-weight:600;margin:0 0 18px;text-wrap:pretty">{{ qTitle }}</h2>
+
+    <!-- ZIP -->
+    <sc-if value="{{ isZip }}" hint-placeholder-val="{{ false }}">
+      <input inputmode="numeric" maxlength="5" placeholder="e.g. 23220" value="{{ zipValue }}" onInput="{{ onZipInput }}" aria-invalid="{{ zipInvalid }}" aria-describedby="{{ zipDescribedBy }}" style="width:100%;font-family:'Space Grotesk',system-ui;font-weight:700;font-size:26px;letter-spacing:.12em;font-variant-numeric:tabular-nums;text-align:center;padding:16px;border-radius:14px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:60px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+      <p style="font-size:13px;line-height:18px;color:var(--text-secondary);margin:12px 0 0;display:flex;gap:8px;align-items:center"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex:none"><circle cx="8" cy="8" r="6.25" stroke="var(--info)" stroke-width="1.5"/><path d="M8 7.2v3.4M8 5.2h.01" stroke="var(--info)" stroke-width="1.6" stroke-linecap="round"/></svg>The only field you type — it finds your utility &amp; sets the $ magnitude for every tier.</p>
+      <sc-if value="{{ zipError }}" hint-placeholder-val="{{ false }}"><p id="pe-zip" role="alert" style="font-size:13px;color:var(--danger);margin:8px 0 0;font-weight:600">{{ zipError }}</p></sc-if>
+      <sc-if value="{{ zipNoUtility }}" hint-placeholder-val="{{ false }}"><p id="pe-zipnf" role="alert" style="font-size:13px;line-height:19px;color:var(--warning);margin:10px 0 0;display:flex;gap:8px;align-items:flex-start"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex:none;margin-top:1px"><path d="M8 2.2 14.5 13.5H1.5z" stroke="var(--warning)" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6.6v2.8M8 11.4h.01" stroke="var(--warning)" stroke-width="1.6" stroke-linecap="round"/></svg><span>{{ zipNoUtility }}</span></p></sc-if>
+    </sc-if>
+
+    <!-- CHIPS (single + multi) -->
+    <sc-if value="{{ isChips }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <sc-for list="{{ options }}" as="o" hint-placeholder-count="4">
+          <button aria-pressed="{{ o.selected }}" onClick="{{ o.onSelect }}" style="{{ o.style }}" style-hover="border-color:var(--accent)">{{ o.dot }}{{ o.glyph }}{{ o.label }}</button>
+        </sc-for>
+      </div>
+      <sc-if value="{{ otherOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:14px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px;padding:16px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:10px">Search common options</div>
+          <input type="text" value="{{ otherSearch }}" onInput="{{ onOtherSearch }}" placeholder="Start typing a brand or model…" style="width:100%;font:400 14px Inter,system-ui,sans-serif;padding:10px 13px;border-radius:10px;background:var(--surface-base);color:var(--text-primary);border:1px solid var(--border-strong);min-height:42px;outline:none;margin-bottom:12px" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ filteredOther }}" as="f" hint-placeholder-count="5">
+              <button aria-pressed="{{ f.picked }}" onClick="{{ f.onPick }}" style="{{ f.style }}" style-hover="border-color:var(--accent)">{{ f.label }}</button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ otherNoResults }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Not in the list — no problem. Enter the exact name below.</div>
+          </sc-if>
+          <div style="height:1px;background:var(--border-subtle);margin:14px 0"></div>
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Which one? <span style="font-weight:400;color:var(--text-secondary)">(if it isn't listed)</span></label>
+          <input type="text" value="{{ capturedName }}" onInput="{{ onOtherType }}" aria-invalid="{{ needName }}" aria-describedby="{{ otherDescribedBy }}" placeholder="Type the exact brand / model" style="{{ whichStyle }}" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+          <sc-if value="{{ otherNeedMsg }}" hint-placeholder-val="{{ false }}"><p id="pe-other" role="alert" style="font-size:13px;color:var(--danger);margin:9px 0 0;font-weight:600">{{ otherNeedMsg }}</p></sc-if>
+          <p style="font-size:12px;line-height:17px;color:var(--text-secondary);margin:9px 0 0;display:flex;gap:7px;align-items:flex-start"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex:none;margin-top:1px"><circle cx="8" cy="8" r="6.25" stroke="var(--info)" stroke-width="1.5"/><path d="M8 7.2v3.4M8 5.2h.01" stroke="var(--info)" stroke-width="1.6" stroke-linecap="round"/></svg><span>{{ otherHelp }}</span></p>
+          <button onClick="{{ onClearOther }}" style="appearance:none;cursor:pointer;background:transparent;border:none;color:var(--text-secondary);font:600 13px Inter,system-ui,sans-serif;padding:8px 0 2px;margin-top:8px;text-decoration:underline;text-underline-offset:3px" style-hover="color:var(--text-primary)">Not sure? Clear this and pick a different option</button>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <!-- SLIDER -->
+    <sc-if value="{{ isSlider }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:13px;font-weight:600;color:var(--text-secondary)">
+        <span style="display:inline-flex;align-items:center;gap:6px">{{ sliderLeftIcon }}{{ sliderLeftLabel }}</span>
+        <span style="display:inline-flex;align-items:center;gap:6px">{{ sliderRightLabel }}{{ sliderRightIcon }}</span>
+      </div>
+      <input type="range" min="0" max="100" value="{{ sliderValue }}" onInput="{{ onSlider }}" style="width:100%;accent-color:var(--accent);height:36px">
+      <div style="text-align:center;font-size:13px;color:var(--text-secondary);margin-top:4px">{{ sliderReadout }}</div>
+    </sc-if>
+
+    <!-- footer -->
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px;padding-top:18px;border-top:1px solid var(--border-subtle)">
+      <button onClick="{{ onBack }}" style="appearance:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:10px 18px;border-radius:999px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:44px;display:inline-flex;align-items:center;gap:6px" style-hover="background:var(--surface-sunken)"><span aria-hidden="true">←</span> Back</button>
+      <div style="display:flex;align-items:center;gap:14px">
+        <sc-if value="{{ showCount }}" hint-placeholder-val="{{ false }}">
+          <span style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--accent)"><span aria-hidden="true" style="width:20px;height:20px;border-radius:999px;background:var(--accent);color:var(--text-onfill);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-variant-numeric:tabular-nums">{{ multiCount }}</span>selected</span>
+        </sc-if>
+        <sc-if value="{{ showNext }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ onNext }}" disabled="{{ nextDisabled }}" style="{{ nextStyle }}">{{ nextLabel }} →</button>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:12px;color:var(--text-secondary);margin:16px 0 0;text-align:center;max-width:520px">Nothing is ever lost — go <b style="color:var(--text-primary)">Back</b> anytime and every answer is still here, ready to change.</p>
+  </sc-if>
+
+  <!-- ============ INTERSTITIAL ============ -->
+  <sc-if value="{{ isInter }}" hint-placeholder-val="{{ false }}">
+  <div class="pif-step" style="width:100%;max-width:600px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:44px 32px;box-shadow:var(--glow-accent),var(--elev-2);text-align:center;animation:pifStepIn .34s cubic-bezier(.2,0,0,1) both" key="{{ stepKey }}">
+    <div style="display:flex;justify-content:center;margin-bottom:8px" class="pif-step">{{ interFace }}</div>
+    <h2 style="font-family:'Space Grotesk',system-ui;font-size:26px;line-height:32px;font-weight:700;margin:0 0 8px">{{ interTitle }}</h2>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:0 auto 24px;max-width:380px">{{ interSub }}</p>
+    <button onClick="{{ onInterContinue }}" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 30px;border-radius:999px;background:var(--accent);color:var(--text-onfill);min-height:48px;box-shadow:var(--glow-accent);transition:transform .2s cubic-bezier(.2,0,0,1.2)" style-active="transform:scale(.96)" style-hover="filter:brightness(1.05)">Keep going →</button>
+  </div>
+  </sc-if>
+
+  <!-- ============ B7b REVIEW ============ -->
+  <sc-if value="{{ isReview }}" hint-placeholder-val="{{ false }}">
+  <div class="pif-step" style="width:100%;max-width:600px;animation:pifStepIn .34s cubic-bezier(.2,0,0,1) both">
+    <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:26px 26px 12px;box-shadow:var(--elev-2)">
+      <h2 style="font-family:'Space Grotesk',system-ui;font-size:24px;line-height:30px;font-weight:700;margin:0 0 4px">Review your answers</h2>
+      <p style="font-size:14px;line-height:20px;color:var(--text-secondary);margin:0 0 20px">Everything you told me — tap <b style="color:var(--text-primary)">Edit</b> on anything to change it. Your answer stays exactly as it was.</p>
+      <sc-for list="{{ reviewGroups }}" as="g" hint-placeholder-count="9">
+        <div style="margin-bottom:18px">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px">{{ g.title }}</div>
+          <div style="display:flex;flex-direction:column;gap:1px;background:var(--border-subtle);border-radius:12px;overflow:hidden">
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="2">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:var(--surface-base)">
+                <div style="min-width:0">
+                  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:2px">{{ it.q }}</div>
+                  <div style="font-size:15px;font-weight:600;text-wrap:pretty">{{ it.a }}</div>
+                </div>
+                <button onClick="{{ it.onEdit }}" style="appearance:none;cursor:pointer;font:600 13px Inter,system-ui,sans-serif;padding:8px 14px;border-radius:999px;background:transparent;color:var(--primary);border:1px solid var(--border-strong);min-height:40px;flex:none" style-hover="background:var(--surface-sunken)">Edit</button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin-top:14px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;box-shadow:var(--elev-1)">
+      <div style="display:flex;align-items:flex-start;gap:11px">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" style="flex:none;margin-top:1px;color:var(--text-secondary)"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v4l2.6 1.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div style="min-width:0;flex:1">
+          <sc-if value="{{ tzFact.resolved }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:14px;line-height:20px"><span style="color:var(--text-secondary)">Times shown in </span><span style="font-weight:700">{{ tzFact.label }}</span><span style="color:var(--text-secondary)"> · </span><button onClick="{{ tzFact.onToggle }}" style="appearance:none;border:none;background:transparent;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;color:var(--primary);padding:0" style-hover="text-decoration:underline">change</button></div>
+            <div style="font-size:12px;line-height:17px;color:var(--text-secondary);margin-top:3px">Your utility sets peak windows in this zone. We use it for every time against your tariff.</div>
+          </sc-if>
+          <sc-if value="{{ tzFact.ambiguous }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:14px;line-height:20px;font-weight:700;color:var(--warning)">One quick check: which time zone?</div>
+            <div style="font-size:12px;line-height:17px;color:var(--text-secondary);margin-top:3px">Your ZIP straddles {{ tzFact.candLabels }}, and peak windows differ by an hour between them. Pick the one your utility bills in.</div>
+          </sc-if>
+          <sc-if value="{{ tzFact.pickerOpen }}" hint-placeholder-val="{{ false }}">
+            <div role="radiogroup" aria-label="Time zone" style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
+              <sc-for list="{{ tzFact.zones }}" as="z" hint-placeholder-count="5">
+                <button role="radio" aria-checked="{{ z.active }}" onClick="{{ z.onPick }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:11px;background:var(--surface-base);border:1px solid {{ z.borderColor }};min-height:42px;font:600 14px Inter,system-ui,sans-serif;color:var(--text-primary)" style-hover="background:var(--surface-sunken)">{{ z.dot }}{{ z.label }}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px">
+      <button onClick="{{ onReviewBack }}" style="appearance:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:999px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px" style-hover="background:var(--surface-sunken)"><span aria-hidden="true">←</span> Back</button>
+      <button onClick="{{ onSeeResult }}" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 28px;border-radius:999px;background:var(--accent);color:var(--text-onfill);min-height:48px;box-shadow:var(--glow-accent);transition:transform .2s cubic-bezier(.2,0,0,1.2)" style-active="transform:scale(.96)" style-hover="filter:brightness(1.05)">See my plan →</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ B8 TIER RESULT ============ -->
+  <sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+  <div class="pif-step" style="width:100%;max-width:600px;animation:pifStepIn .34s cubic-bezier(.2,0,0,1) both">
+    <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:28px 26px;box-shadow:var(--glow-accent),var(--elev-2);text-align:center;margin-bottom:18px">
+      <div style="display:flex;justify-content:center;margin-bottom:4px">{{ resultFace }}</div>
+      <div style="font-size:13px;color:var(--text-secondary);margin-bottom:2px">Estimated savings for a home like yours.</div>
+      <div aria-describedby="pif-savings-note" style="font-family:'Space Grotesk',system-ui;font-size:44px;line-height:1.05;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent)">{{ savingsDisplay }}<span style="font-size:20px;color:var(--text-secondary)">/mo*</span></div>
+      <p style="font-size:14px;line-height:20px;color:var(--text-secondary);margin:10px auto 0;max-width:420px">Computed conservatively from your answers. I recommend <b style="color:var(--text-primary)">{{ recName }}</b> — the highest tier your savings comfortably clear.</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ tiers }}" as="t" hint-placeholder-count="3">
+        <button onClick="{{ t.onSelect }}" style="{{ t.cardStyle }}">
+          <div style="display:flex;align-items:center;gap:14px">
+            <span style="{{ t.radioStyle }}"><span style="{{ t.radioDot }}"></span></span>
+            <div style="text-align:left;min-width:0">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span style="font-size:17px;font-weight:700">{{ t.name }}</span>
+                <sc-if value="{{ t.isRec }}" hint-placeholder-val="{{ false }}"><span style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent);border:1px solid var(--accent);border-radius:999px;padding:2px 8px">Recommended</span></sc-if>
+              </div>
+              <div style="font-size:13px;color:var(--text-secondary);margin-top:3px;text-wrap:pretty">{{ t.blurb }}</div>
+            </div>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums">{{ t.price }}</div>
+            <div style="font-size:11px;color:var(--text-secondary)">/mo</div>
+          </div>
+        </button>
+      </sc-for>
+    </div>
+
+    <!-- why this tier -->
+    <div style="margin-top:16px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px">{{ whyTitle }}</div>
+      <ul aria-describedby="pif-savings-note" style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ drivers }}" as="d" hint-placeholder-count="3">
+          <li style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px"><span style="display:inline-flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:999px;background:var(--accent);flex:none"></span>{{ d.label }}</span><span style="font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);flex:none">{{ d.amount }}</span></li>
+        </sc-for>
+      </ul>
+      <sc-if value="{{ showWhyNot }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-subtle);display:flex;flex-direction:column;gap:7px">
+          <sc-for list="{{ whyNot }}" as="w" hint-placeholder-count="1">
+            <div style="display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:18px;color:var(--text-secondary)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex:none;margin-top:2px"><circle cx="8" cy="8" r="6.25" stroke="var(--text-secondary)" stroke-width="1.4"/><path d="M8 7.2v3.4M8 5.2h.01" stroke="var(--text-secondary)" stroke-width="1.5" stroke-linecap="round"/></svg><span>{{ w }}</span></div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ showConsentNote }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:10px;font-size:12px;line-height:17px;color:var(--text-secondary)">{{ consentNote }}</div>
+      </sc-if>
+    </div>
+
+    <!-- branch panel: leaving value on the table -->
+    <sc-if value="{{ showLeavePanel }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:16px;background:color-mix(in srgb,var(--warning) 10%,var(--surface-raised));border:1px solid var(--warning);border-radius:16px;padding:18px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <svg width="17" height="17" viewBox="0 0 16 16" fill="none" style="flex:none"><path d="M8 2 15 14H1z" stroke="var(--warning)" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 6.5v3.2M8 11.6h.01" stroke="var(--warning)" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <span style="font-size:14px;font-weight:700">What you'd leave on the table</span>
+        </div>
+        <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0 0 10px">{{ leaveIntro }}</p>
+        <ul aria-describedby="pif-savings-note" style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px">
+          <sc-for list="{{ leaveItems }}" as="li" hint-placeholder-count="2">
+            <li style="display:flex;align-items:flex-start;gap:9px;font-size:13px;line-height:18px"><span style="color:var(--warning);flex:none;margin-top:2px">•</span><span>{{ li }}</span></li>
+          </sc-for>
+        </ul>
+        <p style="font-size:12px;color:var(--text-secondary);margin:12px 0 0">No pressure — it's your call. You can confirm this tier or reconsider.</p>
+      </div>
+    </sc-if>
+    <!-- branch note: higher than recommended -->
+    <sc-if value="{{ showHigherNote }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:16px;background:color-mix(in srgb,var(--accent) 8%,var(--surface-raised));border:1px solid var(--accent);border-radius:16px;padding:16px;font-size:13px;line-height:19px;color:var(--text-secondary)">
+        <b style="color:var(--text-primary)">Going bigger — love the ambition.</b> Every higher-tier lever unlocks the moment you subscribe. No friction here.
+      </div>
+    </sc-if>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:20px">
+      <a href="#" onClick="{{ onCompare }}" style="font-size:14px;font-weight:600">Compare all three</a>
+      <button onClick="{{ onContinuePay }}" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 28px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:48px" style-hover="filter:brightness(1.06)">Continue to payment →</button>
+    </div>
+    <p id="pif-savings-note" style="font-size:12px;line-height:18px;color:var(--text-secondary);margin:20px 0 0;padding-top:16px;border-top:1px solid var(--border-subtle)"><span style="font-weight:700;color:var(--text-primary)">* Est. = estimate.</span> These are estimates, not promises. Real savings vary with your utility rates, your devices, the weather, and your daily habits. Once PIF is running, your ledger shows every dollar we actually save you — itemized.</p>
+  </div>
+  </sc-if>
+
+  <!-- ============ NO-FIT ============ -->
+  <sc-if value="{{ isNofit }}" hint-placeholder-val="{{ false }}">
+  <div class="pif-step" style="width:100%;max-width:600px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:40px 32px;box-shadow:var(--elev-2);text-align:center;animation:pifStepIn .4s cubic-bezier(.2,0,0,1) both">
+    <div style="display:flex;justify-content:center;margin-bottom:6px">{{ nofitFace }}</div>
+    <h1 style="font-family:'Space Grotesk',system-ui;font-size:26px;line-height:32px;font-weight:700;margin:0 0 10px">PIF isn't a fit for your home yet</h1>
+    <p style="font-size:15px;line-height:23px;color:var(--text-secondary);margin:0 auto 20px;max-width:420px">I want to be straight with you: right now I couldn't save you enough to comfortably clear even our $5 Basic fee — so I won't ask you to subscribe. Here's why:</p>
+    <ul style="list-style:none;margin:0 auto 22px;padding:0;max-width:440px;display:flex;flex-direction:column;gap:9px;text-align:left">
+      <sc-for list="{{ nofitReasons }}" as="r" hint-placeholder-count="2">
+        <li style="display:flex;gap:10px;align-items:flex-start;background:var(--surface-sunken);border-radius:12px;padding:12px 14px;font-size:14px;line-height:20px"><span style="color:var(--text-secondary);flex:none;margin-top:2px">•</span><span>{{ r }}</span></li>
+      </sc-for>
+    </ul>
+    <p style="font-size:14px;line-height:21px;color:var(--text-secondary);margin:0 auto 24px;max-width:420px">If your rate plan or devices change, the math can change fast. I'll keep an eye out and re-check whenever you like — no charge, no pressure.</p>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px">
+      <button style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 26px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:48px" style-hover="filter:brightness(1.06)">Keep me posted</button>
+      <button onClick="{{ onNofitRestart }}" style="appearance:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 22px;border-radius:999px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px" style-hover="background:var(--surface-sunken)">Re-check my answers</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ MULTI-HOME / BUSINESS CAPTURE ============ -->
+  <sc-if value="{{ isCapture }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ captureNotSent }}" hint-placeholder-val="{{ true }}">
+    <div class="pif-step" style="width:100%;max-width:600px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:34px 30px;box-shadow:var(--elev-2);animation:pifStepIn .4s cubic-bezier(.2,0,0,1) both">
+      <div style="display:flex;justify-content:center;margin-bottom:6px">{{ captureFace }}</div>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;line-height:31px;font-weight:700;margin:0 0 10px;text-align:center">One home today — I'll tell you when there's more</h1>
+      <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:0 auto 22px;max-width:460px;text-align:center">I want to be straight with you: PIF optimizes a single home right now — the one you live in most. Multiple homes and business accounts are coming. Leave your details and I'll email you the moment they launch.</p>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:120px"><label for="cap-zip" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">ZIP <span style="color:var(--danger)">*</span></label><input id="cap-zip" inputmode="numeric" maxlength="5" value="{{ capZip }}" onInput="{{ onCaptureZip }}" placeholder="23220" style="width:100%;font:600 15px 'Space Grotesk',system-ui;letter-spacing:.08em;padding:12px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"><sc-if value="{{ capZipInvalid }}" hint-placeholder-val="{{ true }}"><p style="font-size:12px;color:var(--text-secondary);margin:7px 0 0">Enter your 5-digit ZIP</p></sc-if></div>
+          <div style="flex:2;min-width:200px"><label for="cap-email" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Email <span style="color:var(--danger)">*</span></label><input id="cap-email" type="email" value="{{ capEmail }}" onInput="{{ onCaptureEmail }}" placeholder="you@email.com" style="width:100%;font:400 15px Inter,system-ui;padding:12px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></div>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:10px">What are you interested in?</div>
+          <div role="radiogroup" aria-label="Interest" style="display:flex;flex-wrap:wrap;gap:10px"><sc-for list="{{ capInterest }}" as="o" hint-placeholder-count="3"><button role="radio" aria-checked="{{ o.selected }}" onClick="{{ o.onPick }}" style="{{ o.style }}" style-hover="border-color:var(--accent)">{{ o.label }}</button></sc-for></div>
+        </div>
+        <sc-if value="{{ homesShow }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <span style="font-size:13px;font-weight:600;flex:1;min-width:140px">How many homes? <span style="font-weight:400;color:var(--text-secondary)">(optional)</span></span>
+          <div style="display:inline-flex;align-items:center;gap:12px"><button onClick="{{ onHomesDec }}" aria-disabled="{{ homesDecDis }}" aria-label="Fewer homes" style="{{ homesDecStyle }}"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><span style="font-family:'Space Grotesk',system-ui;font-size:19px;font-weight:700;min-width:26px;text-align:center">{{ capHomes }}</span><button onClick="{{ onHomesInc }}" aria-disabled="{{ homesIncDis }}" aria-label="More homes" style="{{ homesIncStyle }}"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+        </div>
+        </sc-if>
+        <button role="checkbox" aria-checked="{{ capConsent }}" onClick="{{ onCaptureConsent }}" style="appearance:none;background:transparent;border:none;cursor:pointer;display:flex;align-items:flex-start;gap:12px;text-align:left;padding:2px 0">
+          <span style="{{ consentBoxStyle }}"><sc-if value="{{ capConsentOn }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="var(--text-onfill)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></sc-if></span>
+          <span style="font-size:13.5px;line-height:19px;color:var(--text-primary)">Email me when multi-home / business support launches. <span style="color:var(--text-secondary)">Required to send you the notification — nothing else.</span></span>
+        </button>
+        <button onClick="{{ onCaptureSubmit }}" aria-disabled="{{ capSubmitDisabled }}" style="{{ capSubmitStyle }}">Notify me when it launches</button>
+        <button onClick="{{ onCaptureContinue }}" style="appearance:none;cursor:pointer;background:transparent;border:1px solid var(--border-strong);color:var(--text-primary);font:600 15px Inter,system-ui,sans-serif;padding:13px 22px;border-radius:999px;min-height:50px;width:100%" style-hover="background:var(--surface-sunken)">Continue setting up my main home →</button>
+      </div>
+    </div>
+    </sc-if>
+    <sc-if value="{{ captureIsSent }}" hint-placeholder-val="{{ false }}">
+    <div class="pif-step" style="width:100%;max-width:600px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:40px 32px;box-shadow:var(--elev-2);text-align:center;animation:pifStepIn .4s cubic-bezier(.2,0,0,1) both">
+      <div style="display:flex;justify-content:center;margin-bottom:6px">{{ captureFaceSent }}</div>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:26px;line-height:32px;font-weight:700;margin:0 0 10px">You're on the list</h1>
+      <p style="font-size:15px;line-height:23px;color:var(--text-secondary);margin:0 auto 26px;max-width:420px">We'll email you the moment multi-home and business support launch.</p>
+      <button onClick="{{ onCaptureContinue }}" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:14px 28px;border-radius:999px;background:var(--accent);color:var(--text-onfill);min-height:50px" style-hover="filter:brightness(1.05)">Continue setting up my main home →</button>
+    </div>
+    </sc-if>
+  </sc-if>
+
+  <!-- ============ B9 PAYMENT ============ -->
+  <sc-if value="{{ isPayment }}" hint-placeholder-val="{{ false }}">
+  <div class="pif-step" style="width:100%;max-width:600px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:28px 28px 24px;box-shadow:var(--elev-2);animation:pifStepIn .32s cubic-bezier(.2,0,0,1) both">
+    <h2 style="font-family:'Space Grotesk',system-ui;font-size:24px;line-height:30px;font-weight:700;margin:0 0 4px">Confirm &amp; pay</h2>
+    <p style="font-size:14px;line-height:20px;color:var(--text-secondary);margin:0 0 20px">We never charge silently. Card is tokenized by Stripe — we never store your number.</p>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface-sunken);border-radius:14px;padding:16px 18px;margin-bottom:20px">
+      <div>
+        <div style="font-size:13px;color:var(--text-secondary)">Your plan</div>
+        <div style="font-size:18px;font-weight:700">{{ payTierName }}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums">{{ payPrice }}</div>
+        <div style="font-size:11px;color:var(--text-secondary)">billed monthly</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:18px">
+      <label for="pay-name" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Cardholder name <span style="color:var(--danger)">*</span></label>
+      <input id="pay-name" type="text" autocomplete="cc-name" value="{{ pf.name.val }}" onChange="{{ pf.name.onChange }}" onBlur="{{ pf.name.onBlur }}" aria-invalid="{{ pf.name.invalid }}" aria-describedby="{{ pf.name.describedBy }}" placeholder="Name as it appears on card" style="{{ pf.name.style }}" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+      <sc-if value="{{ pf.name.err }}" hint-placeholder-val="{{ false }}"><div id="pe-name" role="alert" style="font-size:12px;color:var(--danger);margin-top:6px">{{ pf.name.err }}</div></sc-if>
+    </div>
+
+    <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:12px">Billing address</div>
+
+    <div style="margin-bottom:14px">
+      <label for="pay-l1" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Address line 1 <span style="color:var(--danger)">*</span></label>
+      <input id="pay-l1" type="text" autocomplete="address-line1" value="{{ pf.l1.val }}" onChange="{{ pf.l1.onChange }}" onBlur="{{ pf.l1.onBlur }}" aria-invalid="{{ pf.l1.invalid }}" aria-describedby="{{ pf.l1.describedBy }}" placeholder="Street address" style="{{ pf.l1.style }}" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+      <sc-if value="{{ pf.l1.err }}" hint-placeholder-val="{{ false }}"><div id="pe-l1" role="alert" style="font-size:12px;color:var(--danger);margin-top:6px">{{ pf.l1.err }}</div></sc-if>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label for="pay-l2" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Address line 2 <span style="font-weight:400;color:var(--text-secondary)">(optional)</span></label>
+      <input id="pay-l2" type="text" autocomplete="address-line2" value="{{ pf.l2.val }}" onChange="{{ pf.l2.onChange }}" onBlur="{{ pf.l2.onBlur }}" placeholder="Apt, suite, unit" style="{{ pf.l2.style }}" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+    </div>
+
+    <div style="display:flex;gap:12px;margin-bottom:14px">
+      <div style="flex:1;min-width:0">
+        <label for="pay-city" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">City <span style="color:var(--danger)">*</span></label>
+        <input id="pay-city" type="text" autocomplete="address-level2" value="{{ pf.city.val }}" onChange="{{ pf.city.onChange }}" onBlur="{{ pf.city.onBlur }}" aria-invalid="{{ pf.city.invalid }}" aria-describedby="{{ pf.city.describedBy }}" placeholder="City" style="{{ pf.city.style }}" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+        <sc-if value="{{ pf.city.err }}" hint-placeholder-val="{{ false }}"><div id="pe-city" role="alert" style="font-size:12px;color:var(--danger);margin-top:6px">{{ pf.city.err }}</div></sc-if>
+      </div>
+      <div style="flex:1;min-width:0">
+        <label for="pay-state" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">State <span style="color:var(--danger)">*</span></label>
+        <input id="pay-state" type="text" list="pif-us-states" autocomplete="address-level1" value="{{ pf.state.val }}" onChange="{{ pf.state.onChange }}" onBlur="{{ pf.state.onBlur }}" aria-invalid="{{ pf.state.invalid }}" aria-describedby="{{ pf.state.describedBy }}" placeholder="Type to search…" style="{{ pf.state.style }}" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+        <datalist id="pif-us-states">
+          <sc-for list="{{ usStates }}" as="st" hint-placeholder-count="0">
+            <option value="{{ st }}"></option>
+          </sc-for>
+        </datalist>
+        <sc-if value="{{ pf.state.err }}" hint-placeholder-val="{{ false }}"><div id="pe-state" role="alert" style="font-size:12px;color:var(--danger);margin-top:6px">{{ pf.state.err }}</div></sc-if>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-bottom:20px">
+      <div style="flex:1;min-width:0">
+        <label for="pay-phone" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Phone <span style="font-weight:400;color:var(--text-secondary)">(optional)</span></label>
+        <input id="pay-phone" type="tel" autocomplete="tel" value="{{ pf.phone.val }}" onChange="{{ pf.phone.onChange }}" onBlur="{{ pf.phone.onBlur }}" aria-invalid="{{ pf.phone.invalid }}" aria-describedby="{{ pf.phone.describedBy }}" placeholder="(555) 555-5555" style="{{ pf.phone.style }}" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+        <sc-if value="{{ pf.phone.err }}" hint-placeholder-val="{{ false }}"><div id="pe-phone" role="alert" style="font-size:12px;color:var(--danger);margin-top:6px">{{ pf.phone.err }}</div></sc-if>
+      </div>
+      <div style="flex:1;min-width:0">
+        <label for="pay-email" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Email <span style="color:var(--danger)">*</span></label>
+        <input id="pay-email" type="email" autocomplete="email" value="{{ pf.email.val }}" onChange="{{ pf.email.onChange }}" onBlur="{{ pf.email.onBlur }}" aria-invalid="{{ pf.email.invalid }}" aria-describedby="{{ pf.email.describedBy }}" placeholder="you@email.com" style="{{ pf.email.style }}" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+        <sc-if value="{{ pf.email.err }}" hint-placeholder-val="{{ false }}"><div id="pe-email" role="alert" style="font-size:12px;color:var(--danger);margin-top:6px">{{ pf.email.err }}</div></sc-if>
+      </div>
+    </div>
+
+    <div style="height:1px;background:var(--border-subtle);margin:0 0 20px"></div>
+
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px">Card information
+      <span style="display:inline-flex;align-items:center;gap:4px;margin-left:auto;text-transform:none;letter-spacing:0;font-weight:500;color:var(--text-secondary)"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.4"></rect><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.4"></path></svg>Secured by Stripe</span>
+    </div>
+    <div role="group" aria-label="Card details, securely hosted by Stripe" style="{{ csGroupStyle }}">
+      <div style="{{ csNumRowStyle }}">
+        <span style="{{ csNumStyle }}">{{ csNumText }}</span>
+        <sc-if value="{{ csCaret }}" hint-placeholder-val="{{ false }}"><span style="width:1px;height:18px;background:var(--primary);display:inline-block;margin-left:1px"></span></sc-if>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:5px">
+          <sc-if value="{{ csCheck }}" hint-placeholder-val="{{ false }}"><svg width="17" height="17" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" fill="var(--success)"></circle><path d="M6.5 10.2 9 12.6 13.5 7.8" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if>
+          <sc-if value="{{ csVisa }}" hint-placeholder-val="{{ false }}"><svg width="34" height="22" viewBox="0 0 40 22"><rect width="40" height="22" rx="3" fill="#1434CB"></rect><text x="20" y="15" font-family="Inter,system-ui,sans-serif" font-size="11" font-style="italic" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="1">VISA</text></svg></sc-if>
+          <sc-if value="{{ csBrandRow }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:4px;opacity:.9"><svg width="30" height="19" viewBox="0 0 40 22"><rect width="40" height="22" rx="3" fill="#1434CB"></rect><text x="20" y="15" font-family="Inter,system-ui,sans-serif" font-size="11" font-style="italic" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="1">VISA</text></svg><svg width="30" height="19" viewBox="0 0 36 22"><rect width="36" height="22" rx="3" fill="#ffffff" stroke="#e2e2e2"></rect><circle cx="15" cy="11" r="7" fill="#EB001B"></circle><circle cx="22" cy="11" r="7" fill="#F79E1B" fill-opacity="0.85"></circle></svg><svg width="30" height="19" viewBox="0 0 40 22"><rect width="40" height="22" rx="3" fill="#1F72CD"></rect><text x="20" y="14" font-family="Inter,system-ui,sans-serif" font-size="8" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">AMEX</text></svg><svg width="30" height="19" viewBox="0 0 48 22"><rect width="48" height="22" rx="3" fill="#ffffff" stroke="#e2e2e2"></rect><text x="6" y="15" font-family="Inter,system-ui,sans-serif" font-size="8" font-weight="700" fill="#111111">DISC</text><circle cx="41" cy="11" r="6" fill="#FF6000"></circle></svg></span></sc-if>
+        </div>
+      </div>
+      <div style="display:flex">
+        <div style="{{ csExpCellStyle }}"><span style="{{ csExpStyle }}">{{ csExpText }}</span></div>
+        <div style="{{ csCvcCellStyle }}"><span style="{{ csCvcStyle }}">{{ csCvcText }}</span><sc-if value="{{ csCvcHint }}" hint-placeholder-val="{{ false }}"><svg width="24" height="16" viewBox="0 0 30 20" fill="none" style="margin-left:auto"><rect x="2" y="3" width="26" height="15" rx="2.5" stroke="var(--border-strong)" stroke-width="1.3"></rect><rect x="17" y="8" width="8" height="3.2" rx="1.6" fill="var(--border-strong)"></rect></svg></sc-if></div>
+      </div>
+    </div>
+    <sc-if value="{{ csErr }}" hint-placeholder-val="{{ false }}"><div id="pe-card" role="alert" style="font-size:12px;color:var(--danger);margin-top:6px">{{ csErr }}</div></sc-if>
+    <div style="font-size:11px;line-height:15px;color:var(--text-secondary);margin:8px 0 20px">These fields are hosted by Stripe — card data never touches PIF servers. Brand, expiry and security-code checks run inside Stripe.</div>
+
+    <div style="display:flex;gap:8px;align-items:flex-start;background:var(--surface-sunken);border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:13px;line-height:18px;color:var(--text-secondary)">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex:none;margin-top:1px"><path d="M8 2l5 2v4c0 3.2-2.1 5.2-5 6-2.9-.8-5-2.8-5-6V4z" stroke="var(--info)" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 8l1.5 1.5L10.5 6" stroke="var(--info)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Savings vary by home, devices, and utility rates. See every dollar itemized in your <a href="#" onClick="{{ onLedger }}" style="font-weight:600">ledger</a> and how we calculate it in our <a href="#" onClick="{{ onMethodology }}" style="font-weight:600">methodology</a>. Cancel anytime — your plan runs to the end of the paid month.</span>
+    </div>
+
+    <div id="pif-renew-note" style="font-size:14px;line-height:20px;color:var(--text-primary);background:var(--surface-sunken);border-radius:12px;padding:14px 16px;margin-bottom:14px">You're subscribing to <b>PIF {{ payTierShort }}</b> at <b>{{ payPrice }}/month</b>. It renews automatically each month until you cancel. Cancel anytime in Settings → Billing — your plan runs to the end of the paid month.</div>
+    <label style="display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:19px;color:var(--text-secondary);margin-bottom:18px;cursor:pointer">
+      <input type="checkbox" checked="{{ agreed }}" onChange="{{ onToggleAgree }}" aria-describedby="pif-renew-note" style="margin-top:1px;width:18px;height:18px;accent-color:var(--accent);flex:none;cursor:pointer">
+      <span>I agree to the <a href="#" onClick="{{ onTerms }}" style="font-weight:600">Terms of Service</a> and <a href="#" onClick="{{ onPrivacy }}" style="font-weight:600">Privacy Policy</a>, and I authorize this recurring monthly charge until I cancel.</span>
+    </label>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <button onClick="{{ onPayBack }}" style="appearance:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px" style-hover="background:var(--surface-sunken)"><span aria-hidden="true">←</span> Back</button>
+      <button onClick="{{ onPay }}" disabled="{{ payDisabled }}" aria-busy="{{ csBusy }}" style="{{ payBtnStyle }}" style-hover="filter:brightness(1.06)">
+        <sc-if value="{{ csBusy }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:9px"><span style="width:15px;height:15px;border-radius:999px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;display:inline-block;animation:pifSpin .7s linear infinite"></span>Processing…</span></sc-if>
+        <sc-if value="{{ notBusy }}" hint-placeholder-val="{{ true }}">Pay {{ payPrice }}/month</sc-if>
+      </button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ B10 COMPLETE ============ -->
+  <sc-if value="{{ isComplete }}" hint-placeholder-val="{{ false }}">
+  <div class="pif-step" style="width:100%;max-width:600px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:44px 32px;box-shadow:var(--glow-accent),var(--elev-3);text-align:center;animation:pifStepIn .4s cubic-bezier(.2,0,0,1) both">
+    <div style="display:flex;justify-content:center;margin-bottom:6px">{{ completeFace }}</div>
+    <h1 style="font-family:'Space Grotesk',system-ui;font-size:28px;line-height:34px;font-weight:700;margin:0 0 10px">You're all set! ⚡</h1>
+    <p style="font-size:16px;line-height:24px;color:var(--text-secondary);margin:0 auto 24px;max-width:400px">Welcome to <b style="color:var(--text-primary)">{{ payTierName }}</b>. Tonight PIF starts shifting your energy to the cheapest hours — you'll wake up to your first savings.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;text-align:left;max-width:400px;margin:0 auto 26px">
+      <div style="display:flex;gap:11px;align-items:center;background:var(--surface-sunken);border-radius:12px;padding:13px 15px"><span style="width:28px;height:28px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;flex:none;font-weight:700">1</span><span style="font-size:14px">Connect your devices so PIF can start optimizing</span></div>
+      <div style="display:flex;gap:11px;align-items:center;background:var(--surface-sunken);border-radius:12px;padding:13px 15px"><span style="width:28px;height:28px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;flex:none;font-weight:700">2</span><span style="font-size:14px">Watch your savings land in the receipt-level ledger</span></div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px">
+      <button onClick="{{ onConnectDevices }}" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 26px;border-radius:999px;background:var(--accent);color:var(--text-onfill);min-height:48px;box-shadow:var(--glow-accent);transition:transform .2s cubic-bezier(.2,0,0,1.2)" style-active="transform:scale(.96)" style-hover="filter:brightness(1.05)">Connect devices →</button>
+      <button onClick="{{ onRestart }}" style="appearance:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 22px;border-radius:999px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px" style-hover="background:var(--surface-sunken)">Replay quiz</button>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:660,&quot;height&quot;:820},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;system&quot;,&quot;tsType&quot;:&quot;'light'|'dark'|'system'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;resultDemo&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;off&quot;,&quot;basic&quot;,&quot;optimum&quot;,&quot;premium&quot;,&quot;nofit&quot;],&quot;default&quot;:&quot;optimum&quot;,&quot;tsType&quot;:&quot;'off'|'basic'|'optimum'|'premium'|'nofit'&quot;,&quot;section&quot;:&quot;Demo: recommendation screen&quot;},&quot;resultSelection&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;recommended&quot;,&quot;lower&quot;,&quot;higher&quot;],&quot;default&quot;:&quot;higher&quot;,&quot;tsType&quot;:&quot;'recommended'|'lower'|'higher'&quot;,&quot;section&quot;:&quot;Demo: recommendation screen&quot;},&quot;zipLookup&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;found&quot;,&quot;notfound&quot;],&quot;default&quot;:&quot;found&quot;,&quot;tsType&quot;:&quot;'found'|'notfound'&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;billingState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;empty&quot;,&quot;focused&quot;,&quot;invalid&quot;,&quot;valid&quot;,&quot;submitting&quot;],&quot;default&quot;:&quot;empty&quot;,&quot;tsType&quot;:&quot;'empty'|'focused'|'invalid'|'valid'|'submitting'&quot;,&quot;section&quot;:&quot;Demo: billing form&quot;},&quot;startReview&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;tzMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;resolved&quot;,&quot;ambiguous&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;'auto'|'resolved'|'ambiguous'&quot;,&quot;section&quot;:&quot;Demo: quiz&quot;},&quot;startCapture&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: multi-home capture&quot;},&quot;captureState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;form&quot;,&quot;sent&quot;],&quot;default&quot;:&quot;form&quot;,&quot;tsType&quot;:&quot;'form'|'sent'&quot;,&quot;section&quot;:&quot;Demo: multi-home capture&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    const demo = props.resultDemo || 'off';
+    this.state = {
+      theme: props.initialTheme || 'system',
+      view: props.startReview ? 'review' : (props.startCapture ? 'capture' : (demo==='off' ? 'welcome' : (demo==='nofit' ? 'nofit' : 'result'))),
+      si: 0, qi: 0,
+      answers: { priority: 40 },
+      maxSection: 0,
+      selectedTier: null,
+      editing: false,
+      interIndex: 0,
+      otherSearch: '',
+      pay: {}, payErrors: {}, agreed: false,
+      capture: { zip:'', email:'', interest:null, homes:2, consent:false },
+      captureSent: props.captureState==='sent',
+    };
+  }
+  componentDidMount(){
+    try {
+      this._mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this._mqh = ()=>{ if(this.state.theme==='system') this.forceUpdate(); };
+      this._mq.addEventListener('change', this._mqh);
+    } catch(e){}
+  }
+  componentWillUnmount(){
+    if(this._mq && this._mqh) this._mq.removeEventListener('change', this._mqh);
+    clearTimeout(this._adv);
+  }
+  reduceMotion(){
+    if(this.props.previewReducedMotion) return true;
+    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+    catch(e){ return false; }
+  }
+
+  fmtPhone(v){
+    const d=(v||'').replace(/\D/g,'').slice(0,10);
+    const a=d.slice(0,3), b=d.slice(3,6), c=d.slice(6,10);
+    if(d.length>6) return '('+a+') '+b+'-'+c;
+    if(d.length>3) return '('+a+') '+b;
+    if(d.length>0) return '('+a;
+    return '';
+  }
+  fieldError(field){
+    const p=this.state.pay||{}; const v=(p[field]||'');
+    if(field==='email'){
+      const t=v.trim();
+      if(!t) return 'Enter your email';
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(t)) return 'Enter a valid email address';
+      return '';
+    }
+    if(field==='phone'){
+      const d=v.replace(/\D/g,'');
+      if(d && d.length!==10) return 'Enter a 10-digit US phone number';
+      return '';
+    }
+    const req={name:'Enter the cardholder name',l1:'Enter your street address',city:'Enter your city',state:'Select your state'};
+    if(req[field] && !v.trim()) return req[field];
+    return '';
+  }
+  setPay(field, value){
+    this.setState(s=>({ pay:{...s.pay,[field]:value}, payErrors:{...s.payErrors,[field]:''} }));
+  }
+  blurField(field){
+    const err=this.fieldError(field);
+    this.setState(s=>({ payErrors:{...s.payErrors,[field]:err} }));
+  }
+  validatePay(){
+    const e={};
+    ['name','l1','city','state','email','phone'].forEach(f=>{ const m=this.fieldError(f); if(m) e[f]=m; });
+    return e;
+  }
+  payFields(){
+    const P=this.state.pay||{}; const E=this.state.payErrors||{};
+    const ids={name:'pe-name',l1:'pe-l1',city:'pe-city',state:'pe-state',phone:'pe-phone',email:'pe-email'};
+    const mk=(field, fmt)=>{
+      const err=E[field]||'';
+      return {
+        val: P[field]||'', err, invalid: !!err,
+        describedBy: err ? (ids[field]||null) : null,
+        style: {
+          width:'100%', font:'400 15px Inter,system-ui,sans-serif', padding:'12px 14px',
+          borderRadius:'12px', background:'var(--surface-sunken)', color:'var(--text-primary)',
+          border:'1px solid '+(err?'var(--danger)':'var(--border-strong)'), minHeight:'46px', outline:'none'
+        },
+        onChange: (ev)=>{ let x=ev.target.value; if(fmt) x=fmt(x); this.setPay(field, x); },
+        onBlur: ()=> this.blurField(field),
+      };
+    };
+    return {
+      name: mk('name'), l1: mk('l1'), l2: mk('l2'), city: mk('city'), state: mk('state'),
+      phone: mk('phone', v=>this.fmtPhone(v)), email: mk('email'),
+    };
+  }
+  stripeMock(){
+    const bs=this.props.billingState||'empty';
+    const line='1px solid var(--border-subtle)';
+    let border='var(--border-strong)', ring='none', opacity=1;
+    if(bs==='focused'){ border='var(--primary)'; ring='0 0 0 2px color-mix(in srgb,var(--primary) 45%,transparent)'; }
+    if(bs==='invalid'){ border='var(--danger)'; }
+    if(bs==='submitting'){ opacity=.55; }
+    const group={ borderRadius:'12px', border:'1px solid '+border, boxShadow:ring, background:'var(--surface-sunken)', overflow:'hidden', opacity };
+    const numRow={ display:'flex', alignItems:'center', gap:'8px', padding:'12px 14px', minHeight:'46px', borderBottom:line };
+    const cell=(left)=>({ flex:1, minWidth:0, display:'flex', alignItems:'center', gap:'8px', padding:'12px 14px', minHeight:'46px', borderLeft: left?line:'none' });
+    const txt=(color)=>({ font:'400 15px Inter,system-ui,sans-serif', color, whiteSpace:'nowrap', flexShrink:0 });
+    const ph='var(--text-secondary)', on='var(--text-primary)', bad='var(--danger)';
+    const filled = bs==='valid'||bs==='submitting';
+    const isEmpty = bs==='empty'||bs==='focused';
+    let numText, numColor, expText, expColor, cvcText, cvcColor, err='';
+    if(bs==='invalid'){
+      numText='4242 4242 4242 4241'; numColor=bad; err='Your card number is invalid.';
+      expText='12 / 34'; expColor=on; cvcText='\u2022\u2022\u2022'; cvcColor=on;
+    } else if(filled){
+      numText='4242 4242 4242 4242'; numColor=on; expText='12 / 34'; expColor=on; cvcText='\u2022\u2022\u2022'; cvcColor=on;
+    } else {
+      numText='1234 1234 1234 1234'; numColor=ph; expText='MM / YY'; expColor=ph; cvcText='CVC'; cvcColor=ph;
+    }
+    return {
+      csGroupStyle: group, csNumRowStyle: numRow,
+      csNumStyle: txt(numColor), csNumText: numText,
+      csExpCellStyle: cell(false), csExpStyle: txt(expColor), csExpText: expText,
+      csCvcCellStyle: cell(true), csCvcStyle: txt(cvcColor), csCvcText: cvcText,
+      csBrandRow: isEmpty, csVisa: bs==='invalid'||filled, csCheck: bs==='valid',
+      csCaret: bs==='focused', csCvcHint: isEmpty, csErr: err, csBusy: bs==='submitting',
+      notBusy: bs!=='submitting',
+    };
+  }
+
+  SECTIONS(){
+    return [
+      { title:'Location & utility', qs:[
+        {id:'zip', kind:'zip', q:"What's your ZIP code?"},
+        {id:'utility', kind:'single', q:'Confirm your utility', opts:[{k:'domin',label:'Dominion Energy',brand:1},{k:'duke',label:'Duke Energy',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'}], otherList:['Pacific Gas & Electric','Southern California Edison','Con Edison','National Grid','Xcel Energy','Georgia Power','DTE Energy','Ameren','Entergy','PECO','Florida Power & Light','Puget Sound Energy'], otherPrompt:'we can’t price a utility we can’t name'},
+        {id:'rate', kind:'single', q:'What kind of rate plan?', showIf:a=>!(a.utility==='domin'||a.utility==='duke'), opts:[{k:'tou',label:'Time-of-use',icon:'clock'},{k:'flat',label:'Flat rate',icon:'minus'},{k:'ns',label:'Not sure',icon:'help'}]},
+      ]},
+      { title:'Home basics', qs:[
+        {id:'hometype', kind:'single', q:'What type of home?', opts:[{k:'house',label:'House',icon:'home'},{k:'town',label:'Townhome',icon:'building'},{k:'condo',label:'Condo',icon:'building'},{k:'apt',label:'Apartment',icon:'door'}]},
+        {id:'ownrent', kind:'single', q:'Do you own or rent?', opts:[{k:'own',label:'Own',icon:'key'},{k:'rent',label:'Rent',icon:'file'}]},
+        {id:'occupancy', kind:'single', q:'When is someone usually home?', opts:[{k:'day',label:'Most of the day',icon:'sun'},{k:'work',label:'Away on workdays',icon:'briefcase'},{k:'varies',label:'Varies',icon:'shuffle'}]},
+      ]},
+      { title:'Heating & cooling', qs:[
+        {id:'cooling', kind:'single', q:'How do you cool your home?', opts:[{k:'central',label:'Central AC',icon:'snow'},{k:'hp',label:'Heat pump',icon:'thermo'},{k:'window',label:'Window units',icon:'fan'},{k:'none',label:'None',icon:'ban'}]},
+        {id:'thermostat', kind:'single', q:'What thermostat do you have?', opts:[{k:'nest',label:'Nest',brand:1},{k:'ecobee',label:'Ecobee',brand:1},{k:'honeywell',label:'Honeywell',brand:1},{k:'other',search:1,label:'Other smart ▸ search',icon:'help'},{k:'prog',label:'Programmable',icon:'clock'},{k:'manual',label:'Manual dial',icon:'disc'},{k:'none',label:'None',icon:'ban'}], otherList:['Emerson Sensi','Wyze','Amazon Smart Thermostat','Mysa','tado°','Bosch','Sinopé','Lux/GEO'], otherPrompt:'it seeds our thermostat adapters'},
+        {id:'fuel', kind:'single', q:'What heats your home?', opts:[{k:'elec',label:'Electric',icon:'zap'},{k:'hp',label:'Heat pump',icon:'thermo'},{k:'gas',label:'Gas',icon:'flame'},{k:'ns',label:'Not sure',icon:'help'}]},
+      ]},
+      { title:'Big appliances', qs:[
+        {id:'dryer', kind:'single', q:'Do you have an electric dryer?', opts:[{k:'smart',label:'Smart, has an app',icon:'phone'},{k:'dial',label:'Dial / knob',icon:'disc'},{k:'buttons',label:'Electronic buttons',icon:'menu'},{k:'gas',label:'Gas dryer',icon:'flame'},{k:'none',label:'No dryer',icon:'ban'}]},
+        {id:'water', kind:'single', q:'What kind of water heater?', opts:[{k:'tank',label:'Electric tank',icon:'zap'},{k:'hp',label:'Heat-pump',icon:'thermo'},{k:'gas',label:'Gas',icon:'flame'},{k:'ns',label:'Not sure',icon:'help'}]},
+        {id:'loads', kind:'multi', q:'Any other large schedulable loads?', opts:[{k:'ev',label:'EV charger',icon:'plug'},{k:'well',label:'Well pump',icon:'droplet'},{k:'space',label:'Space heaters',icon:'flame'},{k:'pool',label:'Pool pump / spa',icon:'waves'}]},
+      ]},
+      { title:'Smart devices', qs:[
+        {id:'plugs', kind:'single', q:'Smart plugs or switches?', opts:[{k:'none',label:'None',icon:'ban'},{k:'few',label:'A few (1–3)',icon:'plug'},{k:'many',label:'Several (4+)',icon:'plug'}]},
+        {id:'plugbrands', kind:'multi', q:'Which plug brands?', showIf:a=>a.plugs==='few'||a.plugs==='many', opts:[{k:'kasa',label:'Kasa / TP-Link',brand:1},{k:'wemo',label:'Wemo',brand:1},{k:'amazon',label:'Amazon',brand:1},{k:'shelly',label:'Shelly',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'}], otherList:['Meross','Govee','Sonoff','Leviton','GE Cync','Eve','Kasa Matter','Tapo'], otherPrompt:'it flags a brand we don’t support yet'},
+        {id:'hubs', kind:'multi', q:'Any smart-home hubs?', opts:[{k:'ha',label:'Home Assistant',brand:1},{k:'st',label:'SmartThings',brand:1},{k:'alexa',label:'Alexa',brand:1},{k:'google',label:'Google Home',brand:1},{k:'apple',label:'Apple Home',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'}], otherList:['Hubitat','Aqara','Homey','Ring / ADT','Insteon','Vera','Hubitat','Home Assistant Yellow'], otherPrompt:'it prioritizes new hub adapters'},
+      ]},
+      { title:'Electric vehicle', qs:[
+        {id:'ev', kind:'single', q:'Do you have an electric vehicle?', opts:[{k:'0',label:'None',icon:'ban'},{k:'1',label:'1',icon:'car'},{k:'2',label:'2 or more',icon:'car'}]},
+        {id:'charger', kind:'single', q:'What kind of charger?', showIf:a=>a.ev&&a.ev!=='0', opts:[{k:'smart',label:'Smart charger / EVSE',icon:'plug'},{k:'l2',label:'Standard Level 2',icon:'plug'},{k:'l1',label:'Level 1 outlet',icon:'zap'},{k:'public',label:'Public only',icon:'map'}]},
+        {id:'chargerbrand', kind:'single', q:'Which smart charger?', showIf:a=>a.ev&&a.ev!=='0'&&a.charger==='smart', opts:[{k:'tesla',label:'Tesla',brand:1},{k:'chargepoint',label:'ChargePoint',brand:1},{k:'wallbox',label:'Wallbox',brand:1},{k:'emporia',label:'Emporia',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'}], otherList:['Grizzl-E','JuiceBox / Enel X','Autel','Lectron','ClipperCreek','Enphase IQ','Pod Point'], otherPrompt:'it seeds our EVSE adapters'},
+        {id:'needby', kind:'single', q:'Car usually needed by?', showIf:a=>a.ev&&a.ev!=='0', opts:[{k:'6',label:'6am',icon:'clock'},{k:'7',label:'7am',icon:'clock'},{k:'8',label:'8am',icon:'clock'},{k:'flex',label:'Flexible',icon:'shuffle'}]},
+      ]},
+      { title:'Solar', qs:[
+        {id:'solar', kind:'single', q:'Do you have rooftop solar?', opts:[{k:'yes',label:'Yes',icon:'sun'},{k:'no',label:'No',icon:'ban'},{k:'planned',label:'Planned',icon:'calendar'}]},
+        {id:'solarsize', kind:'single', q:'How big is the system?', showIf:a=>a.solar==='yes', opts:[{k:'s',label:'Under 5 kW',icon:'sun'},{k:'m',label:'5–10 kW',icon:'sun'},{k:'l',label:'10 kW+',icon:'sun'},{k:'dk',label:"Don't know",icon:'help'}]},
+        {id:'inverter', kind:'single', q:'Which solar inverter?', showIf:a=>a.solar==='yes', opts:[{k:'enphase',label:'Enphase',brand:1},{k:'solaredge',label:'SolarEdge',brand:1},{k:'tesla',label:'Tesla',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'},{k:'dk',label:"Don't know",icon:'help'}], otherList:['SMA','Fronius','Solis','Generac','APsystems','GoodWe','Sol-Ark'], otherPrompt:'it seeds inverter support'},
+      ]},
+      { title:'Battery & grid', qs:[
+        {id:'battery', kind:'single', q:'Do you have a home battery?', opts:[{k:'yes',label:'Yes',icon:'battery'},{k:'no',label:'No',icon:'ban'},{k:'planned',label:'Planned',icon:'calendar'}]},
+        {id:'batbrand', kind:'single', q:'Which home battery?', showIf:a=>a.battery==='yes', opts:[{k:'powerwall',label:'Tesla Powerwall',brand:1},{k:'enphase',label:'Enphase',brand:1},{k:'franklin',label:'Franklin',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'},{k:'dk',label:"Don't know",icon:'help'}], otherList:['LG','Generac PWRcell','SolarEdge','sonnen','Panasonic','FranklinWH','SunPower SunVault'], otherPrompt:'this is our highest-value lever, so worth capturing precisely'},
+        {id:'reserve', kind:'single', q:'Backup reserve preference?', showIf:a=>a.battery==='yes', opts:[{k:'lot',label:'Keep a lot for outages',icon:'shield'},{k:'bal',label:'Balanced',icon:'scale'},{k:'max',label:'Maximize savings',icon:'up'}]},
+        {id:'vpp', kind:'single', q:'Utility VPP / demand-response?', opts:[{k:'enrolled',label:'Already enrolled',icon:'check'},{k:'interested',label:'Interested in earning',icon:'dollar'},{k:'no',label:'Not interested',icon:'ban'},{k:'ns',label:'Not sure',icon:'help'}]},
+      ]},
+      { title:'Goals & consent', qs:[
+        {id:'priority', kind:'slider', q:'What matters most to you?', leftLabel:'Max savings', rightLabel:'Max comfort', leftIcon:'piggy', rightIcon:'sofa'},
+        {id:'drift', kind:'single', q:"Comfort drift you'll accept?", opts:[{k:'barely',label:'Barely any',icon:'snow'},{k:'little',label:'A little',icon:'thermo'},{k:'max',label:'Whatever saves most',icon:'sun'}]},
+        {id:'control', kind:'single', q:'Let PIF control your devices?', opts:[{k:'yes',label:'Yes, optimize for me',icon:'sparkles'},{k:'suggest',label:"Suggest first, I'll approve",icon:'hand'}]},
+      ]},
+    ];
+  }
+
+  ic(name){
+    const c = { width:16, height:16, viewBox:'0 0 20 20', fill:'none', style:{flex:'none'} };
+    const P = (d, ex)=> React.createElement('path', Object.assign({ d, stroke:'currentColor', strokeWidth:1.6, strokeLinecap:'round', strokeLinejoin:'round' }, ex||{}));
+    const C = (cx,cy,r,ex)=> React.createElement('circle', Object.assign({ cx,cy,r, stroke:'currentColor', strokeWidth:1.6 }, ex||{}));
+    const m = {
+      // ---- shared glyphs: canonical geometry from Foundations §15 (same names) ----
+      home:()=>[P('M4 9l6-5 6 5v7H4z')],
+      building:()=>[P('M5 17V4h10v13'),P('M8 7h1M11 7h1M8 10h1M11 10h1M8 13h1M11 13h1')],
+      door:()=>[P('M6 17V4h8v13'),C(11.5,10,.6,{fill:'currentColor',stroke:'none'})],
+      key:()=>[C(7,10,3),P('M9.6 9.4 16 3M13.5 5.5l1.6 1.6M12 7l1.6 1.6')],
+      file:()=>[P('M6 3h5l3 3v11H6z'),P('M11 3v3h3')],
+      sun:()=>[C(10,10,3),P('M10 3v1.5M10 15.5V17M3 10h1.5M15.5 10H17')],
+      briefcase:()=>[P('M4 7h12v9H4z'),P('M7.5 7V5h5v2')],
+      shuffle:()=>[P('M4 6h3l7 8h3M4 14h3l2-2.3M14 4l3 2-3 2M12 12l2 2 3-2')],
+      snow:()=>[P('M10 3v14M4 6.5l12 7M16 6.5l-12 7')],
+      thermo:()=>[P('M10 4v7'),C(10,13,2.4),P('M8 4h4')],
+      fan:()=>[C(10,10,1.6),P('M10 8.4C10 5 7 4 6 6s1 4 4 2.4M11.6 10c3.4 0 4.4 3 2.4 4s-4-1-2.4-4M10 11.6c0 3.4-3 4.4-4 2.4s1-4 4-2.4')],
+      ban:()=>[C(10,10,6.5),P('M5.5 5.5l9 9')],
+      flame:()=>[P('M10 3s4 3.5 4 7a4 4 0 0 1-8 0c0-1.5 1-2.5 1-2.5S8 8 10 3z')],
+      zap:()=>[P('M11 3 5 11h4l-1 6 6-8h-4z')],
+      clock:()=>[C(10,10,7),P('M10 6.4V10l2.4 1.6')],
+      minus:()=>[P('M4 10h12')],
+      help:()=>[C(10,10,6.5),P('M8 8a2 2 0 1 1 2.6 1.9c-.4.2-.6.6-.6 1.1M10 13.4h.01')],
+      disc:()=>[C(10,10,6.5),C(10,10,1.4,{fill:'currentColor',stroke:'none'})],
+      menu:()=>[P('M5 6h10M5 10h10M5 14h6')],
+      phone:()=>[P('M6.5 3.5h7v13h-7z'),P('M9 14.5h2')],
+      plug:()=>[P('M8 3v4M12 3v4M6 7h8v2a4 4 0 0 1-8 0zM10 13v4')],
+      droplet:()=>[P('M10 3s5 5.5 5 8.5a5 5 0 0 1-10 0C5 8.5 10 3 10 3z')],
+      waves:()=>[P('M3 7c1.5-1.5 3-1.5 4.5 0S10.5 8.5 12 7s3-1.5 4.5 0M3 12c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0')],
+      car:()=>[P('M4 12l1.5-4.5h9L16 12M4 12h12v3H4zM5 12v-.5'),C(6.5,15,1),C(13.5,15,1)],
+      map:()=>[P('M10 3c3 0 5 2 5 5 0 3.5-5 9-5 9S5 11.5 5 8c0-3 2-5 5-5z'),C(10,8,1.6)],
+      calendar:()=>[P('M4 5h12v12H4zM4 8h12M7 3v3M13 3v3')],
+      battery:()=>[P('M3 7h11v6H3zM14 9h2v2h-2'),P('M8 8 6.5 10.2H8.8L7.5 12')],
+      shield:()=>[P('M10 3 4.5 5.2v4.3c0 3.4 2.3 5.6 5.5 7 3.2-1.4 5.5-3.6 5.5-7V5.2z')],
+      scale:()=>[P('M10 4v12M6 16h8M5 7h10M5 7l-2 4h4zM15 7l-2 4h4z')],
+      up:()=>[C(10,10,7),P('M10 13.5V7M7 9.5 10 6.5l3 3')],
+      check:()=>[P('M4 10.5 8 14.5 16 5.5')],
+      dollar:()=>[P('M10 3.5v13M12.6 6.4C12 5.4 11 5 10 5 8.4 5 7.2 5.8 7.2 7.2 7.2 10 13 9 13 12c0 1.5-1.3 2.4-3 2.4-1.2 0-2.3-.5-2.8-1.5')],
+      // ---- slider end-caps (quiz-only; no §15 equivalent) ----
+      piggy:()=>[P('M4 11a4.5 4.5 0 0 1 4.5-4.5H12A4 4 0 0 1 16 10v1l1.5 1v2H15l-.8 1.5H8l-.8-1.5H6l-.8 1H4z'),P('M8 6.5 9 4M13.5 9.5h.01')],
+      sofa:()=>[P('M4 10V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2M3 10a1.5 1.5 0 0 1 3 0v3h8v-3a1.5 1.5 0 0 1 3 0v4H3zM6 16v1M14 16v1')],
+      sparkles:()=>[P('M10 3l1.6 3.6L15 8l-3.4 1.4L10 13l-1.6-3.6L5 8l3.4-1.4z'),P('M15.5 13l.7 1.6 1.8.7-1.8.7-.7 1.6-.7-1.6-1.8-.7 1.8-.7z')],
+      hand:()=>[P('M7 11V5.5a1.2 1.2 0 0 1 2.4 0V10M9.4 9.5V4.5a1.2 1.2 0 0 1 2.4 0V10M11.8 6a1.2 1.2 0 0 1 2.4 0v6a4 4 0 0 1-4 4H9a3 3 0 0 1-2.3-1.1L4 12s.8-1 2-.5l1 .5')],
+    };
+    const f = m[name] || (()=>[C(10,10,1.6,{fill:'currentColor',stroke:'none'})]);
+    return React.createElement('svg', c, ...f());
+  }
+
+  brandSquare(label){
+    const letter = (label||'?').trim().charAt(0).toUpperCase();
+    return React.createElement('span', { style:{ width:'22px', height:'22px', borderRadius:'6px', flex:'none',
+      background:'var(--surface-sunken)', border:'1px solid var(--border-strong)', color:'var(--primary)',
+      display:'inline-flex', alignItems:'center', justifyContent:'center', font:"700 12px 'Space Grotesk', system-ui, sans-serif" } }, letter);
+  }
+
+  chipStyle(sel){
+    return { display:'inline-flex', alignItems:'center', gap:'9px', padding:'11px 16px', borderRadius:'999px',
+      border:'1px solid ' + (sel ? 'var(--accent)' : 'var(--border-strong)'),
+      background: sel ? 'color-mix(in srgb, var(--accent) 12%, var(--surface-base))' : 'var(--surface-base)',
+      color:'var(--text-primary)', font:"600 14px Inter, system-ui, sans-serif", cursor:'pointer', minHeight:'46px',
+      transition:'border-color .18s cubic-bezier(.2,0,0,1), background .18s cubic-bezier(.2,0,0,1)' };
+  }
+  ringDot(sel){
+    return React.createElement('span', { style:{ width:'18px', height:'18px', borderRadius:'999px', flex:'none',
+      border:'2px solid ' + (sel ? 'var(--accent)' : 'var(--border-strong)'),
+      display:'inline-flex', alignItems:'center', justifyContent:'center' } },
+      sel ? React.createElement('span', { style:{ width:'8px', height:'8px', borderRadius:'999px', background:'var(--accent)' } }) : null);
+  }
+  checkDot(on){
+    return React.createElement('span', { style:{ width:'18px', height:'18px', borderRadius:'999px', flex:'none',
+      background: on ? 'var(--accent)' : 'transparent', border:'2px solid ' + (on ? 'var(--accent)' : 'var(--border-strong)'),
+      color:'var(--text-onfill)', display:'inline-flex', alignItems:'center', justifyContent:'center' } },
+      on ? React.createElement('svg', { width:11, height:11, viewBox:'0 0 16 16', fill:'none' },
+        React.createElement('path', { d:'M3 8.5 6.5 12 13 4.5', stroke:'currentColor', strokeWidth:2.6, strokeLinecap:'round', strokeLinejoin:'round' })) : null);
+  }
+
+  themeIcon(mode){
+    const c = { width:14, height:14, viewBox:'0 0 16 16', fill:'none' };
+    if(mode==='light') return React.createElement('svg', c, React.createElement('circle',{cx:8,cy:8,r:3.2,fill:'currentColor'}), React.createElement('path',{d:'M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15M3 3l1.1 1.1M11.9 11.9 13 13M13 3l-1.1 1.1M4.1 11.9 3 13',stroke:'currentColor',strokeWidth:1.3,strokeLinecap:'round'}));
+    if(mode==='dark') return React.createElement('svg', c, React.createElement('path',{d:'M13 9.5A6 6 0 0 1 6.5 3 5.6 5.6 0 1 0 13 9.5z',fill:'currentColor'}));
+    return React.createElement('svg', c, React.createElement('circle',{cx:8,cy:8,r:6,stroke:'currentColor',strokeWidth:1.4}), React.createElement('path',{d:'M8 2a6 6 0 0 1 0 12z',fill:'currentColor'}));
+  }
+
+  ionaSvg(pose, size){
+    const s = size || 48;
+    const grad = '<defs><radialGradient id="ig'+pose+'" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient><radialGradient id="ih'+pose+'" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#2FE39A" stop-opacity="0.5"/><stop offset="1" stop-color="#2FE39A" stop-opacity="0"/></radialGradient></defs>';
+    const glow = '<ellipse cx="0" cy="0" rx="118" ry="118" fill="url(#ih'+pose+')"/>';
+    const bolt = '<path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" fill="#F5B23D"/>';
+    const body = '<circle cx="0" cy="0" r="72" fill="url(#ig'+pose+')"/>';
+    let face='';
+    if(pose==='welcome') face = bolt+body+'<circle cx="-24" cy="-8" r="11" fill="#0B1220"/><circle cx="24" cy="-8" r="11" fill="#0B1220"/><circle cx="-20" cy="-12" r="4" fill="#fff"/><circle cx="28" cy="-12" r="4" fill="#fff"/><path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/><circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><path d="M62,-6 Q92,-30 86,-58" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/><circle cx="86" cy="-62" r="12" fill="#2FE39A"/>';
+    else if(pose==='thumbs') face = bolt+body+'<path d="M-34,-8 Q-24,-18 -14,-8" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/><path d="M14,-8 Q24,-18 34,-8" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/><path d="M-24,16 Q0,44 24,16" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/><circle cx="-44" cy="12" r="8" fill="#5CF3B6" opacity="0.5"/><circle cx="44" cy="12" r="8" fill="#5CF3B6" opacity="0.5"/><path d="M60,10 Q86,4 92,-16" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/><circle cx="94" cy="-20" r="13" fill="#2FE39A"/><rect x="90" y="-34" width="8" height="14" rx="4" fill="#2FE39A"/>';
+    else if(pose==='celebrate') face = '<path d="M74,-40 l3,7 l7,3 l-7,3 l-3,7 l-3,-7 l-7,-3 l7,-3 z" fill="#5CF3B6"/>'+body+'<path d="M-24,-12 l3,7 l7,1 l-5,5 l1,7 l-6,-4 l-6,4 l1,-7 l-5,-5 l7,-1 z" fill="#0B1220"/><path d="M24,-12 l3,7 l7,1 l-5,5 l1,7 l-6,-4 l-6,4 l1,-7 l-5,-5 l7,-1 z" fill="#0B1220"/><path d="M-18,18 Q0,40 18,18 Q0,30 -18,18 Z" fill="#0B1220"/><path d="M60,-6 Q84,-26 80,-52" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/><path d="M-60,-6 Q-84,-26 -80,-52" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/><circle cx="80" cy="-56" r="11" fill="#2FE39A"/><circle cx="-80" cy="-56" r="11" fill="#2FE39A"/><path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" transform="translate(78,0)" fill="#F5B23D" stroke="#0B1220" stroke-width="2"/>';
+    else if(pose==='empathetic') face = '<path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" fill="#F5B23D" opacity="0.85"/><circle cx="0" cy="4" r="72" fill="url(#ig'+pose+')"/><path d="M-36,-6 Q-24,-16 -12,-15" fill="none" stroke="#0B1220" stroke-width="5" stroke-linecap="round"/><path d="M36,-6 Q24,-16 12,-15" fill="none" stroke="#0B1220" stroke-width="5" stroke-linecap="round"/><circle cx="-24" cy="-2" r="10" fill="#0B1220"/><circle cx="24" cy="-2" r="10" fill="#0B1220"/><circle cx="-20" cy="-6" r="3.5" fill="#fff"/><circle cx="28" cy="-6" r="3.5" fill="#fff"/><path d="M30,10 q7,12 0,18 q-7,-6 0,-18 z" fill="#7FB2FF"/><path d="M-20,34 Q0,18 20,34" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/><path d="M62,20 Q80,36 74,58" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/><path d="M-62,20 Q-80,36 -74,58" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/>';
+    return '<svg viewBox="-120 -120 240 240" width="'+s+'" height="'+s+'">'+grad+glow+face+'</svg>';
+  }
+  ionaEl(pose, size){
+    return React.createElement('span', { style:{ display:'inline-flex', filter:'drop-shadow(0 0 6px rgba(47,227,154,.5))' },
+      dangerouslySetInnerHTML:{ __html: this.ionaSvg(pose, size) } });
+  }
+
+  // ---- navigation ----
+  cur(){ const S=this.SECTIONS(); const sec=S[this.state.si]; return { S, sec, q: sec.qs[this.state.qi] }; }
+
+  visibleQ(q){ return !q.showIf || q.showIf(this.state.answers); }
+  nextVisibleIdx(si, qi){ const s=this.SECTIONS()[si]; for(let i=qi+1;i<s.qs.length;i++){ if(this.visibleQ(s.qs[i])) return i; } return -1; }
+  prevVisibleIdx(si, qi){ const s=this.SECTIONS()[si]; for(let i=qi-1;i>=0;i--){ if(this.visibleQ(s.qs[i])) return i; } return -1; }
+  firstVisibleIdx(si){ const s=this.SECTIONS()[si]; for(let i=0;i<s.qs.length;i++){ if(this.visibleQ(s.qs[i])) return i; } return 0; }
+  lastVisibleIdx(si){ const s=this.SECTIONS()[si]; for(let i=s.qs.length-1;i>=0;i--){ if(this.visibleQ(s.qs[i])) return i; } return 0; }
+
+  pickSingle(id, o){
+    if(o.search){ this.setState(s=>({ answers: Object.assign({}, s.answers, { [id]:'other' }), otherSearch:'' })); return; }
+    this.setSingle(id, o.k);
+  }
+  setSingle(id, k){
+    this.setState(s=>({ answers: Object.assign({}, s.answers, { [id]: k }) }));
+    const rm = this.reduceMotion();
+    clearTimeout(this._adv);
+    this._adv = setTimeout(()=> this.advance(), rm ? 80 : 300);
+  }
+  toggleMulti(id, k){
+    this.setState(s=>{
+      const prev = s.answers[id] || {};
+      const next = Object.assign({}, prev, { [k]: !prev[k] });
+      const patch = { answers: Object.assign({}, s.answers, { [id]: next }) };
+      if(k==='other') patch.otherSearch = '';
+      return patch;
+    });
+  }
+  setOtherName(id, name){ this.setState(s=>({ answers: Object.assign({}, s.answers, { [id+'_other']: name }) })); }
+  clearOther(id, isMulti){
+    this.setState(s=>{
+      const a=Object.assign({}, s.answers);
+      if(isMulti){ const cur=Object.assign({}, a[id]||{}); delete cur.other; a[id]=cur; }
+      else { delete a[id]; }
+      delete a[id+'_other'];
+      return { answers:a, otherSearch:'' };
+    });
+  }
+  setZip(v){
+    const clean = (v||'').replace(/\D/g,'').slice(0,5);
+    this.setState(s=>({ answers: Object.assign({}, s.answers, { zip: clean }) }));
+  }
+  setSlider(v){ this.setState(s=>({ answers: Object.assign({}, s.answers, { priority: +v }) })); }
+
+  advance(){
+    const S = this.SECTIONS();
+    clearTimeout(this._adv);
+    if(this.state.editing){ this.setState({ editing:false, view:'review', otherSearch:'' }); return; }
+    const ni = this.nextVisibleIdx(this.state.si, this.state.qi);
+    if(ni !== -1){
+      this.setState({ qi: ni, otherSearch:'' });
+    } else {
+      const doneSection = this.state.si;
+      const newMax = Math.max(this.state.maxSection, doneSection + 1);
+      if(this.state.si < S.length - 1){
+        this.setState({ view:'interstitial', interIndex: doneSection, maxSection: newMax, otherSearch:'' });
+      } else {
+        this.setState({ view:'review', maxSection: S.length, otherSearch:'' });
+      }
+    }
+  }
+  interContinue(){ const ns=this.state.si+1; this.setState({ view:'quiz', si: ns, qi: this.firstVisibleIdx(ns), otherSearch:'' }); }
+  back(){
+    clearTimeout(this._adv);
+    if(this.state.editing){ this.setState({ editing:false, view:'review', otherSearch:'' }); return; }
+    const pi = this.prevVisibleIdx(this.state.si, this.state.qi);
+    if(pi !== -1){ this.setState({ qi: pi, otherSearch:'' }); return; }
+    if(this.state.si > 0){ const ps=this.state.si-1; this.setState({ si: ps, qi: this.lastVisibleIdx(ps), otherSearch:'' }); return; }
+    this.setState({ view:'welcome' });
+  }
+  editJump(si, qi){ this.setState({ view:'quiz', si, qi, editing:true, otherSearch:'' }); }
+
+  // ---- result engine ----
+  utilMeta(a){
+    const M = {
+      domin:{name:'Dominion Energy', tou:true, nem:'full-retail', dereg:false, tz:['America/New_York']},
+      duke:{name:'Duke Energy', tou:true, nem:'full-retail', dereg:false, tz:['America/New_York']},
+    };
+    return M[a.utility] || null;
+  }
+  utilResolved(a){ return !!this.utilMeta(a); }
+  utilName(a){ const m=this.utilMeta(a); if(m) return m.name; return (a.utility==='other' && a['utility_other']) ? a['utility_other'] : 'your utility'; }
+
+  // --- Timezone: the tariff's zone is authoritative (service-territory local time). ---
+  // Store IANA zones only (America/Phoenix vs America/Denver) — never an offset/abbreviation.
+  tzLabel(z){ return ({
+    'America/New_York':'Eastern Time',
+    'America/Chicago':'Central Time',
+    'America/Denver':'Mountain Time',
+    'America/Phoenix':'Mountain Time (Arizona, no DST)',
+    'America/Los_Angeles':'Pacific Time',
+  })[z] || z; }
+  // ZIP → candidate zones. Most are single-zone; a few prefixes straddle two (the conditional-ask case).
+  zipZones(zip){
+    if(!zip || zip.length<3) return null;
+    const p = zip.slice(0,3);
+    const STRADDLE = { '693':['America/Chicago','America/Denver'], '834':['America/Denver','America/Los_Angeles'], '997':['America/Anchorage','America/Los_Angeles'] };
+    if(STRADDLE[p]) return STRADDLE[p].slice();
+    const n = parseInt(zip,10);
+    if(n>=1000 && n<=29999) return ['America/New_York'];
+    if(n>=30000 && n<=69999) return ['America/Chicago'];
+    if(n>=80000 && n<=88999) return ['America/Denver'];
+    if(n>=85000 && n<=86999) return ['America/Phoenix'];
+    if(n>=90000 && n<=96199) return ['America/Los_Angeles'];
+    return null;
+  }
+  deviceZone(){ try{ return Intl.DateTimeFormat().resolvedOptions().timeZone; }catch(e){ return null; } }
+  // Resolution order: manual override → utility service territory → ZIP → device silent cross-check → ambiguous.
+  tzResolve(a){
+    a = a || this.state.answers;
+    const forced = this.props.tzMode;
+    if(forced==='resolved') return { zone:'America/New_York', label:this.tzLabel('America/New_York'), ambiguous:false, source:'utility' };
+    if(forced==='ambiguous') return { zone:'America/Chicago', label:this.tzLabel('America/Chicago'), ambiguous:true, source:'zip', candidates:['America/Chicago','America/Denver'] };
+    if(a.tz) return { zone:a.tz, label:this.tzLabel(a.tz), ambiguous:false, source:'manual' };
+    const meta = this.utilMeta(a);
+    let cands = (meta && meta.tz) ? meta.tz.slice() : null;
+    let source = cands ? 'utility' : '';
+    const zc = this.zipZones((a.zip||'').trim());
+    if(zc){ if(cands){ const inter = cands.filter(z=>zc.indexOf(z)>=0); if(inter.length) cands = inter; } else { cands = zc.slice(); source='zip'; } }
+    const dev = this.deviceZone();
+    if(cands && cands.length>1 && dev && cands.indexOf(dev)>=0){ cands = [dev]; source='device'; }
+    if(!cands || cands.length===0){ if(dev) return { zone:dev, label:this.tzLabel(dev), ambiguous:false, source:'device' }; return { zone:null, label:null, ambiguous:true, source:'none', candidates:[] }; }
+    if(cands.length===1) return { zone:cands[0], label:this.tzLabel(cands[0]), ambiguous:false, source };
+    return { zone:cands[0], label:this.tzLabel(cands[0]), ambiguous:true, source, candidates:cands };
+  }
+
+  // Conservative $/mo the levers of each tier can add for THIS home.
+  // Unknowns resolve to the LESS valuable assumption (can only push a tier down).
+  scorePlan(){
+    const demo = this.props.resultDemo || 'off';
+    if(demo!=='off') return this.demoPlan(demo);
+    const a = this.state.answers;
+    const meta = this.utilMeta(a);
+    // Rate: resolved from utility when known; otherwise the answer; unknown => flat (no spread).
+    const effRate = meta ? (meta.tou ? 'tou' : 'flat') : (a.rate==='tou' ? 'tou' : 'flat');
+    const touActive = effRate === 'tou';
+    const spread = touActive ? 1 : 0.15;          // no TOU spread => shifting earns almost nothing
+    const nem = meta ? meta.nem : 'full-retail';  // unknown utility => conservative full-retail NEM
+    const suggest = a.control === 'suggest';
+    const autoK = suggest ? 0.85 : 1;             // 'Suggest first' discounts automated-control value
+
+    // Basic: shiftable appliance load (needs a price spread)
+    let appliance = 0;
+    if(a.dryer==='smart') appliance += 3;
+    if(a.water==='tank' || a.water==='hp') appliance += 4;   // 'ns'/gas => 0 (push down)
+    if(a.plugs==='many') appliance += 3; else if(a.plugs==='few') appliance += 1;
+    const loads = a.loads || {};
+    if(loads.pool) appliance += 5;
+    if(loads.well) appliance += 2;
+    if(loads.space) appliance += 2;
+    appliance = appliance * spread * autoK;
+
+    // Optimum: HVAC peak-shaving + EV smart-charge shifting
+    const smartStat = ['nest','ecobee','honeywell','other'].includes(a.thermostat);
+    const controllableHVAC = ['central','hp'].includes(a.cooling);
+    let hvac = 0;
+    if(controllableHVAC && smartStat) hvac = 10; else if(controllableHVAC) hvac = 3;
+    hvac = hvac * spread * autoK;
+    let ev = 0;
+    if(a.ev && a.ev!=='0'){
+      if(a.charger==='smart') ev = 13;
+      else if(a.charger==='l2') ev = 6;
+      else if(a.charger==='l1' || a.charger==='public') ev = 2;
+      else ev = 6;
+    }
+    ev = ev * spread * autoK;
+
+    // Premium: battery arbitrage + solar orchestration + VPP earnings
+    const arbitrageViable = touActive;            // arbitrage needs a price spread
+    let battery = (a.battery==='yes' && arbitrageViable) ? 24 : 0;
+    battery = battery * autoK;
+    // Solar orchestration only pays under net-billing, OR if a battery can time-shift the surplus.
+    let solar = (a.solar==='yes' && (nem==='net-billing' || a.battery==='yes')) ? 14 : 0;
+    solar = solar * autoK;
+    let vpp = (a.vpp==='interested' || a.vpp==='enrolled') ? 9 : 0;   // 'ns'/'no' => 0
+
+    const gross = [ appliance, appliance+hvac+ev, appliance+hvac+ev+battery+solar+vpp ];
+    const fees = [5,15,25];
+    const net = gross.map((g,i)=> g - fees[i]);
+    let rec = -1;
+    for(let i=2;i>=0;i--){ if(net[i] > 10){ rec = i; break; } }   // highest tier comfortably cleared
+    return { a, meta, touActive, nem, suggest, gross, net, fees, rec,
+      components:{ appliance, hvac, ev, battery, solar, vpp }, controllableHVAC, smartStat };
+  }
+
+  // Forceable placeholder plans so every recommendation-screen state can be previewed.
+  demoPlan(kind){
+    const mk=(components,rec)=>{ const c=Object.assign({appliance:0,hvac:0,ev:0,battery:0,solar:0,vpp:0},components);
+      const gross=[c.appliance, c.appliance+c.hvac+c.ev, c.appliance+c.hvac+c.ev+c.battery+c.solar+c.vpp];
+      const fees=[5,15,25]; const net=gross.map((g,i)=>g-fees[i]);
+      return { a:this.state.answers, meta:null, touActive:true, nem:'net-billing', suggest:false, gross, net, fees, rec,
+        components:c, controllableHVAC:true, smartStat:true, demo:kind }; };
+    if(kind==='basic')   return mk({appliance:18}, 0);
+    if(kind==='premium') return mk({appliance:8,hvac:10,ev:13,battery:24,solar:14,vpp:9}, 2);
+    if(kind==='nofit')   return mk({appliance:2}, -1);
+    return mk({appliance:8,hvac:12,ev:14}, 1); // optimum
+  }
+
+  renderVals(){
+    const theme = this.state.theme;
+    const rm = this.reduceMotion();
+    const view = this.state.view;
+    const S = this.SECTIONS();
+
+    const mkSeg = (mode,label)=>{
+      const base = { appearance:'none', border:'none', background:'transparent', color:'var(--text-secondary)', cursor:'pointer',
+        width:'30px', height:'30px', borderRadius:'999px', display:'inline-flex', alignItems:'center', justifyContent:'center',
+        transition:'background .2s cubic-bezier(.2,0,0,1), color .2s cubic-bezier(.2,0,0,1)' };
+      const active = { background:'var(--surface-base)', color:'var(--text-primary)', boxShadow:'var(--elev-1)' };
+      return { mode, label, active: theme===mode, icon: this.themeIcon(mode), onSelect: ()=> this.setState({ theme: mode }),
+        style: theme===mode ? Object.assign({}, base, active) : base };
+    };
+
+    // battery chrome
+    const done = view==='review'||view==='result'||view==='payment'||view==='complete' ? 9 : this.state.maxSection;
+    const charge = done/9;
+    const fillStyle = { position:'absolute', left:'4px', top:'4px', bottom:'4px',
+      width:'calc(' + charge.toFixed(4) + ' * (100% - 8px))', borderRadius:'7px',
+      background:'linear-gradient(90deg,#2FE39A,#12B76A)',
+      boxShadow:'0 0 14px rgba(47,227,154,.4) inset, 0 0 10px rgba(47,227,154,.3)',
+      transition: rm ? 'none' : 'width .55s cubic-bezier(.2,0,0,1)' };
+    const boltStyle = (left, lit)=>({ position:'absolute', left, top:'4px', bottom:'4px', width:'13px',
+      transform:'translateX(-50%)', zIndex:3, color: lit ? '#F5B23D' : '#6b5a2a', opacity: lit ? 1 : .8,
+      filter: lit ? 'drop-shadow(0 0 7px rgba(245,178,61,.8))' : 'none', transition: rm ? 'none' : 'filter .4s, opacity .4s' });
+
+    // Iona head + line for chrome
+    let ionaLine, headPose;
+    const SECTION_LINES = [
+      "Let's start with where you live — this sets the whole picture.",
+      "Now a little about your home itself.",
+      "Heating and cooling is where a lot of savings hide.",
+      "Big appliances are easy wins — let's find yours.",
+      "Smart gadgets give me more to work with.",
+      "EVs are one of the biggest levers of all.",
+      "Solar? Now we're talking real orchestration.",
+      "A battery is my favorite thing to optimize.",
+      "Last set — let's tune this to what you want.",
+    ];
+    if(view==='welcome'){ ionaLine = "We're at 0% — let's charge this battery up together!"; headPose='welcome'; }
+    else if(view==='quiz'){ ionaLine = SECTION_LINES[this.state.si] || "Keep going — you're doing great."; headPose = done>=2 ? 'thumbs' : 'welcome'; }
+    else if(view==='interstitial'){ ionaLine = "Nice — that really helps."; headPose='thumbs'; }
+    else if(view==='review'){ ionaLine = "All charged up! Let's make sure I got everything right."; headPose='celebrate'; }
+    else { ionaLine=''; headPose='welcome'; }
+
+    // interstitial content
+    const INTER = [
+      { t:'Great start!', s:"Your location's locked in — that sets the dollar magnitude for everything." },
+      { t:'Nice work!', s:'I know your home now. On to how you keep it comfortable.' },
+      { t:"You're doing great!", s:'A third of the way — the battery just crossed its first bolt. ⚡' },
+      { t:'Love it!', s:'Appliances mapped. Your smart devices are next.' },
+      { t:"You're on a roll!", s:'Two-thirds done — second bolt lit. Let’s talk transport & energy.' },
+      { t:'Almost there!', s:'EV covered. A few big-lever questions left.' },
+      { t:'So close now!', s:'Solar noted. Battery and grid programs next.' },
+      { t:'One more set!', s:'Just your goals left, then I’ll show you the plan.' },
+    ];
+    const inter = INTER[this.state.interIndex] || INTER[0];
+
+    // current question view-model
+    let q = null, sec = null;
+    if(view==='quiz'){ sec = S[this.state.si]; q = sec.qs[this.state.qi]; }
+    const a = this.state.answers;
+
+    let vm = {};
+    if(q){
+      const isZip = q.kind==='zip';
+      const isSlider = q.kind==='slider';
+      const isMulti = q.kind==='multi';
+      const isSingle = q.kind==='single';
+      const isChips = isSingle || isMulti;
+      const lastSection = this.state.si === S.length - 1;
+      const lastVisible = this.nextVisibleIdx(this.state.si, this.state.qi) === -1;
+
+      let options = [];
+      if(isChips){
+        options = q.opts.map(o=>{
+          if(isSingle){
+            const selected = a[q.id]===o.k;
+            return { label:o.label, selected, dot:this.ringDot(selected), glyph: o.brand ? this.brandSquare(o.label) : this.ic(o.icon),
+              style:this.chipStyle(selected), onSelect: ()=> this.pickSingle(q.id, o) };
+          } else {
+            const on = !!(a[q.id] && a[q.id][o.k]);
+            return { label:o.label, selected:on, dot:this.checkDot(on), glyph: o.brand ? this.brandSquare(o.label) : this.ic(o.icon),
+              style:this.chipStyle(on), onSelect: ()=> this.toggleMulti(q.id, o.k) };
+          }
+        });
+      }
+
+      // --- Other capture panel ---
+      const otherOn = isSingle ? (a[q.id]==='other') : (isMulti ? !!(a[q.id] && a[q.id].other) : false);
+      const otherOpen = !!(q.otherList && otherOn);
+      const capturedName = a[q.id+'_other'] || '';
+      const search = this.state.otherSearch || '';
+      const filteredOther = otherOpen ? (q.otherList||[]).filter((n,i,arr)=> arr.indexOf(n)===i && n.toLowerCase().includes(search.toLowerCase())).map(n=>({
+        label:n, picked: capturedName===n,
+        style: Object.assign({}, this.chipStyle(capturedName===n), { padding:'8px 13px', minHeight:'38px', fontSize:'13px', background: capturedName===n ? 'color-mix(in srgb, var(--accent) 14%, var(--surface-base))' : 'var(--surface-base)' }),
+        onPick: ()=> this.setOtherName(q.id, n),
+      })) : [];
+      const otherNoResults = otherOpen && search.length>0 && filteredOther.length===0;
+
+      const zipVal = a.zip || '';
+      const multiCount = isMulti ? Object.keys(a[q.id]||{}).filter(k=>k!=='other'&&a[q.id][k]).length + (otherOn?1:0) : 0;
+      const sliderVal = a.priority==null ? 40 : a.priority;
+      const nextLabel = (this.state.editing) ? 'Done' : (lastSection && lastVisible ? 'Review' : 'Next');
+      const needName = otherOn && !capturedName.trim();
+      const ASKS={
+        utility:'Which utility is it? Type the exact name and I\u2019ll price it for you.',
+        thermostat:'Which thermostat is it? Type the exact brand so I can match an adapter.',
+        plugbrands:'Which plug brand is it? Type it in so I know what to support.',
+        hubs:'Which hub is it? Type the exact name so I can plan support.',
+        chargerbrand:'Which charger is it? Type the exact brand so I can seed an adapter.',
+        inverter:'Which inverter is it? Type the exact brand so I can support it.',
+        batbrand:'Which battery is it? Type the exact brand \u2014 it\u2019s my biggest savings lever.',
+      };
+      const zipFound = (this.props.zipLookup||'found')==='found';
+      const zip5 = zipVal.length===5;
+      const zipErr = (zipVal.length>0 && zipVal.length<5) ? 'That ZIP\u2019s a little short \u2014 I need all 5 digits.' : '';
+      const zipNoUtil = (isZip && zip5 && !zipFound) ? ('Hmm \u2014 I can\u2019t find a utility serving ' + zipVal + ' yet. Mind double-checking it? If it\u2019s right, I may not cover your area just yet.') : '';
+      const whichBase = { width:'100%', font:'400 14px Inter,system-ui,sans-serif', padding:'10px 13px', borderRadius:'10px', background:'var(--surface-base)', color:'var(--text-primary)', border:'1px solid '+(needName?'var(--danger)':'var(--border-strong)'), minHeight:'42px', outline:'none' };
+      const showNext = isSingle ? otherOn : (isMulti || isZip || isSlider);
+      const nextDisabled = isZip ? (!zip5 || !zipFound) : needName;
+      const nextBase = { appearance:'none', border:'none', cursor:'pointer', font:"600 15px Inter,system-ui,sans-serif",
+        padding:'11px 24px', borderRadius:'999px', background:'var(--accent)', color:'var(--text-onfill)', minHeight:'46px',
+        boxShadow:'var(--glow-accent)', transition:'transform .2s cubic-bezier(.2,0,0,1.2)' };
+
+      const readout = sliderVal < 40 ? 'Leaning toward savings' : sliderVal > 60 ? 'Leaning toward comfort' : 'A balanced mix';
+
+      vm = {
+        progressLabel: 'Set ' + (this.state.si+1) + ' of 9 · ' + sec.title,
+        qTitle: q.q,
+        stepKey: this.state.si + '-' + this.state.qi,
+        pillOne: isSingle, pillAll: isMulti,
+        isZip, isChips, isSlider,
+        zipValue: zipVal, onZipInput: (e)=> this.setZip(e.target.value),
+        options,
+        sliderValue: sliderVal, onSlider: (e)=> this.setSlider(e.target.value),
+        sliderLeftLabel: q.leftLabel, sliderRightLabel: q.rightLabel,
+        sliderLeftIcon: this.ic(q.leftIcon), sliderRightIcon: this.ic(q.rightIcon), sliderReadout: readout,
+        showCount: isMulti, multiCount,
+        otherOpen, otherSearch: search, onOtherSearch: (e)=> this.setState({ otherSearch: e.target.value }),
+        filteredOther, otherNoResults, capturedName, onOtherType: (e)=> this.setOtherName(q.id, e.target.value),
+        needName, whichStyle: whichBase, otherDescribedBy: needName ? 'pe-other' : null,
+        otherNeedMsg: needName ? (ASKS[q.id] || 'Which one is it? Type the exact name so I can capture it.') : '',
+        onClearOther: ()=> this.clearOther(q.id, isMulti),
+        zipInvalid: !!zipErr || !!zipNoUtil, zipDescribedBy: zipErr ? 'pe-zip' : (zipNoUtil ? 'pe-zipnf' : null),
+        zipError: zipErr, zipNoUtility: zipNoUtil,
+        otherHelp: q.otherPrompt ? ('Pick yours or type the exact name — ' + q.otherPrompt + '.') : "Pick yours or type the exact name so we capture it.",
+        showNext, nextLabel, nextDisabled,
+        nextStyle: nextDisabled ? Object.assign({}, nextBase, { opacity:.45, cursor:'not-allowed' }) : nextBase,
+        onNext: ()=> this.advance(),
+        onBack: ()=> this.back(),
+      };
+    }
+
+    // timezone (service-territory local time) — derived, passively confirmed on review
+    const tz = this.tzResolve(a);
+    const tzZoneOpts = ['America/New_York','America/Chicago','America/Denver','America/Phoenix','America/Los_Angeles'].map(z=>{
+      const active = tz.zone===z;
+      return { zone:z, label:this.tzLabel(z), active, borderColor: active?'var(--primary)':'var(--border-subtle)',
+        dot: React.createElement('span', { 'aria-hidden':'true', style:{ width:'16px', height:'16px', flex:'none', borderRadius:'999px', display:'inline-flex', alignItems:'center', justifyContent:'center', border:'2px solid '+(active?'var(--primary)':'var(--border-strong)'), background: active?'var(--primary)':'transparent' } },
+          active ? React.createElement('span', { style:{ width:'5px', height:'5px', borderRadius:'999px', background:'var(--text-onfill)' } }) : null),
+        onPick:()=> this.setState(s=>({ answers: Object.assign({}, s.answers, { tz:z }), tzPickerOpen:false })) };
+    });
+    const tzFact = {
+      label: tz.label || '', ambiguous: !!tz.ambiguous, resolved: !tz.ambiguous,
+      pickerOpen: !!this.state.tzPickerOpen || !!tz.ambiguous,
+      candLabels: (tz.candidates||[]).map(z=>this.tzLabel(z)).join(' or '),
+      onToggle: ()=> this.setState(s=>({ tzPickerOpen: !s.tzPickerOpen })),
+      zones: tzZoneOpts,
+    };
+
+    // review groups
+    let reviewGroups = [];
+    if(view==='review'){
+      reviewGroups = S.map((section, si)=>({
+        title: section.title,
+        items: section.qs.map((qq, qi)=>({ qq, qi })).filter(x=> !x.qq.showIf || x.qq.showIf(a)).map(x=>({
+          q: x.qq.q,
+          a: this.answerText(x.qq, a),
+          onEdit: ()=> this.editJump(si, x.qi),
+        })),
+      })).filter(g=> g.items.length>0);
+    }
+
+    // result / no-fit
+    let resultVM = {}, nofitVM = {};
+    if(view==='result' || view==='nofit'){
+      const sp = this.scorePlan();
+      const rec = Math.max(0, sp.rec);
+      let sel = this.state.selectedTier==null ? rec : this.state.selectedTier;
+      if(sp.demo && this.state.selectedTier==null){
+        const off = { recommended:0, lower:-1, higher:1 }[this.props.resultSelection||'recommended'] || 0;
+        sel = Math.max(0, Math.min(2, rec + off));
+      }
+      const NAMES = ['Basic','Optimum','Premium'];
+      const PRICES = ['$5','$15','$25'];
+      const C = sp.components;
+      const uname = this.utilName(a);
+
+      // Why-this-tier: top 2-3 dollar drivers within the recommended tier
+      const driverDefs = [
+        { label:'EV charging shifted to off-peak', v:C.ev, tier:1 },
+        { label:'HVAC peak-shaving', v:C.hvac, tier:1 },
+        { label:'Appliances shifted to cheap hours', v:C.appliance, tier:0 },
+        { label:'Battery arbitrage', v:C.battery, tier:2 },
+        { label:'Solar orchestration', v:C.solar, tier:2 },
+        { label:'Grid / VPP earnings', v:C.vpp, tier:2 },
+      ];
+      const drivers = driverDefs.filter(d=> d.tier<=rec && d.v>=1).sort((x,y)=>y.v-x.v).slice(0,3)
+        .map(d=>({ label:d.label, amount:'Est. ~$'+Math.round(d.v)+'/mo*' }));
+      // Why owned hardware did NOT promote a higher tier
+      const whyNot = [];
+      if(a.solar==='yes' && C.solar<1 && rec<2) whyNot.push('Your solar doesn\u2019t add value under ' + uname + '\u2019s full-retail net metering, so Premium wouldn\u2019t earn its fee.');
+      if(a.battery==='yes' && C.battery<1 && rec<2) whyNot.push('Without a time-of-use price spread on your rate, battery arbitrage can\u2019t clear Premium\u2019s fee.');
+      if((!a.vpp || a.vpp==='ns') && rec<2 && (a.solar==='yes' || a.battery==='yes')) whyNot.push('VPP earnings are unknown until you confirm your utility\u2019s program \u2014 we didn\u2019t count them.');
+      const consentNote = sp.suggest ? 'Because you chose \u201cSuggest first, I\u2019ll approve,\u201d we discounted automated-control value.' : '';
+      if(sp.demo && rec<2 && !whyNot.length) whyNot.push('Your solar doesn\u2019t add value under your utility\u2019s full-retail net metering, so Premium wouldn\u2019t earn its fee.');
+
+      if(view==='nofit'){
+        const reasons = [];
+        if(!sp.touActive) reasons.push('Your rate has little time-of-use price spread, so shifting energy earns very little.');
+        if(C.appliance<3 && C.hvac<3 && C.ev<3) reasons.push('We didn\u2019t find controllable, shiftable loads (HVAC, EV, or big appliances) that clear a monthly fee.');
+        if(a.solar==='yes' && C.solar<1) reasons.push('Your solar doesn\u2019t add value under ' + uname + '\u2019s full-retail net metering.');
+        if(a.battery==='yes' && C.battery<1) reasons.push('Battery arbitrage needs a price spread your rate doesn\u2019t have.');
+        if(!reasons.length) reasons.push('The savings we could make for your home don\u2019t comfortably clear even our $5 Basic fee right now.');
+        nofitVM = {
+          nofitFace: this.ionaEl('empathetic', 96),
+          nofitReasons: reasons,
+          nofitUtil: uname,
+          onNofitRestart: ()=> this.setState({ view:'welcome', si:0, qi:0, answers:{ priority:40 }, maxSection:0, selectedTier:null, editing:false }),
+        };
+      }
+      const BLURBS = [
+        'Shift your big appliances to the cheapest hours.',
+        'Everything in Basic, plus HVAC peak-shaving & EV charge timing.',
+        'Everything in Optimum, plus battery arbitrage, solar & grid earnings.',
+      ];
+      const tiers = [0,1,2].map(i=>{
+        const selected = sel===i;
+        return {
+          name: NAMES[i], price: PRICES[i], blurb: BLURBS[i], isRec: i===rec,
+          onSelect: ()=> this.setState({ selectedTier: i }),
+          cardStyle: { display:'flex', alignItems:'center', justifyContent:'space-between', gap:'14px', width:'100%',
+            textAlign:'left', appearance:'none', cursor:'pointer', padding:'16px 18px', borderRadius:'16px',
+            border:'2px solid ' + (selected ? 'var(--accent)' : 'var(--border-subtle)'),
+            background: selected ? 'color-mix(in srgb, var(--accent) 8%, var(--surface-raised))' : 'var(--surface-raised)',
+            color:'var(--text-primary)', boxShadow: selected ? 'var(--glow-accent), var(--elev-1)' : 'var(--elev-1)',
+            transition:'border-color .18s, background .18s' },
+          radioStyle: { width:'22px', height:'22px', borderRadius:'999px', flex:'none',
+            border:'2px solid ' + (selected ? 'var(--accent)' : 'var(--border-strong)'),
+            display:'inline-flex', alignItems:'center', justifyContent:'center' },
+          radioDot: { width:'11px', height:'11px', borderRadius:'999px', background: selected ? 'var(--accent)' : 'transparent', display:'block' },
+        };
+      });
+
+      // leave-on-table (lower than rec) — uses the SAME component estimates as "Why <tier>"
+      let leaveItems = [], leaveIntro='';
+      if(sel < rec){
+        leaveIntro = 'Based on your home, ' + NAMES[sel] + " can't reach some of your biggest levers:";
+        const leaveDefs = [
+          { tier:1, v:C.ev, text:(n)=>"Your EV won't be charge-timed to off-peak — Est. ~$"+n+"/mo* missed." },
+          { tier:1, v:C.hvac, text:(n)=>"HVAC peak-shaving stays off — Est. ~$"+n+"/mo* missed." },
+          { tier:2, v:C.battery, text:(n)=>"Your home battery stays dormant — Est. ~$"+n+"/mo* of arbitrage left unused." },
+          { tier:2, v:C.solar, text:(n)=>"Solar surplus won't be orchestrated against price — Est. ~$"+n+"/mo* forgone." },
+          { tier:2, v:C.vpp, text:(n)=>"Grid / VPP earnings stay off the table — Est. ~$"+n+"/mo* forgone." },
+        ];
+        leaveDefs.filter(d=> d.tier>sel && d.v>=1).sort((x,y)=>y.v-x.v).forEach(d=> leaveItems.push(d.text(Math.round(d.v))));
+        if(!leaveItems.length) leaveItems.push("Some higher-tier optimizations for your home would stay dormant on " + NAMES[sel] + ".");
+      }
+
+      resultVM = {
+        recName: NAMES[rec],
+        savingsDisplay: 'Est. $' + Math.round(sp.gross[sel]),
+        resultFace: this.ionaEl('celebrate', 84),
+        tiers,
+        whyTitle: 'Why ' + NAMES[rec],
+        drivers,
+        showWhyNot: whyNot.length>0, whyNot,
+        showConsentNote: !!consentNote, consentNote,
+        showLeavePanel: sel < rec,
+        showHigherNote: sel > rec,
+        leaveIntro, leaveItems,
+        onCompare: (e)=>{ if(e&&e.preventDefault) e.preventDefault(); try{ window.location.href='PIF-Acquisition-Batch7.dc.html#a11'; }catch(err){} },
+        onContinuePay: ()=> this.setState({ view:'payment', selectedTier: sel }),
+      };
+    }
+
+    // payment / complete tier name
+    const _sp = this.scorePlan();
+    const selForPay = this.state.selectedTier==null ? Math.max(0,_sp.rec) : this.state.selectedTier;
+    const NAMES = ['Basic','Optimum','Premium']; const PRICES=['$5','$15','$25'];
+    const pf = this.payFields();
+    const sm = this.stripeMock();
+    const agreed = !!this.state.agreed;
+    const payDisabled = sm.csBusy || !agreed;
+    const payBtnStyle = { appearance:'none', border:'none', cursor: payDisabled?'not-allowed':'pointer',
+      font:'600 15px Inter,system-ui,sans-serif', padding:'13px 28px', borderRadius:'12px',
+      background:'var(--primary)', color:'var(--text-onfill)', minHeight:'48px', opacity: sm.csBusy?0.8:(agreed?1:0.5) };
+
+    // multi-home / business demand capture (Phase-2 waitlist)
+    const cap = this.state.capture;
+    const capSent = this.state.captureSent;
+    const chipStyle = (sel)=> 'appearance:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px 16px;border-radius:999px;min-height:44px;border:1px solid '+(sel?'var(--accent)':'var(--border-strong)')+';background:'+(sel?'color-mix(in srgb,var(--accent) 14%,var(--surface-sunken))':'var(--surface-sunken)')+';color:var(--text-primary)';
+    const capInterest = [['multi','Multiple homes'],['business','Business'],['both','Both']].map(o=>({
+      label:o[1], selected: cap.interest===o[0] ? 'true':'false', style: chipStyle(cap.interest===o[0]),
+      onPick: ()=> this.setState(s=>({ capture: Object.assign({}, s.capture, { interest:o[0], homes:(o[0]==='multi'||o[0]==='both')?s.capture.homes:2 }) })),
+    }));
+    const capCanSubmit = /^\d{5}$/.test(cap.zip.trim()) && cap.email.trim().length>0 && cap.consent;
+    const stepStyle=(en)=> 'appearance:none;cursor:'+(en?'pointer':'not-allowed')+';width:40px;height:40px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface-sunken);color:var(--text-primary);display:inline-flex;align-items:center;justify-content:center;opacity:'+(en?1:.4);
+    const captureVM = {
+      isCapture: view==='capture',
+      captureNotSent: !capSent, captureIsSent: capSent,
+      captureFace: this.ionaEl('welcome', 92),
+      captureFaceSent: this.ionaEl('celebrate', 104),
+      capZip: cap.zip, onCaptureZip:(e)=> this.setState(s=>({ capture:Object.assign({},s.capture,{ zip:e.target.value }) })),
+      capZipInvalid: !/^\d{5}$/.test(cap.zip.trim()),
+      capEmail: cap.email, onCaptureEmail:(e)=> this.setState(s=>({ capture:Object.assign({},s.capture,{ email:e.target.value }) })),
+      capInterest,
+      homesShow: cap.interest==='multi'||cap.interest==='both',
+      capHomes: cap.homes,
+      onHomesDec: ()=> this.setState(s=>({ capture:Object.assign({},s.capture,{ homes:Math.max(2,s.capture.homes-1) }) })),
+      onHomesInc: ()=> this.setState(s=>({ capture:Object.assign({},s.capture,{ homes:Math.min(20,s.capture.homes+1) }) })),
+      homesDecStyle: stepStyle(cap.homes>2), homesIncStyle: stepStyle(cap.homes<20),
+      homesDecDis: cap.homes>2?'false':'true', homesIncDis: cap.homes<20?'false':'true',
+      capConsent: cap.consent?'true':'false', capConsentOn: cap.consent,
+      onCaptureConsent: ()=> this.setState(s=>({ capture:Object.assign({},s.capture,{ consent:!s.capture.consent }) })),
+      consentBoxStyle: 'width:24px;height:24px;border-radius:6px;flex:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:'+(cap.consent?'var(--accent)':'transparent')+';border:2px solid '+(cap.consent?'var(--accent)':'var(--border-strong)'),
+      capSubmitDisabled: capCanSubmit?'false':'true',
+      capSubmitStyle: 'appearance:none;border:none;cursor:'+(capCanSubmit?'pointer':'not-allowed')+';font:600 15px Inter,system-ui,sans-serif;padding:14px 24px;border-radius:999px;background:'+(capCanSubmit?'var(--accent)':'var(--border-strong)')+';color:var(--text-onfill);min-height:50px;width:100%;opacity:'+(capCanSubmit?1:.65),
+      onCaptureSubmit: ()=>{ if(!capCanSubmit) return; this.setState({ captureSent:true }); },
+      onCaptureContinue: ()=> this.setState({ view:'quiz', si:0, qi:0 }),
+      onOpenCapture: ()=> this.setState({ view:'capture', captureSent:false }),
+    };
+
+    return {
+      theme,
+      rmFlag: rm ? '1':'0',
+      ...captureVM,
+      segs: [ mkSeg('light','Light'), mkSeg('dark','Dark'), mkSeg('system','System') ],
+
+      showChrome: view==='welcome'||view==='quiz'||view==='interstitial'||view==='review',
+      onQuizHelp: ()=>{ try{ window.location.href='PIF-Settings-Help-Batch5.dc.html#s12'; }catch(err){} },
+      ionaHeadFace: this.ionaEl(headPose, 44),
+      ionaLine,
+      fillStyle, shellFull: done>=9 ? 'full' : '',
+      b1Style: boltStyle('33.333%', done>=3), b2Style: boltStyle('66.666%', done>=6),
+      chargePct: Math.round(charge*100) + '%',
+
+      isWelcome: view==='welcome',
+      isQuiz: view==='quiz',
+      isInter: view==='interstitial',
+      isReview: view==='review',
+      isResult: view==='result',
+      isPayment: view==='payment',
+      isComplete: view==='complete',
+
+      welcomeFace: this.ionaEl('welcome', 116),
+      onStart: ()=> this.setState({ view:'quiz', si:0, qi:0 }),
+
+      ...vm,
+
+      interFace: this.ionaEl('thumbs', 96),
+      interTitle: inter.t, interSub: inter.s,
+      onInterContinue: ()=> this.interContinue(),
+
+      reviewGroups, tzFact,
+      onReviewBack: ()=> this.setState({ view:'quiz', si: S.length-1, qi: this.lastVisibleIdx(S.length-1) }),
+      onSeeResult: ()=> { const t=this.tzResolve(this.state.answers); if(t.ambiguous){ this.setState({ tzPickerOpen:true }); return; } const sp=this.scorePlan(); this.setState({ view: sp.rec===-1 ? 'nofit' : 'result' }); },
+      isNofit: view==='nofit',
+      onLedger: (e)=>{ if(e&&e.preventDefault) e.preventDefault(); try{ window.location.href='PIF-Dashboard-Ledger-Batch3.dc.html#ledger'; }catch(err){} },
+      onMethodology: (e)=>{ if(e&&e.preventDefault) e.preventDefault(); try{ window.location.href='PIF-Acquisition-Batch7.dc.html#a12'; }catch(err){} },
+      ...nofitVM,
+
+      ...resultVM,
+
+      usStates: ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','District of Columbia','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'],
+      pf, payBtnStyle, ...sm,
+      agreed, payDisabled, payTierShort: NAMES[selForPay],
+      onToggleAgree: ()=> this.setState(s=>({ agreed: !s.agreed })),
+      onTerms: (e)=>{ if(e&&e.preventDefault) e.preventDefault(); try{ window.location.href='PIF-Legal-Batch10.dc.html#tos'; }catch(err){} },
+      onPrivacy: (e)=>{ if(e&&e.preventDefault) e.preventDefault(); try{ window.location.href='PIF-Legal-Batch10.dc.html#privacy'; }catch(err){} },
+      payTierName: NAMES[selForPay] + ' plan',
+      payPrice: PRICES[selForPay],
+      completeFace: this.ionaEl('celebrate', 116),
+      onPayBack: ()=> this.setState({ view:'result' }),
+      onPay: ()=>{ if(!this.state.agreed) return; const e=this.validatePay(); if(Object.keys(e).length){ this.setState({ payErrors:e }); return; } this.setState({ view:'complete', payErrors:{} }); },
+      onRestart: ()=> this.setState({ view:'welcome', si:0, qi:0, answers:{ priority:40 }, maxSection:0, selectedTier:null, editing:false }),
+      onConnectDevices: (e)=>{ if(e&&e.preventDefault) e.preventDefault(); try{ window.location.href='PIF-Devices-Connect-Batch4.dc.html'; }catch(err){} },
+    };
+  }
+
+  answerText(q, a){
+    if(q.kind==='zip') return a.zip ? a.zip : '—';
+    if(q.kind==='slider'){ const v=a.priority==null?40:a.priority; return v<40?'Leaning savings':v>60?'Leaning comfort':'Balanced'; }
+    if(q.kind==='single'){
+      if(a[q.id]==='other') return 'Other: ' + (a[q.id+'_other'] ? a[q.id+'_other'] : '(unnamed)');
+      const o=(q.opts||[]).find(x=>x.k===a[q.id]); return o?o.label:'—';
+    }
+    if(q.kind==='multi'){
+      const sel=a[q.id]||{};
+      const labs=(q.opts||[]).filter(x=>x.k!=='other'&&sel[x.k]).map(x=>x.label);
+      if(sel.other) labs.push('Other: ' + (a[q.id+'_other'] ? a[q.id+'_other'] : '(unnamed)'));
+      return labs.length?labs.join(', '):'None';
+    }
+    return '—';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- PIF-Foundations-Batch0 v16 — 26 Jul, dedicated evidence-tier palette (--tier-*); Advisory teal→magenta -->
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#FFFFFF;font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--primary);text-decoration:none}
+  a:hover{color:var(--secondary);text-decoration:underline}
+  /* Semantic token roles — light is the default so first paint is correct */
+  :root,[data-theme="light"],[data-theme="system"]{
+    --surface-base:#FFFFFF; --surface-raised:#F4F7FB; --surface-sunken:#E9EEF6;
+    --text-primary:#16233B; --text-secondary:#586378; --text-onfill:#FFFFFF;
+    --border-subtle:#C9D4E3; --border-strong:#7C8BA3;
+    --primary:#1B3A6B; --secondary:#0E7C7B; --accent:#077A46; --accent-bright:#0FA968;
+    --success:#077A46; --warning:#9A6400; --danger:#C22F2F; --info:#1B5FB8;
+    --tier-banked:#077A46; --tier-measured:#1B5FB8; --tier-modeled:#9A6400; --tier-advisory:#A61E88;
+    --elev-1:0 1px 2px rgba(22,35,59,.06),0 1px 3px rgba(22,35,59,.08);
+    --elev-2:0 2px 6px rgba(22,35,59,.08),0 4px 12px rgba(22,35,59,.10);
+    --elev-3:0 8px 24px rgba(22,35,59,.14);
+    --glow-accent:0 0 0 rgba(0,0,0,0); --glow-primary:0 0 0 rgba(0,0,0,0);
+  }
+  [data-theme="dark"]{
+    --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+    --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+    --border-subtle:#2A3852; --border-strong:#62738F;
+    --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+    --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+    --tier-banked:#2FE39A; --tier-measured:#7FB2FF; --tier-modeled:#F5B23D; --tier-advisory:#E08AC8;
+    --elev-1:0 1px 2px rgba(0,0,0,.40);
+    --elev-2:0 4px 14px rgba(0,0,0,.50);
+    --elev-3:0 10px 30px rgba(0,0,0,.60);
+    --glow-accent:0 0 24px rgba(47,227,154,.45); --glow-primary:0 0 24px rgba(108,155,240,.40);
+  }
+  @media (prefers-color-scheme:dark){
+    [data-theme="system"]{
+      --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+      --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+      --border-subtle:#2A3852; --border-strong:#62738F;
+      --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+      --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+      --tier-banked:#2FE39A; --tier-measured:#7FB2FF; --tier-modeled:#F5B23D; --tier-advisory:#E08AC8;
+      --elev-1:0 1px 2px rgba(0,0,0,.40);
+      --elev-2:0 4px 14px rgba(0,0,0,.50);
+      --elev-3:0 10px 30px rgba(0,0,0,.60);
+      --glow-accent:0 0 24px rgba(47,227,154,.45); --glow-primary:0 0 24px rgba(108,155,240,.40);
+    }
+  }
+  @keyframes pifFlashHold{0%{box-shadow:0 0 0 rgba(47,227,154,0)}45%{box-shadow:0 0 34px rgba(47,227,154,.8)}100%{box-shadow:0 0 18px rgba(47,227,154,.5)}}
+  @keyframes pifFanIn{from{opacity:0;transform:translateY(8px) scale(.92)}to{opacity:1;transform:none}}
+  .pif-shell.full{animation:pifFlashHold .7s ease-out 1 forwards}
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+    .pif-shell.full{animation:none;box-shadow:0 0 16px rgba(47,227,154,.5)}
+  }
+  [data-rm="1"] .pif-shell.full{animation:none !important;box-shadow:0 0 16px rgba(47,227,154,.5)}
+  [data-rm="1"] [data-fan]{animation:none !important}
+  .pif-page{max-width:1120px;margin:0 auto;padding:24px 24px 72px}
+  .pif-col-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .pif-col-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .pif-nav{display:flex;gap:4px}
+  @media (max-width:768px){
+    .pif-page{padding:16px 14px 56px}
+    .pif-col-2,.pif-col-3{grid-template-columns:1fr}
+    .pif-nav{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+    .pif-btn-full{width:100%}
+  }
+  @media (max-width:480px){ .pif-page{padding:14px 12px 48px} }
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" style="min-height:100vh;width:100%;background:var(--surface-base);color:var(--text-primary);font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;transition:background .32s cubic-bezier(.2,0,0,1),color .32s cubic-bezier(.2,0,0,1)">
+<div style="max-width:1120px;margin:0 auto;padding:40px 32px 96px">
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+    <radialGradient id="pif-body" cx="42%" cy="36%" r="72%"><stop offset="0%" stop-color="#5CF3B6"></stop><stop offset="55%" stop-color="#2FE39A"></stop><stop offset="100%" stop-color="#0E7C7B"></stop></radialGradient>
+    <radialGradient id="pif-glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#2FE39A" stop-opacity="0.55"></stop><stop offset="100%" stop-color="#2FE39A" stop-opacity="0"></stop></radialGradient>
+  </defs></svg>
+
+  <!-- ============ HEADER ============ -->
+  <header style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between;padding-bottom:28px;border-bottom:1px solid var(--border-subtle);margin-bottom:48px">
+    <div style="max-width:640px">
+      <div style="display:inline-flex;align-items:center;gap:9px;margin-bottom:14px">
+        <img src="assets/pif-tile.png" alt="" aria-hidden="true" style="height:26px;width:auto;display:block;border-radius:6px">
+        <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:var(--text-secondary);border:1px solid var(--border-subtle);border-radius:6px;padding:2px 6px">PIF · v1</span>
+      </div>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:40px;line-height:48px;font-weight:700;margin:0 0 8px;letter-spacing:-.02em">Foundations &amp; Components</h1>
+      <p style="font-size:17px;line-height:26px;color:var(--text-secondary);margin:0">Clean-energy intelligence that feels alive. Two moods — <b style="color:var(--accent)">reward</b> where we celebrate savings, <b style="color:var(--text-primary)">trust</b> where we move money and control devices — built from one set of tokens. WCAG 2.1 AA verified, 0 fails.</p>
+    </div>
+
+    <!-- Theme Switch (Light / Dark / System) -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">Theme</span>
+      <div role="radiogroup" aria-label="Theme" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px">
+        <sc-for list="{{ segs }}" as="s" hint-placeholder-count="3">
+          <button role="radio" aria-checked="{{ s.active }}" aria-label="{{ s.label }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">
+            <span aria-hidden="true" style="display:inline-flex">{{ s.icon }}</span>{{ s.label }}
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ MOOD RULE ============ -->
+  <section style="margin-bottom:56px">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
+      <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">01 · The dual-mood rule</span>
+    </div>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:0 0 20px;max-width:720px">The core rule of the system. A surface picks a mood; components adapt. Same tokens, two feelings.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px">
+
+      <!-- Reward mood -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:22px;box-shadow:var(--glow-accent),var(--elev-2)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+          <span style="width:8px;height:8px;border-radius:999px;background:var(--accent)"></span>
+          <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)">Reward mood</span>
+          <span style="font-size:12px;color:var(--text-secondary)">dashboard · savings</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+          <span style="font-size:13px;color:var(--text-secondary)">last 30 days</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--tier-modeled);background:color-mix(in srgb,var(--tier-modeled) 13%,transparent);border:1px solid var(--tier-modeled);border-radius:999px;padding:2px 8px"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M3 14c3-7 5-7 7-3s4 4 7-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Modeled</span>
+        </div>
+        <div aria-describedby="pif-fnd-savings-note" style="font-family:'Space Grotesk',system-ui;font-size:44px;line-height:1.05;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent)">{{ savingsDisplay }} lower</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">from 47 shifts · 214 kWh moved into cheap hours</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px">
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px;background:var(--accent);color:var(--text-onfill)">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M8 3 4 7M8 3l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>7-day streak
+          </span>
+          <button onClick="{{ replaySavings }}" style="appearance:none;border:none;cursor:pointer;font:600 13px Inter,system-ui,sans-serif;padding:9px 16px;border-radius:999px;background:var(--accent);color:var(--text-onfill);box-shadow:var(--glow-accent);min-height:40px" style-active="transform:scale(.96)" style-hover="filter:brightness(1.05)">Replay count-up</button>
+        </div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:14px 0 0;line-height:16px">Vibrant accent · glow in dark · emphasized motion · celebratory count-up.</p>
+      </div>
+
+      <!-- Trust mood -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:22px;box-shadow:var(--elev-1)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+          <span style="width:8px;height:8px;border-radius:999px;background:var(--primary)"></span>
+          <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">Trust mood</span>
+          <span style="font-size:12px;color:var(--text-secondary)">money · devices · admin</span>
+        </div>
+        <div style="font-weight:600;font-size:15px;margin-bottom:2px">Comfort floor</div>
+        <div style="font-size:13px;color:var(--text-secondary)">Lowest temperature PIF will allow</div>
+        <div style="margin-top:12px;background:var(--surface-sunken);border-radius:12px;padding:12px 14px;font-size:13px;line-height:18px;color:var(--text-secondary);display:flex;gap:8px;align-items:center">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex:none"><circle cx="8" cy="8" r="6.25" stroke="var(--info)" stroke-width="1.5"/><path d="M8 7.2v3.4M8 5.2h.01" stroke="var(--info)" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span>Impact preview · comfort floor → 68°F, est. <b style="color:var(--text-primary);font-variant-numeric:tabular-nums">−$4/mo</b></span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button style="appearance:none;border:none;cursor:pointer;font:600 13px Inter,system-ui,sans-serif;padding:9px 16px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:40px" style-hover="filter:brightness(1.06)">Save</button>
+          <button style="appearance:none;cursor:pointer;font:600 13px Inter,system-ui,sans-serif;padding:9px 16px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:40px" style-hover="background:var(--surface-sunken)">Cancel</button>
+        </div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:14px 0 0;line-height:16px">Muted palette · elevation not glow · standard motion · no celebration.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COLOR ROLES ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">02 · Color roles</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px">Referenced by semantic role, never raw hex. Swatches below track the active theme; the caption lists both light &amp; dark values.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px">
+      <sc-for list="{{ roles }}" as="r" hint-placeholder-count="16">
+        <div style="border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden;background:var(--surface-raised)">
+          <div style="height:56px;background:{{ r.swatch }};border-bottom:1px solid var(--border-subtle)"></div>
+          <div style="padding:9px 11px">
+            <div style="font-size:13px;font-weight:600">{{ r.name }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-secondary);margin-top:3px">L {{ r.light }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-secondary)">D {{ r.dark }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <p style="font-size:12px;line-height:16px;color:var(--text-secondary);margin:16px 0 0;max-width:720px">Bright fills (accent, warning) in dark mode take <b style="color:var(--text-primary)">dark</b> text (text.onFill). <span style="font-family:'JetBrains Mono',monospace">accentBright</span> is graphics-only in light mode — it fails small-text contrast.</p>
+  </section>
+
+  <!-- ============ TYPOGRAPHY ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">03 · Typography</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px"><b style="color:var(--text-primary)">Space Grotesk</b> for expressive display &amp; counters · <b style="color:var(--text-primary)">Inter</b> for all UI · <b style="color:var(--text-primary)">JetBrains Mono</b> for codes &amp; data. Money and energy figures use tabular numerals.</p>
+
+    <div style="background:var(--surface-raised);border-radius:16px;padding:8px 24px;box-shadow:var(--elev-1)">
+      <div style="display:flex;align-items:baseline;gap:20px;padding:16px 0;border-bottom:1px solid var(--border-subtle);flex-wrap:wrap">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);width:88px;flex:none">displayXl</span>
+        <span style="font-family:'Space Grotesk',system-ui;font-size:40px;line-height:48px;font-weight:700">Cleaner mornings</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);margin-left:auto">40/48 · Space Grotesk 700</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:20px;padding:16px 0;border-bottom:1px solid var(--border-subtle);flex-wrap:wrap">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);width:88px;flex:none">displayL</span>
+        <span style="font-family:'Space Grotesk',system-ui;font-size:32px;line-height:40px;font-weight:700">Your home, working</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);margin-left:auto">32/40 · Space Grotesk 700</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:20px;padding:16px 0;border-bottom:1px solid var(--border-subtle);flex-wrap:wrap">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);width:88px;flex:none">h1</span>
+        <span style="font-size:28px;line-height:36px;font-weight:600">This month's savings</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);margin-left:auto">28/36 · Inter 600</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:20px;padding:16px 0;border-bottom:1px solid var(--border-subtle);flex-wrap:wrap">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);width:88px;flex:none">h2</span>
+        <span style="font-size:22px;line-height:30px;font-weight:600">Devices &amp; schedules</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);margin-left:auto">22/30 · Inter 600</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:20px;padding:16px 0;border-bottom:1px solid var(--border-subtle);flex-wrap:wrap">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);width:88px;flex:none">h3</span>
+        <span style="font-size:18px;line-height:26px;font-weight:600">Comfort floor</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);margin-left:auto">18/26 · Inter 600</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:20px;padding:16px 0;border-bottom:1px solid var(--border-subtle);flex-wrap:wrap">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);width:88px;flex:none">bodyL</span>
+        <span style="font-size:17px;line-height:26px">PIF shifts your energy use to the cheapest hours, automatically.</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);margin-left:auto">17/26 · Inter 400</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:20px;padding:16px 0;border-bottom:1px solid var(--border-subtle);flex-wrap:wrap">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);width:88px;flex:none">body</span>
+        <span style="font-size:15px;line-height:22px">The workhorse reading size for controls and content.</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);margin-left:auto">15/22 · Inter 400</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:20px;padding:16px 0;border-bottom:1px solid var(--border-subtle);flex-wrap:wrap">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);width:88px;flex:none">bodyS</span>
+        <span style="font-size:13px;line-height:18px;color:var(--text-secondary)">Supporting captions and helper text.</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);margin-left:auto">13/18 · Inter 400</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:20px;padding:16px 0;flex-wrap:wrap">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);width:88px;flex:none">overline</span>
+        <span style="font-size:11px;line-height:16px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">Section label</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);margin-left:auto">11/16 · Inter 600 · tracked</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BUTTONS ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">04 · Buttons</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px">Trust CTAs stay <span style="color:var(--primary);font-weight:600">primary</span>, no bounce. Reward CTAs use <span style="color:var(--accent);font-weight:600">accent</span> with an emphasized press (and glow in dark). Minimum 44px targets.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px">
+      <div style="background:var(--surface-raised);border-radius:16px;padding:22px;box-shadow:var(--elev-1)">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:14px">Trust</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <button style="appearance:none;border:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:44px" style-hover="filter:brightness(1.06)">Primary</button>
+          <button style="appearance:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:44px" style-hover="background:var(--surface-sunken)">Secondary</button>
+          <button style="appearance:none;border:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px 14px;border-radius:12px;background:transparent;color:var(--primary);min-height:44px" style-hover="background:var(--surface-sunken)">Tertiary</button>
+          <button style="appearance:none;border:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:12px;background:var(--danger);color:#FFFFFF;min-height:44px" style-hover="filter:brightness(1.06)">Delete</button>
+          <button disabled style="appearance:none;border:none;font:600 14px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:12px;background:var(--surface-sunken);color:var(--text-secondary);min-height:44px;opacity:.6;cursor:not-allowed">Disabled</button>
+        </div>
+      </div>
+      <div style="background:var(--surface-raised);border-radius:16px;padding:22px;box-shadow:var(--glow-accent),var(--elev-1)">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">Reward</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <button style="appearance:none;border:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:999px;background:var(--accent);color:var(--text-onfill);min-height:44px;box-shadow:var(--glow-accent);transition:transform .2s cubic-bezier(.2,0,0,1.2)" style-active="transform:scale(.95)" style-hover="filter:brightness(1.05)">Claim savings</button>
+          <button style="appearance:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:999px;background:transparent;color:var(--accent);border:1px solid var(--accent);min-height:44px;transition:transform .2s cubic-bezier(.2,0,0,1.2)" style-active="transform:scale(.95)" style-hover="background:var(--surface-sunken)">See breakdown</button>
+        </div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:14px 0 0;line-height:16px">Pill radius · overshoot easing on press.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INPUTS / TOGGLES ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">05 · Inputs, selects &amp; toggles</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px">Sunken fill, strong border, a visible 2px focus ring. Toggles are pill-shaped. Try tabbing through — focus is always visible.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;background:var(--surface-raised);border-radius:16px;padding:24px;box-shadow:var(--elev-1)">
+      <div>
+        <label for="pif-in" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Home ZIP code</label>
+        <input id="pif-in" type="text" value="23220" style="width:100%;font:400 15px Inter,system-ui,sans-serif;padding:11px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:44px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px">Used to pull your utility's TOU schedule.</div>
+      </div>
+      <div>
+        <label for="pif-sel" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Utility</label>
+        <select id="pif-sel" style="width:100%;font:400 15px Inter,system-ui,sans-serif;padding:11px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:44px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+          <option>Dominion Energy</option>
+          <option>Duke Energy</option>
+          <option>Pacific Gas &amp; Electric</option>
+        </select>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px">Determines available rate arbitrage.</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:9px">Automations</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <label style="display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer">
+            <span style="font-size:15px">Auto-shift appliances</span>
+            <button role="switch" aria-checked="{{ toggleOn }}" onClick="{{ onToggle }}" style="{{ trackStyle }}">
+              <span style="{{ knobStyle }}"></span>
+            </button>
+          </label>
+          <label style="display:flex;align-items:center;justify-content:space-between;gap:12px;opacity:.55">
+            <span style="font-size:15px">Battery arbitrage <span style="font-size:11px;font-weight:600;color:var(--text-secondary)">(Premium)</span></span>
+            <span style="width:48px;height:28px;border-radius:999px;background:var(--surface-sunken);border:1px solid var(--border-strong);display:inline-flex;align-items:center;padding:2px"><span style="width:22px;height:22px;border-radius:999px;background:var(--border-strong)"></span></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CARDS ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">06 · Cards</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px">The workhorse container — surface.raised, radius 16, elevation 1–2. Device cards, savings cards, setting groups.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px">
+      <div style="background:var(--surface-raised);border-radius:16px;padding:20px;box-shadow:var(--elev-1)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="width:36px;height:36px;border-radius:10px;background:var(--surface-sunken);display:inline-flex;align-items:center;justify-content:center">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M11 2 4 11h5l-1 7 7-9h-5z" fill="var(--accent-bright)"/></svg>
+            </span>
+            <div>
+              <div style="font-weight:600;font-size:15px">EV charger</div>
+              <div style="font-size:12px;color:var(--text-secondary)">Tesla · garage</div>
+            </div>
+          </div>
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--success)">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Active
+          </span>
+        </div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:18px">Charging paused until 11:00 PM to catch off-peak rates.</div>
+      </div>
+
+      <div style="background:var(--surface-raised);border-radius:16px;padding:20px;box-shadow:var(--elev-2)">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px">Elevation 2 · sheet</div>
+        <div style="font-weight:600;font-size:15px;margin-bottom:4px">This week</div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span aria-describedby="pif-fnd-savings-note" style="font-family:'Space Grotesk',system-ui;font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent)"><span aria-hidden="true">≈ </span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">approximately </span>$11.05<span style="font-size:16px;color:var(--text-secondary)">*</span></span>
+          <span style="font-size:12px;color:var(--text-secondary)">across 3 devices</span>
+        </div>
+      </div>
+
+      <div style="background:var(--surface-raised);border-radius:16px;padding:20px;box-shadow:var(--elev-3)">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px">Elevation 3 · dialog</div>
+        <div style="font-weight:600;font-size:15px;margin-bottom:4px">Confirm schedule change</div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:18px">Highest surface for modal moments. In dark mode, depth is shadow — never glow — on trust surfaces.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NAVIGATION ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">07 · Navigation</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px">Icon <b style="color:var(--text-primary)">and</b> label, never icon-only — the label supports a11y and clarity. Side nav on web, bottom nav on mobile.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px">
+      <!-- Side nav -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:12px;box-shadow:var(--elev-1)">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary);padding:8px 12px 6px">Side nav · web</div>
+        <nav style="display:flex;flex-direction:column;gap:2px">
+          <a href="#" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-size:15px;font-weight:600;color:var(--text-onfill);background:var(--primary);min-height:44px">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3 9 10 3l7 6v8H3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Dashboard
+          </a>
+          <a href="#" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-size:15px;font-weight:500;color:var(--text-secondary);min-height:44px" style-hover="background:var(--surface-sunken);color:var(--text-primary)">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 4v12h12M7 12l3-4 2 2 4-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Savings ledger
+          </a>
+          <a href="#" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-size:15px;font-weight:500;color:var(--text-secondary);min-height:44px" style-hover="background:var(--surface-sunken);color:var(--text-primary)">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M7 10h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Devices
+          </a>
+          <a href="#" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-size:15px;font-weight:500;color:var(--text-secondary);min-height:44px" style-hover="background:var(--surface-sunken);color:var(--text-primary)">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 6h12M4 10h12M4 14h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Settings
+          </a>
+        </nav>
+      </div>
+
+      <!-- Bottom nav -->
+      <div style="display:flex;flex-direction:column;justify-content:flex-end">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px">Bottom nav · mobile</div>
+        <nav style="display:flex;justify-content:space-around;background:var(--surface-raised);border-radius:16px;padding:8px 4px;box-shadow:var(--elev-2)">
+          <a href="#" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 12px;border-radius:12px;color:var(--accent);min-width:56px">
+            <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M3 9 10 3l7 6v8H3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            <span style="font-size:11px;font-weight:600">Home</span>
+          </a>
+          <a href="#" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 12px;border-radius:12px;color:var(--text-secondary);min-width:56px">
+            <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M4 4v12h12M7 12l3-4 2 2 4-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:11px;font-weight:500">Ledger</span>
+          </a>
+          <a href="#" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 12px;border-radius:12px;color:var(--text-secondary);min-width:56px">
+            <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M7 10h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span style="font-size:11px;font-weight:500">Devices</span>
+          </a>
+          <a href="#" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 12px;border-radius:12px;color:var(--text-secondary);min-width:56px">
+            <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M4 6h12M4 10h12M4 14h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span style="font-size:11px;font-weight:500">Settings</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BADGES ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">08 · Status, stale &amp; safety badges</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px">Always color <b style="color:var(--text-primary)">plus</b> an icon and a text label — never color alone. This is a hard accessibility rule.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:10px;background:var(--surface-raised);border-radius:16px;padding:22px;box-shadow:var(--elev-1)">
+      <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;background:var(--success);color:var(--text-onfill)">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Optimizing
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;background:var(--warning);color:var(--text-onfill)">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2 15 14H1z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 6.5v3.2M8 11.6h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Action needed
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;background:var(--danger);color:#FFFFFF">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Disconnected
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;background:var(--surface-sunken);color:var(--text-secondary);border:1px solid var(--border-strong)">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.5V8l2.4 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Data stale · 2h
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;background:transparent;color:var(--info);border:1px solid var(--info)">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3.2-2.1 5.2-5 6-2.9-.8-5-2.8-5-6V4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 8l1.5 1.5L10.5 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Safety-bound
+      </span>
+    </div>
+  </section>
+
+  <!-- ============ CHIPS & TABS ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">09 · Chips &amp; tabs</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px">The quiz's core vocabulary. Single-select reads as a <b style="color:var(--text-primary)">ring</b> (pick one, auto-advances); multi-select reads as a <b style="color:var(--text-primary)">check</b> (pick all, with a running count and a Next button). Two shapes so users always know how many answers are expected — the mode is never signalled by color alone.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px">
+
+      <!-- single-select -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:22px;box-shadow:var(--elev-1)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px">
+          <div style="font-size:15px;font-weight:600">When is someone usually home?</div>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;padding:4px 10px;flex:none">
+            <span aria-hidden="true" style="width:11px;height:11px;border-radius:999px;border:2px solid var(--accent);display:inline-flex;align-items:center;justify-content:center"><span style="width:4px;height:4px;border-radius:999px;background:var(--accent)"></span></span>Pick one
+          </span>
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:14px">Chips act like radios — tapping one deselects the rest.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <sc-for list="{{ singleChips }}" as="o" hint-placeholder-count="3">
+            <button aria-pressed="{{ o.selected }}" onClick="{{ o.onSelect }}" style="{{ o.style }}" style-hover="border-color:var(--accent)">{{ o.dot }}{{ o.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- multi-select -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:22px;box-shadow:var(--elev-1)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px">
+          <div style="font-size:15px;font-weight:600">Other large schedulable loads?</div>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;padding:4px 10px;flex:none">
+            <span aria-hidden="true" style="width:11px;height:11px;border-radius:999px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;color:var(--text-onfill)"><svg width="8" height="8" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Pick all
+          </span>
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:14px">Chips act like toggles — several can be lit at once.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+          <sc-for list="{{ multiChips }}" as="o" hint-placeholder-count="3">
+            <button aria-pressed="{{ o.active }}" onClick="{{ o.onSelect }}" style="{{ o.style }}" style-hover="border-color:var(--accent)">{{ o.dot }}{{ o.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <span style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--accent)">
+            <span aria-hidden="true" style="width:20px;height:20px;border-radius:999px;background:var(--accent);color:var(--text-onfill);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-variant-numeric:tabular-nums">{{ multiCount }}</span>{{ multiCountLabel }}
+          </span>
+          <button style="appearance:none;border:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:10px 22px;border-radius:999px;background:var(--accent);color:var(--text-onfill);min-height:44px;box-shadow:var(--glow-accent);transition:transform .2s cubic-bezier(.2,0,0,1.2)" style-active="transform:scale(.95)" style-hover="filter:brightness(1.05)">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- tab chips -->
+    <div style="background:var(--surface-raised);border-radius:16px;padding:22px;box-shadow:var(--elev-1);margin-top:20px">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:12px">Tab chips · segmented filter</div>
+      <div role="tablist" aria-label="Ledger range" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px">
+        <sc-for list="{{ tabChips }}" as="t" hint-placeholder-count="4">
+          <button role="tab" aria-selected="{{ t.active }}" onClick="{{ t.onSelect }}" style="{{ t.style }}">{{ t.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SIGNATURE COMPONENTS ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">10 · Signature PIF components</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px">The patterns that make PIF feel like PIF.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px">
+      <!-- Savings counter -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:22px;box-shadow:var(--glow-accent),var(--elev-2)">
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px">Savings Counter</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:16px">Reward · four evidence tiers — every figure carries exactly one</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:14px">
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--tier-banked);background:color-mix(in srgb,var(--tier-banked) 13%,transparent);border:1px solid var(--tier-banked);border-radius:999px;padding:2px 8px"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M4 7c0-1.3 2.7-2.3 6-2.3s6 1 6 2.3-2.7 2.3-6 2.3-6-1-6-2.3z" stroke="currentColor" stroke-width="1.6"/><path d="M4 7v5c0 1.3 2.7 2.3 6 2.3s6-1 6-2.3V7" stroke="currentColor" stroke-width="1.6"/></svg>Banked</span>
+            <div style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--success);margin-top:9px">$3.60 earned</div>
+            <div style="font-size:11px;line-height:15px;color:var(--text-secondary);margin-top:4px">Real money received — VPP payouts, bill credits. No caveat.</div>
+          </div>
+          <div style="background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:14px">
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--tier-measured);background:color-mix(in srgb,var(--tier-measured) 13%,transparent);border:1px solid var(--tier-measured);border-radius:999px;padding:2px 8px"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M4 13a6 6 0 0 1 12 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M10 13l3.2-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Measured</span>
+            <div style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-primary);margin-top:9px"><span aria-hidden="true">≈ </span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">approximately </span>$5.44</div>
+            <div style="font-size:11px;line-height:15px;color:var(--text-secondary);margin-top:4px">Metered kWh × published tariff. Assumption stated, not hidden.</div>
+          </div>
+          <div style="background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:14px">
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--tier-modeled);background:color-mix(in srgb,var(--tier-modeled) 13%,transparent);border:1px solid var(--tier-modeled);border-radius:999px;padding:2px 8px"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M4 14c3.5 0 4.5-8 12-8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M13 6h3v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Modeled</span>
+            <div aria-describedby="pif-fnd-savings-note" style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-primary);margin-top:9px"><span aria-hidden="true">≈ </span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">approximately </span>$0.86<span style="font-size:15px;color:var(--text-secondary)">*</span></div>
+            <div style="font-size:11px;line-height:15px;color:var(--text-secondary);margin-top:4px">Runtime × class-typical load. A true estimate — carries the *.</div>
+          </div>
+          <div style="background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:14px">
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--tier-advisory);background:color-mix(in srgb,var(--tier-advisory) 13%,transparent);border:1px solid var(--tier-advisory);border-radius:999px;padding:2px 8px"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M7 11V6.4a1.2 1.2 0 0 1 2.4 0V10M9.4 9.6V4.8a1.2 1.2 0 0 1 2.4 0V10M11.8 6.2a1.2 1.2 0 0 1 2.4 0V12a4 4 0 0 1-4 4H9a3 3 0 0 1-2.3-1.1L4.2 12.2s.8-1 2-.5l.8.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Advisory</span>
+            <div style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-primary);margin-top:9px"><span aria-hidden="true">≈ </span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">approximately </span>$0.18</div>
+            <div style="font-size:11px;line-height:15px;color:var(--text-secondary);margin-top:4px">You acted on a nudge — the credit is yours, not PIF's.</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;background:var(--surface-sunken);border:1px solid var(--success);border-radius:12px;padding:14px;display:flex;gap:11px;align-items:flex-start">
+          <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--success);background:color-mix(in srgb,var(--success) 13%,transparent);border:1px solid var(--success);border-radius:999px;padding:2px 8px;flex:none;margin-top:1px"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Bill-checked</span>
+          <div style="min-width:0">
+            <div style="font-size:12px;line-height:17px;color:var(--text-primary);font-weight:600">Aggregate confirmation — not a fifth tier.</div>
+            <div style="font-size:11px;line-height:16px;color:var(--text-secondary);margin-top:2px">A period-level label: a TOU bill confirms the mechanism in aggregate (load moved off-peak, total cost fell). It sits on the <b style="color:var(--text-primary)">ledger summary</b>, never on a single figure — a bill shows totals, not per-device rows. Each dollar still carries one of the four tiers above.</div>
+          </div>
+        </div>
+        <p id="pif-fnd-savings-note" style="font-size:11px;line-height:16px;color:var(--text-secondary);margin:14px 0 0"><b style="color:var(--text-primary)">* Modeled figures are estimates.</b> Every figure carries exactly one tier — Banked (real money), Measured (metered × tariff), Modeled (estimated, carries the *), Advisory (you acted). “Verified” never appears on a row; only your bill's totals confirm the mechanism in aggregate. <b style="color:var(--text-primary)">“≈” means approximate</b> — the figure is calculated, not measured.</p>
+      </div>
+
+      <!-- Profile completeness meter -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:22px;box-shadow:var(--elev-1)">
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px">Profile-Completeness Meter</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:14px">Gamified but tasteful</div>
+        <div style="display:flex;align-items:center;gap:18px">
+          <div style="position:relative;width:96px;height:96px;flex:none">
+            <svg width="96" height="96" viewBox="0 0 96 96">
+              <circle cx="48" cy="48" r="42" fill="none" stroke="var(--surface-sunken)" stroke-width="10"/>
+              <circle cx="48" cy="48" r="42" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="52.8" transform="rotate(-90 48 48)"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <span style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums">80%</span>
+            </div>
+          </div>
+          <div style="font-size:13px;line-height:18px;color:var(--text-secondary)">Add your <b style="color:var(--text-primary)">EV</b> to unlock arbitrage and reach 100%.</div>
+        </div>
+      </div>
+
+      <!-- Impact preview -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:22px;box-shadow:var(--elev-1)">
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px">Impact-Preview inline</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:14px">Trust styling near a reward</div>
+        <div style="font-weight:600;font-size:15px">Comfort floor</div>
+        <input type="range" min="64" max="74" value="68" style="width:100%;margin:12px 0;accent-color:var(--primary)">
+        <div style="background:var(--surface-sunken);border-radius:12px;padding:12px 14px;font-size:13px;line-height:18px;color:var(--text-secondary);display:flex;gap:8px;align-items:center">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex:none"><circle cx="8" cy="8" r="6.25" stroke="var(--info)" stroke-width="1.5"/><path d="M8 7.2v3.4M8 5.2h.01" stroke="var(--info)" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span>comfort floor → 68°F, est. <b style="color:var(--text-primary);font-variant-numeric:tabular-nums">−$4/mo</b></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ IONA — EXPRESSIONS & LAUNCHER ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">11 · Iona — the guide</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px">PIF's friendly ion spark. Four expressions keep the energy-bolt tuft; the tappable global launcher swaps it for a yellow <b style="color:var(--warning)">"?"</b> (reads as "ask"). She's decorative &amp; supplementary — every line she says also stands on its own as text, and her motion follows the reduced-motion rule.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px">
+
+      <!-- welcoming -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:16px 16px 18px;box-shadow:var(--elev-1);text-align:center">
+        <div style="height:132px;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="-120 -120 240 240" width="100%" style="max-width:150px;height:auto" role="img" aria-label="Iona, welcoming">
+            <ellipse cx="0" cy="0" rx="118" ry="118" fill="url(#pif-glow)"></ellipse>
+            <path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" fill="#F5B23D"></path>
+            <circle cx="0" cy="0" r="72" fill="url(#pif-body)"></circle>
+            <circle cx="-24" cy="-8" r="11" fill="#0B1220"></circle><circle cx="24" cy="-8" r="11" fill="#0B1220"></circle>
+            <circle cx="-20" cy="-12" r="4" fill="#fff"></circle><circle cx="28" cy="-12" r="4" fill="#fff"></circle>
+            <path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"></path>
+            <circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"></circle><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"></circle>
+            <path d="M62,-6 Q92,-30 86,-58" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"></path><circle cx="86" cy="-62" r="12" fill="#2FE39A"></circle>
+          </svg>
+        </div>
+        <div style="font-size:14px;font-weight:600;margin-top:4px">Welcoming</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Quiz intro · "Let's jump in!"</div>
+      </div>
+
+      <!-- thumbs-up -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:16px 16px 18px;box-shadow:var(--elev-1);text-align:center">
+        <div style="height:132px;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="-120 -120 240 240" width="100%" style="max-width:150px;height:auto" role="img" aria-label="Iona, thumbs-up">
+            <ellipse cx="0" cy="0" rx="118" ry="118" fill="url(#pif-glow)"></ellipse>
+            <path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" fill="#F5B23D"></path>
+            <circle cx="0" cy="0" r="72" fill="url(#pif-body)"></circle>
+            <path d="M-34,-8 Q-24,-18 -14,-8" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"></path>
+            <path d="M14,-8 Q24,-18 34,-8" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"></path>
+            <path d="M-24,16 Q0,44 24,16" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"></path>
+            <circle cx="-44" cy="12" r="8" fill="#5CF3B6" opacity="0.5"></circle><circle cx="44" cy="12" r="8" fill="#5CF3B6" opacity="0.5"></circle>
+            <path d="M60,10 Q86,4 92,-16" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"></path>
+            <circle cx="94" cy="-20" r="13" fill="#2FE39A"></circle><rect x="90" y="-34" width="8" height="14" rx="4" fill="#2FE39A"></rect>
+          </svg>
+        </div>
+        <div style="font-size:14px;font-weight:600;margin-top:4px">Thumbs-up</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Interstitial · "Great choice!"</div>
+      </div>
+
+      <!-- celebrating -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:16px 16px 18px;box-shadow:var(--glow-accent),var(--elev-1);text-align:center">
+        <div style="height:132px;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="-120 -120 240 240" width="100%" style="max-width:150px;height:auto" role="img" aria-label="Iona, celebrating with thunderbolt">
+            <ellipse cx="0" cy="0" rx="118" ry="118" fill="url(#pif-glow)"></ellipse>
+            <path d="M74,-40 l3,7 l7,3 l-7,3 l-3,7 l-3,-7 l-7,-3 l7,-3 z" fill="#5CF3B6"></path>
+            <circle cx="0" cy="0" r="72" fill="url(#pif-body)"></circle>
+            <path d="M-24,-12 l3,7 l7,1 l-5,5 l1,7 l-6,-4 l-6,4 l1,-7 l-5,-5 l7,-1 z" fill="#0B1220"></path>
+            <path d="M24,-12 l3,7 l7,1 l-5,5 l1,7 l-6,-4 l-6,4 l1,-7 l-5,-5 l7,-1 z" fill="#0B1220"></path>
+            <path d="M-18,18 Q0,40 18,18 Q0,30 -18,18 Z" fill="#0B1220"></path>
+            <path d="M60,-6 Q84,-26 80,-52" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"></path>
+            <path d="M-60,-6 Q-84,-26 -80,-52" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"></path>
+            <circle cx="80" cy="-56" r="11" fill="#2FE39A"></circle><circle cx="-80" cy="-56" r="11" fill="#2FE39A"></circle>
+            <path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" transform="translate(78,0)" fill="#F5B23D" stroke="#0B1220" stroke-width="2"></path>
+          </svg>
+        </div>
+        <div style="font-size:14px;font-weight:600;margin-top:4px">Celebrating</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Quiz complete · thunderbolt held high</div>
+      </div>
+
+      <!-- empathetic -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:16px 16px 18px;box-shadow:var(--elev-1);text-align:center">
+        <div style="height:132px;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="-120 -120 240 240" width="100%" style="max-width:150px;height:auto" role="img" aria-label="Iona, empathetic">
+            <ellipse cx="0" cy="6" rx="95" ry="95" fill="url(#pif-glow)" opacity="0.6"></ellipse>
+            <path d="M-8,-100 L10,-100 L-2,-80 L14,-80 L-14,-52 L-4,-76 L-18,-76 Z" fill="#F5B23D" opacity="0.85"></path>
+            <circle cx="0" cy="4" r="72" fill="url(#pif-body)"></circle>
+            <path d="M-36,-6 Q-24,-16 -12,-15" fill="none" stroke="#0B1220" stroke-width="5" stroke-linecap="round"></path>
+            <path d="M36,-6 Q24,-16 12,-15" fill="none" stroke="#0B1220" stroke-width="5" stroke-linecap="round"></path>
+            <circle cx="-24" cy="-2" r="10" fill="#0B1220"></circle><circle cx="24" cy="-2" r="10" fill="#0B1220"></circle>
+            <circle cx="-20" cy="-6" r="3.5" fill="#fff"></circle><circle cx="28" cy="-6" r="3.5" fill="#fff"></circle>
+            <path d="M30,10 q7,12 0,18 q-7,-6 0,-18 z" fill="#7FB2FF"></path>
+            <path d="M-20,34 Q0,18 20,34" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"></path>
+            <path d="M62,20 Q80,36 74,58" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"></path>
+            <path d="M-62,20 Q-80,36 -74,58" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="font-size:14px;font-weight:600;margin-top:4px">Empathetic</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Unsubscribe goodbye · never a guilt-trip</div>
+      </div>
+
+      <!-- launcher ? -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:16px 16px 18px;box-shadow:var(--elev-1);text-align:center">
+        <div style="height:132px;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="-120 -120 240 240" width="100%" style="max-width:150px;height:auto" role="img" aria-label="Iona launcher">
+            <ellipse cx="0" cy="0" rx="118" ry="118" fill="url(#pif-glow)"></ellipse>
+            <text x="0" y="-76" fill="#F5B23D" font-size="58" font-weight="700" text-anchor="middle" font-family="Inter,system-ui">?</text>
+            <circle cx="0" cy="0" r="72" fill="url(#pif-body)"></circle>
+            <circle cx="-24" cy="-8" r="11" fill="#0B1220"></circle><circle cx="24" cy="-8" r="11" fill="#0B1220"></circle>
+            <circle cx="-20" cy="-12" r="4" fill="#fff"></circle><circle cx="28" cy="-12" r="4" fill="#fff"></circle>
+            <path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"></path>
+            <circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"></circle><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"></circle>
+          </svg>
+        </div>
+        <div style="font-size:14px;font-weight:600;margin-top:4px">Launcher</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Yellow "?" · tap from any screen</div>
+      </div>
+
+      <!-- launcher unread -->
+      <div style="background:var(--surface-raised);border-radius:16px;padding:16px 16px 18px;box-shadow:var(--elev-1);text-align:center">
+        <div style="height:132px;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="-120 -120 240 240" width="100%" style="max-width:150px;height:auto" role="img" aria-label="Iona launcher with an unread message">
+            <ellipse cx="0" cy="0" rx="118" ry="118" fill="url(#pif-glow)"></ellipse>
+            <text x="0" y="-76" fill="#F5B23D" font-size="58" font-weight="700" text-anchor="middle" font-family="Inter,system-ui">?</text>
+            <circle cx="0" cy="0" r="72" fill="url(#pif-body)"></circle>
+            <circle cx="-24" cy="-8" r="11" fill="#0B1220"></circle><circle cx="24" cy="-8" r="11" fill="#0B1220"></circle>
+            <circle cx="-20" cy="-12" r="4" fill="#fff"></circle><circle cx="28" cy="-12" r="4" fill="#fff"></circle>
+            <path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"></path>
+            <circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"></circle>
+            <path d="M60,-2 Q80,-24 82,-46" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"></path>
+            <g transform="translate(84,-70)">
+              <rect x="-20" y="-14" width="40" height="28" rx="4" fill="#F4F7FB" stroke="#0B1220" stroke-width="2.5"></rect>
+              <path d="M-20,-13 L0,3 L20,-13" fill="none" stroke="#0B1220" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="font-size:14px;font-weight:600;margin-top:4px">Launcher · unread</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Holds a plain letter — no badge or count</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ IONA LAUNCHER — FAN-OUT MENU ============ -->
+  <section style="margin-bottom:56px">
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between">
+      <div>
+        <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">12 · Iona global launcher — fan-out</span>
+        <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 0;max-width:640px">Tapping Iona fans out labelled tabs (icon <b style="color:var(--text-primary)">and</b> text) — the canonical set: <b style="color:var(--text-primary)">Help · Messages · Upgrade · Settings · Close</b>. <b style="color:var(--text-primary)">Messages</b> is a single feed entry routing to the H1 inbox — never split into separate Notifications / Nudge / Tip tabs (Tips are the Premium-only filter <i>inside</i> the inbox). <b style="color:var(--text-primary)">Upgrade</b> shows for Basic / Optimum only — hidden for Premium. Unread → Iona holds a letter and the Messages tab flags <b style="color:var(--accent)">New</b> — presence + text, never color alone.</p>
+      </div>
+      <label style="display:inline-flex;align-items:center;gap:10px;cursor:pointer;flex:none">
+        <span style="font-size:13px;font-weight:600">Unread messages</span>
+        <button role="switch" aria-checked="{{ unread }}" onClick="{{ onToggleUnread }}" style="{{ unreadTrackStyle }}"><span style="{{ unreadKnobStyle }}"></span></button>
+      </label>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:20px">
+
+      <!-- Basic / Optimum -->
+      <div style="background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:20px;padding:22px;min-height:420px;position:relative;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="width:8px;height:8px;border-radius:999px;background:var(--primary)"></span>
+          <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">Basic / Optimum tier</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Upgrade shown</div>
+        <div style="margin-top:auto;display:flex;flex-direction:column;align-items:flex-end;gap:9px">
+          <sc-for list="{{ tabsStd }}" as="t" hint-placeholder-count="6">
+            <button data-fan style="{{ t.style }}" style-hover="filter:brightness(1.02);transform:translateY(-1px)">
+              <span aria-hidden="true" style="display:inline-flex;color:var(--text-secondary)">{{ t.icon }}</span>{{ t.label }}
+              <sc-if value="{{ t.hi }}" hint-placeholder-val="{{ false }}"><span style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--surface-sunken);border:1px solid var(--accent);border-radius:999px;padding:2px 7px">New</span></sc-if>
+            </button>
+          </sc-for>
+          <div style="margin-top:4px">{{ launcherAvatar }}</div>
+        </div>
+      </div>
+
+      <!-- Premium -->
+      <div style="background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:20px;padding:22px;min-height:420px;position:relative;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="width:8px;height:8px;border-radius:999px;background:var(--accent)"></span>
+          <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">Premium tier</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">No Upgrade (already Premium)</div>
+        <div style="margin-top:auto;display:flex;flex-direction:column;align-items:flex-end;gap:9px">
+          <sc-for list="{{ tabsPremium }}" as="t" hint-placeholder-count="6">
+            <button data-fan style="{{ t.style }}" style-hover="filter:brightness(1.02);transform:translateY(-1px)">
+              <span aria-hidden="true" style="display:inline-flex;color:var(--text-secondary)">{{ t.icon }}</span>{{ t.label }}
+              <sc-if value="{{ t.hi }}" hint-placeholder-val="{{ false }}"><span style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--surface-sunken);border:1px solid var(--accent);border-radius:999px;padding:2px 7px">New</span></sc-if>
+            </button>
+          </sc-for>
+          <div style="margin-top:4px">{{ launcherAvatar }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHARGING-BATTERY PROGRESS ============ -->
+  <section style="margin-bottom:32px" data-rm="{{ rmFlag }}">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">13 · Charging-battery progress</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px">The quiz progress indicator <b style="color:var(--text-primary)">is</b> a battery. One value (<span style="font-family:'JetBrains Mono',monospace">charge</span> 0→1 = sections/9) drives the fill. Two bolt separators mark 3 zones that light up — bolt 1 at 3 done, bolt 2 at 6. The line rides inside; Iona rides just off the + end. At full: one flash, then hold the glow. Reduced motion → static fill, no flash. Shown in both themes.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:20px">
+      <button onClick="{{ battBack }}" style="appearance:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:10px 18px;border-radius:999px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:44px" style-hover="background:var(--surface-sunken)">◀ Back</button>
+      <button onClick="{{ battNext }}" style="appearance:none;border:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:10px 20px;border-radius:999px;background:var(--accent);color:var(--text-onfill);min-height:44px;box-shadow:var(--glow-accent);transition:transform .2s cubic-bezier(.2,0,0,1.2)" style-active="transform:scale(.95)" style-hover="filter:brightness(1.05)">Complete a section ▶</button>
+      <button onClick="{{ battReset }}" style="appearance:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:10px 18px;border-radius:999px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:44px" style-hover="background:var(--surface-sunken)">Reset</button>
+      <span style="font-size:13px;color:var(--text-secondary);font-variant-numeric:tabular-nums">Sections <b style="color:var(--text-primary)">{{ done }}</b> / 9</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px">
+
+      <!-- LIGHT -->
+      <div data-theme="light" style="background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:20px;padding:28px 22px;box-shadow:var(--elev-1)">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:18px">Light</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div class="pif-shell {{ shellFull }}" style="position:relative;width:300px;max-width:100%;height:58px;border:4px solid var(--border-subtle);border-radius:16px;background:var(--surface-sunken);overflow:hidden">
+            <div style="{{ fillStyle }}"></div>
+            <div class="pif-bolt" style="{{ b1Style }}"><svg viewBox="0 0 18 86" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><path d="M11,0 L3,44 L9,44 L7,86 L17,38 L11,38 Z" fill="currentColor"/></svg></div>
+            <div class="pif-bolt" style="{{ b2Style }}"><svg viewBox="0 0 18 86" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><path d="M11,0 L3,44 L9,44 L7,86 L17,38 L11,38 Z" fill="currentColor"/></svg></div>
+            <span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;white-space:nowrap;font-size:13px;font-weight:500;color:#fff;background:rgba(7,12,22,.6);padding:5px 11px;border-radius:10px">{{ battMsg }}</span>
+          </div>
+          <div style="width:10px;height:22px;border-radius:0 6px 6px 0;background:var(--border-subtle);margin-left:-3px"></div>
+          <span style="margin-left:-4px;flex:0 0 auto">{{ ionaFace }}</span>
+        </div>
+      </div>
+
+      <!-- DARK -->
+      <div data-theme="dark" style="background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:20px;padding:28px 22px;box-shadow:var(--elev-1)">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:18px">Dark</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div class="pif-shell {{ shellFull }}" style="position:relative;width:300px;max-width:100%;height:58px;border:4px solid var(--border-subtle);border-radius:16px;background:var(--surface-sunken);overflow:hidden">
+            <div style="{{ fillStyle }}"></div>
+            <div class="pif-bolt" style="{{ b1Style }}"><svg viewBox="0 0 18 86" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><path d="M11,0 L3,44 L9,44 L7,86 L17,38 L11,38 Z" fill="currentColor"/></svg></div>
+            <div class="pif-bolt" style="{{ b2Style }}"><svg viewBox="0 0 18 86" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><path d="M11,0 L3,44 L9,44 L7,86 L17,38 L11,38 Z" fill="currentColor"/></svg></div>
+            <span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;white-space:nowrap;font-size:13px;font-weight:500;color:#fff;background:rgba(7,12,22,.6);padding:5px 11px;border-radius:10px">{{ battMsg }}</span>
+          </div>
+          <div style="width:10px;height:22px;border-radius:0 6px 6px 0;background:var(--border-subtle);margin-left:-3px"></div>
+          <span style="margin-left:-4px;flex:0 0 auto">{{ ionaFace }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TIME & TIMEZONE ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">14 · Time &amp; timezone</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px">TOU windows are defined in the <b style="color:var(--text-primary)">tariff's</b> local prevailing time — the utility's service-territory zone, not the customer's phone. A one-hour error would shift load <b style="color:var(--text-primary)">into</b> peak, causing real financial harm and a false savings claim. Derive it, confirm it passively, ask only when genuinely ambiguous.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:20px;box-shadow:var(--elev-1)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px">Resolution order</div>
+        <ol style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:7px;font-size:13px;line-height:19px;color:var(--text-secondary)">
+          <li><b style="color:var(--text-primary)">Utility service territory</b> — most are single-zone (Dominion → Eastern); confirming the utility usually settles it outright.</li>
+          <li><b style="color:var(--text-primary)">ZIP</b> narrows it where a utility spans zones.</li>
+          <li><b style="color:var(--text-primary)">Device zone</b> as a silent cross-check (<span style="font-family:'JetBrains Mono',monospace;font-size:12px">Intl…resolvedOptions().timeZone</span>, no prompt). If it matches a candidate, take it and say nothing.</li>
+          <li><b style="color:var(--text-primary)">Ask</b> only if ambiguity remains — some ZIPs straddle two zones. A conditional question, consistent with never asking what can't change an outcome.</li>
+        </ol>
+      </div>
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:20px;box-shadow:var(--elev-1)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px">Passive confirm (rate step)</div>
+        <div style="background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:13px 15px;font-size:13px;line-height:19px"><span style="color:var(--text-secondary)">Times shown in </span><span style="font-weight:700">Eastern Time</span><span style="color:var(--text-secondary)"> · </span><span style="color:var(--primary);font-weight:600">change</span></div>
+        <p style="font-size:12px;line-height:18px;color:var(--text-secondary);margin:11px 0 0">Shown as an editable fact — one tap to correct, no question for the unambiguous 95%. Also editable later in <b style="color:var(--text-primary)">Settings → Rate/utility</b>, since it's effectively a quiz answer.</p>
+      </div>
+      <div style="background:var(--surface-raised);border:1px solid var(--warning);border-radius:16px;padding:20px;box-shadow:var(--elev-1)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--warning)">Two implementation rules</div>
+        <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:9px;font-size:13px;line-height:19px;color:var(--text-secondary)">
+          <li>Store the <b style="color:var(--text-primary)">IANA zone</b> (<span style="font-family:'JetBrains Mono',monospace;font-size:12px">America/Phoenix</span> vs <span style="font-family:'JetBrains Mono',monospace;font-size:12px">America/Denver</span>), never an offset or abbreviation. Arizona is the trap: most of the state skips DST, the Navajo Nation observes it, and the Hopi Reservation inside that doesn't — an offset breaks twice a year.</li>
+          <li>Any time shown against a tariff is labelled in <b style="color:var(--text-primary)">service-territory local time</b>. The device zone is used only for display convenience and notification timing.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ICON REGISTRY ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">15 · Icon registry</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 14px;max-width:720px">A catalogued lookup set so the app resolves the right glyph for any device or action automatically. Names are <b style="color:var(--text-primary)">stable keys</b> — a developer looks up <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text-primary)">device.water-heater</span> or <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text-primary)">action.precool</span> and gets the same icon every time, with <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text-primary)">device.generic</span> covering anything new. One icon per meaning, one meaning per icon. <b style="color:var(--text-primary)">Every icon on every screen — chrome included — is drawn from this registry; a new icon is added HERE first, never improvised per screen (the same discipline as Iona’s expressions).</b></p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px">
+      <div style="display:flex;gap:9px;align-items:flex-start;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:12px;padding:12px 14px;max-width:340px;flex:1;min-width:260px">
+        <span style="color:var(--text-secondary);flex:none;margin-top:1px">{{ icoSetIcon }}</span>
+        <div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)"><b style="color:var(--text-primary)">Set &amp; licence.</b> PIF in-house line set — 20×20 grid, 1.6px stroke, round caps/joins. Custom-drawn for PIF and shipped under our own licence (no third-party attribution); silhouettes follow common line-icon conventions for familiarity.</div>
+      </div>
+      <div style="display:flex;gap:9px;align-items:flex-start;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:12px;padding:12px 14px;max-width:340px;flex:1;min-width:260px">
+        <span style="color:var(--text-secondary);flex:none;margin-top:1px">{{ icoThemeIcon }}</span>
+        <div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)"><b style="color:var(--text-primary)">Theming.</b> Every glyph draws with <span style="font-family:'JetBrains Mono',monospace;font-size:12px">currentColor</span> — stroke and fill inherit a semantic token, so they adapt to light and dark with no hardcoded colours.</div>
+      </div>
+      <div style="display:flex;gap:9px;align-items:flex-start;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:12px;padding:12px 14px;max-width:340px;flex:1;min-width:260px">
+        <span style="color:var(--text-secondary);flex:none;margin-top:1px">{{ icoA11yIcon }}</span>
+        <div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)"><b style="color:var(--text-primary)">Accessibility.</b> Decorative when paired with a visible text label → <span style="font-family:'JetBrains Mono',monospace;font-size:12px">aria-hidden="true"</span>. Used standalone (icon-only control) → give it an accessible name. Each tile below notes which applies.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:26px">
+      <sc-for list="{{ iconCats }}" as="cat" hint-placeholder-count="4">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px">
+            <span style="font-size:15px;font-weight:700">{{ cat.title }}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:6px;padding:1px 7px">{{ cat.prefix }}</span>
+          </div>
+          <p style="font-size:12.5px;line-height:18px;color:var(--text-secondary);margin:0 0 12px;max-width:760px">{{ cat.note }}</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">
+            <sc-for list="{{ cat.items }}" as="it" hint-placeholder-count="6">
+              <div style="{{ it.tileStyle }}">
+                <span style="width:42px;height:42px;flex:none;border-radius:11px;background:var(--surface-sunken);border:1px solid var(--border-subtle);display:inline-flex;align-items:center;justify-content:center;color:{{ it.color }}">{{ it.icon }}</span>
+                <div style="min-width:0;flex:1">
+                  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                    <span style="font-size:13px;font-weight:600">{{ it.name }}</span>
+                    <sc-if value="{{ it.fallback }}" hint-placeholder-val="{{ false }}"><span style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,transparent);border:1px solid var(--accent);border-radius:999px;padding:1px 6px">Fallback</span></sc-if>
+                  </div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);margin-top:3px;overflow:hidden;text-overflow:ellipsis">{{ it.key }}</div>
+                  <div style="font-size:10.5px;line-height:14px;color:var(--text-secondary);margin-top:5px">{{ it.a11y }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ============ APP-SHELL CHROME ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">16 · App-shell chrome</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 14px;max-width:720px">The shared frame every product surface wears. <b style="color:var(--text-primary)">This section is the single source of truth</b> — same governance model as the §15 icon registry: batches copy from here, never redraw. Brand lockup and the <code style="font-family:'JetBrains Mono',monospace;font-size:12px">pif-tile.png</code> asset are canonical here; the Iona face is the launcher avatar only, never the brand mark.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+      <div style="background:var(--surface-raised);border:1px solid var(--accent);border-radius:16px;padding:20px;box-shadow:var(--elev-1)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px">Canonical brand lockup</div>
+        <div style="background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:18px;display:flex;justify-content:center;margin-bottom:14px">
+          <div style="display:inline-flex;align-items:center;gap:9px">
+            <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
+            <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+          </div>
+        </div>
+        <pre style="margin:0;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:10px;padding:13px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:17px;color:var(--text-primary);white-space:pre-wrap;overflow-x:auto">&lt;div style="display:inline-flex;align-items:center;gap:9px"&gt;
+  &lt;img src="assets/pif-tile.png" alt="ProIonFlow"
+       style="height:26px;width:auto;display:block;border-radius:6px"&gt;
+  &lt;span style="font-family:'Space Grotesk',system-ui;
+       font-weight:700;font-size:15px;letter-spacing:-.01em"&gt;ProIonFlow&lt;/span&gt;
+&lt;/div&gt;</pre>
+        <p style="font-size:12px;line-height:18px;color:var(--text-secondary);margin:12px 0 0">Tile art is the shared file <code style="font-family:'JetBrains Mono',monospace;font-size:11px">assets/pif-tile.png</code> (the green P-glyph tile) — <b style="color:var(--text-primary)">never an inline SVG re-draw, and never the Iona face</b>. 26px tile / 15px Space Grotesk 700 wordmark, gap 9, radius 6.</p>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 17px;box-shadow:var(--elev-1)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:5px">Top-nav</div>
+          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0">Five items — <b style="color:var(--text-primary)">Dashboard · Ledger · Devices · Settings · Billing</b> — as real cross-file <code style="font-family:'JetBrains Mono',monospace;font-size:11px">&lt;a href&gt;</code> links. The current file’s own item(s) render active; in-file screens switch via handlers rather than navigation.</p>
+        </div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 17px;box-shadow:var(--elev-1)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:5px">Floating Iona launcher</div>
+          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0 0 8px"><code style="font-family:'JetBrains Mono',monospace;font-size:11px">position:fixed; right:24px; bottom:24px; z-index:70</code>. Present from the dashboard onward; <b style="color:var(--text-primary)">absent in Auth &amp; Onboarding</b>. The avatar is the Iona face — which lives only here, never as the brand mark.</p>
+          <p style="font-size:12px;line-height:17px;color:var(--text-secondary);margin:0"><b style="color:var(--text-primary)">Canonical fan-out (identical in every app-shell file):</b> Help · Messages · Upgrade (Basic/Optimum only — hidden for Premium) · Settings · Close. Messages is the single feed entry — it routes to the inbox (<code style="font-family:'JetBrains Mono',monospace;font-size:11px">#h1</code>) with an unread indicator when unread items exist; per-type counts live inside the inbox. Never split into separate Notifications / Nudge / Tip tabs.</p>
+        </div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 17px;box-shadow:var(--elev-1)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:5px">Account menu (top-right avatar)</div>
+          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0 0 8px">A <b style="color:var(--text-primary)">dropdown card — never a fan-out</b> (the fan pattern belongs to the Iona launcher only, so the two never look alike). Opens on the avatar (<code style="font-family:'JetBrains Mono',monospace;font-size:11px">aria-haspopup="menu"</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">aria-expanded</code> bound to the open state). Items: <b style="color:var(--text-primary)">Settings</b> (→ <code style="font-family:'JetBrains Mono',monospace;font-size:11px">PIF-Settings-Help-Batch5.dc.html#s1</code>) and <b style="color:var(--text-primary)">Plug out</b>. Plug out closes the menu and navigates to Auth (<code style="font-family:'JetBrains Mono',monospace;font-size:11px">PIF-Auth-Batch1.dc.html</code>) — a real logout, never a no-op. Use the canonical §15 logout icon.</p>
+          <p style="font-size:12px;line-height:17px;color:var(--text-secondary);margin:0"><b style="color:var(--text-primary)">Dismissal (both menus):</b> the account dropdown and the launcher fan-out both close on outside-click and Escape. A transparent full-viewport backdrop (<code style="font-family:'JetBrains Mono',monospace;font-size:11px">position:fixed; inset:0; z-index:40</code> — below the menus, above content) renders whenever either is open, and its click closes both; a document <code style="font-family:'JetBrains Mono',monospace;font-size:11px">keydown</code> listener closes both on Escape. Opening one menu closes the other.</p>
+        </div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 17px;box-shadow:var(--elev-1)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:5px">Back control</div>
+          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0 0 10px">Every back affordance returns to the previous view. Modal Cancel/Close controls are separate and keep their own labels.</p>
+          <pre style="margin:0 0 10px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:10px;padding:11px 12px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:16px;color:var(--text-primary);white-space:pre-wrap;overflow-x:auto">&lt;button on<span>Click</span>="…" style="…;min-height:24px;padding:8px 0;…"&gt;
+  &lt;span aria-hidden="true"&gt;←&lt;/span&gt; Back
+&lt;/button&gt;   &lt;!-- use &lt;a&gt; for cross-file backs --&gt;</pre>
+          <p style="font-size:12px;line-height:17px;color:var(--text-secondary);margin:0">The ← is decorative (aria-hidden); accessible name is exactly “Back”. Hit target ≥24×24px for WCAG 2.2 2.5.8. Contrast, Label-in-Name, and Consistent-Identification already hold.</p>
+        </div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 17px;box-shadow:var(--elev-1)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:5px">Screen-reader utilities</div>
+          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0 0 10px">Visually-hidden text for screen readers uses the canonical <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.pif-sr</code> class (define once per file):</p>
+          <pre style="margin:0 0 10px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:10px;padding:11px 12px;font-family:'JetBrains Mono',monospace;font-size:10.5px;line-height:15px;color:var(--text-primary);white-space:pre-wrap;overflow-x:auto">.pif-sr{position:absolute;width:1px;height:1px;
+  padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}</pre>
+          <p style="font-size:12px;line-height:17px;color:var(--text-secondary);margin:0"><b style="color:var(--text-primary)">The “≈” rule:</b> any “≈” prefixing a figure must be <code style="font-family:'JetBrains Mono',monospace;font-size:11px">&lt;span aria-hidden="true"&gt;≈&lt;/span&gt;&lt;span class="pif-sr"&gt;approximately &lt;/span&gt;</code> so it reads “approximately $5.44”, or use plain words (“about $42”) where there’s room.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESPONSIVE ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">17 · Responsive</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 14px;max-width:720px">Layout scaffolding lives in a small set of helper classes so every batch (and Batch 9) shares one breakpoint system. <b style="color:var(--text-primary)">This is the single source of truth</b> — copy the block verbatim; component styling stays inline as always, only structural layout is class-driven.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 17px;box-shadow:var(--elev-1)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:5px">Breakpoints</div>
+          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0">Two stops, mobile-tolerant desktop-first. <b style="color:var(--text-primary)">≤768px</b> — tablet/phone: columns stack to one, nav scrolls horizontally, primary buttons go full-width. <b style="color:var(--text-primary)">≤480px</b> — tightens shell padding only. No horizontal page scroll at 390px is the acceptance test.</p>
+        </div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 17px;box-shadow:var(--elev-1)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:5px">Helper classes</div>
+          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0 0 6px"><code style="font-family:'JetBrains Mono',monospace;font-size:11px">.pif-page</code> — the centered page container (replaces the inline <code style="font-family:'JetBrains Mono',monospace;font-size:11px">max-width;margin:0 auto;padding</code>). <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.pif-col-2</code> / <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.pif-col-3</code> — grids that auto-stack ≤768px. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.pif-nav</code> — top nav, scrolls instead of overflowing. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.pif-btn-full</code> — full-width primary buttons ≤768px.</p>
+          <p style="font-size:12px;line-height:17px;color:var(--text-secondary);margin:0"><b style="color:var(--text-primary)">Menus &amp; wide content:</b> the account dropdown and launcher fan cap at <code style="font-family:'JetBrains Mono',monospace;font-size:11px">max-width:calc(100vw - 28px)</code>, right-anchored, so they never overflow. Wide tables/rows get <code style="font-family:'JetBrains Mono',monospace;font-size:11px">overflow-x:auto</code> on their own container — never let a child break the page. Charts stay %/flex-width, never fixed px.</p>
+        </div>
+      </div>
+      <pre style="margin:0;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:10px;padding:13px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:17px;color:var(--text-primary);white-space:pre-wrap;overflow-x:auto">.pif-page{max-width:1120px;margin:0 auto;
+  padding:24px 24px 72px}
+.pif-col-2{display:grid;
+  grid-template-columns:1fr 1fr;gap:20px}
+.pif-col-3{display:grid;
+  grid-template-columns:1fr 1fr 1fr;gap:16px}
+.pif-nav{display:flex;gap:4px}
+@media (max-width:768px){
+  .pif-page{padding:16px 14px 56px}
+  .pif-col-2,.pif-col-3{
+    grid-template-columns:1fr}   /* stack */
+  .pif-nav{overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    flex-wrap:nowrap}
+  .pif-btn-full{width:100%}
+}
+@media (max-width:480px){
+  .pif-page{padding:14px 12px 48px}
+}</pre>
+    </div>
+  </section>
+
+  <!-- ============ SETTINGS COMPONENTS ============ -->
+  <section style="margin-bottom:56px">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">18 · Settings components</span>
+    <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:6px 0 20px;max-width:720px">The building blocks the Settings, Help and account surfaces compose from. Defined here so every screen reuses one implementation — same rule as the icon registry. All draw from semantic tokens; each toggle is <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text-primary)">role="switch"</span> with <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text-primary)">aria-checked</span>.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px">
+
+      <!-- search field -->
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:8px">Search field</div>
+        <div style="position:relative">
+          <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-secondary);display:inline-flex"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="5.4" stroke="currentColor" stroke-width="1.6"/><path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+          <input aria-label="Search (example)" placeholder="Search settings — e.g. passkey" style="width:100%;appearance:none;border:1px solid var(--border-strong);background:var(--surface-raised);color:var(--text-primary);border-radius:12px;padding:12px 15px 12px 42px;font:500 14px Inter,system-ui,sans-serif;min-height:46px">
+        </div>
+      </div>
+
+      <!-- completeness meter -->
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:8px">Completeness meter</div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 16px;box-shadow:var(--elev-1)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px"><span style="font-size:13px;font-weight:700">Profile completeness</span><span style="font-family:'Space Grotesk',system-ui;font-size:14px;font-weight:700;color:var(--accent)">80%</span></div>
+          <div role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" aria-label="Profile completeness (example)" style="height:8px;border-radius:999px;background:var(--surface-sunken);overflow:hidden"><div style="height:100%;width:80%;background:var(--accent);border-radius:999px"></div></div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:9px"><b style="color:var(--text-primary)">Add your EV</b> to unlock arbitrage.</div>
+        </div>
+      </div>
+
+      <!-- section header + list rows -->
+      <div style="grid-column:1/-1">
+        <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:8px">Section header &amp; list rows</div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;box-shadow:var(--elev-1);overflow:hidden;max-width:520px">
+          <div style="display:flex;align-items:center;gap:12px;padding:15px 18px">
+            <span style="width:38px;height:38px;border-radius:11px;background:var(--surface-sunken);border:1px solid var(--border-subtle);display:inline-flex;align-items:center;justify-content:center;color:var(--primary)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 16a5.5 5.5 0 0 1 11 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+            <span style="flex:1"><span style="display:block;font-size:15px;font-weight:700">Account</span><span style="display:block;font-size:12.5px;color:var(--text-secondary)">Plan, security, profile, billing</span></span>
+            <span style="color:var(--text-secondary);transform:rotate(180deg)"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div style="border-top:1px solid var(--border-subtle);display:flex;align-items:center;gap:12px;padding:14px 18px">
+            <span style="color:var(--accent)"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M10 13.5V7M7 9.5 10 6.5l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span style="flex:1"><span style="display:flex;align-items:center;gap:8px"><span style="font-size:14px;font-weight:600">Upgrade</span><span style="font-size:10px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,transparent);border:1px solid var(--accent);border-radius:999px;padding:1px 7px;white-space:nowrap">Save more</span></span><span style="display:block;font-size:12px;color:var(--text-secondary);margin-top:2px">Compare tiers and move up</span></span>
+            <span style="color:var(--text-secondary)"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M8 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div style="border-top:1px solid var(--border-subtle);display:flex;align-items:center;gap:12px;padding:14px 18px">
+            <span style="color:var(--text-secondary)"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6.4 9.2V7a3.6 3.6 0 0 1 7.2 0v2.2M5.4 9.2h9.2v6.6H5.4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+            <span style="flex:1"><span style="font-size:14px;font-weight:600">Security</span><span style="display:block;font-size:12px;color:var(--text-secondary);margin-top:2px">Passkeys, 2FA, active sessions</span></span>
+            <span style="color:var(--text-secondary)"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M8 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- toggle group -->
+      <div style="grid-column:1/-1">
+        <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:8px">Toggle group (role="switch")</div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;box-shadow:var(--elev-1);overflow:hidden;max-width:520px">
+          <div style="display:flex;align-items:center;gap:14px;padding:15px 18px">
+            <span style="flex:1"><span style="font-size:14px;font-weight:600">Savings &amp; results</span><span style="display:block;font-size:12px;color:var(--text-secondary)">On — email + push</span></span>
+            <span role="switch" aria-checked="true" aria-label="Savings notifications (example, on)" style="flex:none;width:50px;height:29px;border-radius:999px;background:var(--accent);position:relative;display:inline-block"><span style="position:absolute;top:3px;left:24px;width:23px;height:23px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span></span>
+          </div>
+          <div style="border-top:1px solid var(--border-subtle);display:flex;align-items:center;gap:14px;padding:15px 18px">
+            <span style="flex:1"><span style="font-size:14px;font-weight:600">Tips &amp; offers</span><span style="display:block;font-size:12px;color:var(--text-secondary)">Off — marketing, opt-in</span></span>
+            <span role="switch" aria-checked="false" aria-label="Tips notifications (example, off)" style="flex:none;width:50px;height:29px;border-radius:999px;background:var(--border-strong);position:relative;display:inline-block"><span style="position:absolute;top:3px;left:3px;width:23px;height:23px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer style="margin-top:48px;padding-top:24px;border-top:1px solid var(--border-subtle);font-size:12px;color:var(--text-secondary);line-height:18px">
+    ProIonFlow (PIF) · Foundations page · Tokens are the single source of truth · All 30 critical contrast pairs pass WCAG 2.1 AA in both themes · Every animation has a reduced-motion fallback.
+  </footer>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1160,&quot;height&quot;:2600},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;system&quot;,&quot;tsType&quot;:&quot;'light'|'dark'|'system'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = {
+      theme: props.initialTheme || 'system',
+      savings: 42.18,
+      toggleOn: true,
+      single: 'workdays',
+      multi: { ev: true, heat: true },
+      tab: 'week',
+      unread: true,
+      done: 0,
+    };
+    this._raf = null;
+  }
+
+  componentDidMount(){
+    this.animateSavings();
+    try {
+      this._mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this._mqh = ()=>{ if(this.state.theme==='system') this.forceUpdate(); };
+      this._mq.addEventListener('change', this._mqh);
+    } catch(e){}
+  }
+  componentWillUnmount(){
+    if(this._mq && this._mqh) this._mq.removeEventListener('change', this._mqh);
+  }
+
+  resolvedDark(){
+    const t = this.state.theme;
+    if(t==='dark') return true;
+    if(t==='light') return false;
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; }
+    catch(e){ return false; }
+  }
+  componentWillUnmount(){
+    if(this._raf) cancelAnimationFrame(this._raf);
+  }
+
+  reduceMotion(){
+    if(this.props.previewReducedMotion) return true;
+    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+    catch(e){ return false; }
+  }
+
+  animateSavings(){
+    if(this._raf) cancelAnimationFrame(this._raf);
+    const target = 42.18;
+    if(this.reduceMotion()){ this.setState({ savings: target }); return; }
+    const dur = 1200;
+    const start = performance.now();
+    const tick = (now)=>{
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      this.setState({ savings: target * eased });
+      if(t < 1) this._raf = requestAnimationFrame(tick);
+    };
+    this.setState({ savings: 0 });
+    this._raf = requestAnimationFrame(tick);
+  }
+
+  // ---- chips ----
+  chipStyle(sel){
+    return {
+      display:'inline-flex', alignItems:'center', gap:'9px',
+      padding:'10px 16px', borderRadius:'999px',
+      border:'1px solid ' + (sel ? 'var(--accent)' : 'var(--border-strong)'),
+      background: sel ? 'color-mix(in srgb, var(--accent) 12%, var(--surface-base))' : 'var(--surface-base)',
+      color:'var(--text-primary)', font:"600 14px Inter, system-ui, sans-serif",
+      cursor:'pointer', minHeight:'44px',
+      transition:'border-color .2s cubic-bezier(.2,0,0,1), background .2s cubic-bezier(.2,0,0,1)',
+    };
+  }
+  ringDot(sel){
+    return React.createElement('span', { style:{ width:'18px', height:'18px', borderRadius:'999px', flex:'none',
+      border:'2px solid ' + (sel ? 'var(--accent)' : 'var(--border-strong)'),
+      display:'inline-flex', alignItems:'center', justifyContent:'center' } },
+      sel ? React.createElement('span', { style:{ width:'8px', height:'8px', borderRadius:'999px', background:'var(--accent)' } }) : null);
+  }
+  checkDot(on){
+    return React.createElement('span', { style:{ width:'18px', height:'18px', borderRadius:'999px', flex:'none',
+      background: on ? 'var(--accent)' : 'transparent',
+      border:'2px solid ' + (on ? 'var(--accent)' : 'var(--border-strong)'),
+      color:'var(--text-onfill)', display:'inline-flex', alignItems:'center', justifyContent:'center' } },
+      on ? React.createElement('svg', { width:11, height:11, viewBox:'0 0 16 16', fill:'none' },
+        React.createElement('path', { d:'M3 8.5 6.5 12 13 4.5', stroke:'currentColor', strokeWidth:2.6, strokeLinecap:'round', strokeLinejoin:'round' })) : null);
+  }
+  tabStyle(active){
+    const base = { appearance:'none', border:'none', background:'transparent', color:'var(--text-secondary)',
+      font:"600 13px Inter, system-ui, sans-serif", padding:'8px 18px', borderRadius:'999px', cursor:'pointer',
+      minHeight:'36px', transition:'background .2s cubic-bezier(.2,0,0,1), color .2s cubic-bezier(.2,0,0,1)' };
+    return active ? Object.assign({}, base, { background:'var(--surface-base)', color:'var(--text-primary)', boxShadow:'var(--elev-1)' }) : base;
+  }
+  toggleMulti(k){ this.setState(s=>({ multi: Object.assign({}, s.multi, { [k]: !s.multi[k] }) })); }
+
+  // ---- launcher fan-out ----
+  lIcon(name){
+    const c = { width:17, height:17, viewBox:'0 0 20 20', fill:'none' };
+    const P = (d, extra)=> React.createElement('path', Object.assign({ d, stroke:'currentColor', strokeWidth:1.6, strokeLinecap:'round', strokeLinejoin:'round' }, extra||{}));
+    if(name==='help') return React.createElement('svg', c, React.createElement('circle',{cx:10,cy:10,r:7.2,stroke:'currentColor',strokeWidth:1.6}), React.createElement('circle',{cx:10,cy:10,r:2.6,stroke:'currentColor',strokeWidth:1.6}), P('M12 5l-1.4 2.6M8 15l1.4-2.6M15 12l-2.6-1.4M5 8l2.6 1.4'));
+    if(name==='bell') return React.createElement('svg', c, P('M6 8a4 4 0 0 1 8 0c0 4 1.5 5 1.5 5h-11S6 12 6 8z'), P('M8.5 16a1.6 1.6 0 0 0 3 0'));
+    if(name==='sparkles') return React.createElement('svg', c, P('M10 3l1.6 3.6L15 8l-3.4 1.4L10 13l-1.6-3.6L5 8l3.4-1.4z'), P('M15.5 13l.7 1.6 1.8.7-1.8.7-.7 1.6-.7-1.6-1.8-.7 1.8-.7z'));
+    if(name==='bulb') return React.createElement('svg', c, P('M7 12.5A4.5 4.5 0 1 1 13 12.5c-.8.7-1 1.2-1 2.2H8c0-1-.2-1.5-1-2.2z'), P('M8.2 17h3.6M9 15.5h2'));
+    if(name==='up') return React.createElement('svg', c, React.createElement('circle',{cx:10,cy:10,r:7.2,stroke:'currentColor',strokeWidth:1.6}), P('M10 13.5V7M7 9.5 10 6.5l3 3'));
+    if(name==='gear') return React.createElement('svg', c, React.createElement('circle',{cx:10,cy:10,r:2.4,stroke:'currentColor',strokeWidth:1.6}), P('M10 3.2v1.8M10 15v1.8M16.8 10H15M5 10H3.2M14.8 5.2 13.5 6.5M6.5 13.5 5.2 14.8M14.8 14.8 13.5 13.5M6.5 6.5 5.2 5.2'));
+    return React.createElement('svg', c, P('M5.5 5.5l9 9M14.5 5.5l-9 9'));
+  }
+  tabBtnStyle(hi, i, rm){
+    return { display:'inline-flex', alignItems:'center', gap:'9px', padding:'9px 15px', borderRadius:'999px',
+      border:'1px solid ' + (hi ? 'var(--accent)' : 'var(--border-subtle)'),
+      background: hi ? 'color-mix(in srgb, var(--accent) 12%, var(--surface-raised))' : 'var(--surface-raised)',
+      color:'var(--text-primary)', font:"600 13px Inter, system-ui, sans-serif", cursor:'pointer',
+      minHeight:'40px', boxShadow:'var(--elev-1)', alignSelf:'flex-end',
+      transition:'transform .15s cubic-bezier(.2,0,0,1), filter .15s',
+      animation: rm ? 'none' : ('pifFanIn .28s cubic-bezier(.2,0,0,1.2) both ' + (i*45) + 'ms') };
+  }
+  launcherTabs(tier, rm){
+    const u = this.state.unread;
+    const list = [
+      { label:'Help', icon:this.lIcon('help') },
+      { label:'Messages', icon:this.lIcon('bell'), hi:u },
+    ];
+    if(tier!=='premium') list.push({ label:'Upgrade', icon:this.lIcon('up') });
+    list.push({ label:'Settings', icon:this.lIcon('gear') });
+    list.push({ label:'Close', icon:this.lIcon('x') });
+    return list.map((t,i)=>({ label:t.label, icon:t.icon, hi:!!t.hi, style:this.tabBtnStyle(!!t.hi, i, rm) }));
+  }
+
+  // ---- battery ----
+  battAdvance(n){ this.setState(s=>({ done: Math.max(0, Math.min(9, s.done + n)) })); }
+
+  launcherAvatarSvg(unread){
+    const head = '<svg viewBox="-120 -120 240 240" width="76" height="76"><defs><radialGradient id="la1" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient><radialGradient id="la2" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#2FE39A" stop-opacity="0.55"/><stop offset="1" stop-color="#2FE39A" stop-opacity="0"/></radialGradient></defs>';
+    const glow = '<ellipse cx="0" cy="0" rx="118" ry="118" fill="url(#la2)"/>';
+    const q = '<text x="0" y="-76" fill="#F5B23D" font-size="58" font-weight="700" text-anchor="middle" font-family="Inter,system-ui">?</text>';
+    const body = '<circle cx="0" cy="0" r="72" fill="url(#la1)"/><circle cx="-24" cy="-8" r="11" fill="#0B1220"/><circle cx="24" cy="-8" r="11" fill="#0B1220"/><circle cx="-20" cy="-12" r="4" fill="#fff"/><circle cx="28" cy="-12" r="4" fill="#fff"/><path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/>';
+    const letter = '<circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><path d="M60,-2 Q80,-24 82,-46" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/><g transform="translate(84,-70)"><rect x="-20" y="-14" width="40" height="28" rx="4" fill="#F4F7FB" stroke="#0B1220" stroke-width="2.5"/><path d="M-20,-13 L0,3 L20,-13" fill="none" stroke="#0B1220" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></g>';
+    const cheeks = '<circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/>';
+    return head + glow + q + body + (unread ? letter : cheeks) + '</svg>';
+  }
+
+  // ---- icon registry (catalogued lookup set) ----
+  iconReg(name, size){
+    const c = { width:size||20, height:size||20, viewBox:'0 0 20 20', fill:'none', style:{flex:'none'}, 'aria-hidden':'true' };
+    const P = (d, ex)=> React.createElement('path', Object.assign({ d, stroke:'currentColor', strokeWidth:1.6, strokeLinecap:'round', strokeLinejoin:'round' }, ex||{}));
+    const C = (cx,cy,r,ex)=> React.createElement('circle', Object.assign({ cx,cy,r, stroke:'currentColor', strokeWidth:1.6 }, ex||{}));
+    const D = (cx,cy,r)=> React.createElement('circle', { cx,cy,r, fill:'currentColor' });
+    const m = {
+      // device.*
+      'ev-charger':()=>[P('M3 13l1.3-3.3a1 1 0 0 1 .93-.62h4.54a1 1 0 0 1 .93.62L12 13M3 13v2.3M12 13v2.3M3.5 13h8.5'),D(5,15.3,1),D(10.5,15.3,1),P('M15.5 5.5l-1.6 2.6h1.8L14.3 11')],
+      'thermostat-hvac':()=>[C(10,10,6.6),C(10,10,1.9),P('M10 3.4V4.9')],
+      'water-heater':()=>[P('M6 3.5h8v13H6z'),P('M10 8s1.9 2.1 1.9 3.3a1.9 1.9 0 0 1-3.8 0C8.1 10.1 10 8 10 8z')],
+      'dryer':()=>[P('M4 4h12v12H4z'),C(10,11,3.3),D(10,11,0.6),P('M6.4 6.6h.01M8.6 6.6h.01')],
+      'dishwasher':()=>[P('M4 4h12v12H4zM4 7.4h12'),P('M6.3 5.6h.01'),P('M8.5 12.4h3')],
+      'pool-pump-spa':()=>[P('M4 13.5c1.1 0 1.1-1 2.2-1s1.1 1 2.2 1 1.1-1 2.2-1 1.1 1 2.2 1'),P('M4 16c1.1 0 1.1-1 2.2-1s1.1 1 2.2 1 1.1-1 2.2-1 1.1 1 2.2 1'),P('M7 10V6M10 10V5M13 10V6')],
+      'home-battery':()=>[P('M3 7h11v6H3zM14 9h2v2h-2'),P('M8.4 8l-1.2 2.3h1.5L8 12.4')],
+      'solar-inverter':()=>[C(10,9.6,3),P('M10 3.2V4.8M10 14.4V16M3.4 9.6H5M15 9.6h1.6M5.4 5l1.1 1.1M13.5 13.1l1.1 1.1M14.6 5l-1.1 1.1M6.5 13.1l-1.1 1.1')],
+      'smart-plug':()=>[P('M7.6 3.5v3.2M12.4 3.5v3.2M6 6.5h8v2.3a4 4 0 0 1-8 0zM10 12.8V16.5')],
+      'smart-home-hub':()=>[C(10,10,1.9),C(10,4.6,1.3),C(10,15.4,1.3),C(4.6,10,1.3),C(15.4,10,1.3),P('M10 6.6v1.4M10 12v1.4M6.5 10h1.4M12.1 10h1.4')],
+      'space-heater':()=>[P('M3.6 4.6h12.8v10.8H3.6z'),P('M6 7v6M8.4 7v6M11 7v6M13.4 7v6')],
+      'well-pump':()=>[P('M3.4 15.5h13.2'),P('M10 15.5V7.4M7.4 10 10 7.4l2.6 2.6'),P('M6 15.5c0-2.4 8-2.4 8 0')],
+      'generic':()=>[P('M5 5h10v10H5z'),D(10,10,1.6)],
+      // action.*
+      'shift-delay':()=>[P('M4 8h9l-2.4-2.4M16 12H7l2.4 2.4')],
+      'charge':()=>[P('M4 9.5h9v4H4zM13 10.8h2v1.4h-2'),P('M8.5 3v4M6.6 5.2l1.9 1.9 1.9-1.9')],
+      'discharge':()=>[P('M4 9.5h9v4H4zM13 10.8h2v1.4h-2'),P('M8.5 7V3M6.6 4.8l1.9-1.9 1.9 1.9')],
+      'pre-cool':()=>[P('M10 3v14M4.2 6.5l11.6 7M15.8 6.5l-11.6 7M10 6.2 8.1 4.3M10 6.2l1.9-1.9M10 13.8l-1.9 1.9M10 13.8l1.9 1.9')],
+      'pre-heat':()=>[P('M7 16c0-2-2-2-2-4s2-2 2-4M10 16c0-2-2-2-2-4s2-2 2-4M13 16c0-2-2-2-2-4s2-2 2-4')],
+      'hold-reserve':()=>[P('M10 3 4.7 5.1v4.1c0 3.3 2.2 5.4 5.3 6.8 3.1-1.4 5.3-3.5 5.3-6.8V5.1z'),P('M8.2 9.2h3.6v2.6H8.2z')],
+      'sell-to-grid':()=>[P('M7 16l1-10M13 16l-1-10M7.4 9.4h5.2M6 6.4h8l-1-2.4H7z'),P('M10 12.2V15')],
+      'nudge-advisory':()=>[P('M6.6 9a3.4 3.4 0 0 1 6.8 0c0 3.4 1.2 4.3 1.2 4.3H5.4S6.6 12.4 6.6 9z'),P('M8.8 15.5a1.4 1.4 0 0 0 2.4 0'),P('M15.2 3.4l.55 1.35L17 5.3l-1.25.55L15.2 7l-.55-1.15L13.4 5.3l1.25-.55z')],
+      // status.*
+      'active':()=>[C(10,10,6.8),P('M6.8 10.2 9 12.4 13.4 7.8')],
+      'dormant':()=>[C(10,10,6.8),P('M8.4 7.6v4.8M11.6 7.6v4.8')],
+      'stale':()=>[P('M6 4h8M6 16h8M7 4c0 3 6 3 6 6s-6 3-6 6M13 4c0 3-6 3-6 6')],
+      'unclassified':()=>[C(10,10,6.8),P('M8.2 8.2a1.85 1.85 0 0 1 3.5.7c0 1.2-1.7 1.4-1.7 2.6'),D(10,13.7,0.55)],
+      'protected':()=>[P('M10 3 4.7 5.1v4.1c0 3.3 2.2 5.4 5.3 6.8 3.1-1.4 5.3-3.5 5.3-6.8V5.1z')],
+      'critical':()=>[P('M6.4 9.2V7a3.6 3.6 0 0 1 7.2 0v2.2'),P('M5.4 9.2h9.2v6.6H5.4z'),D(10,12.2,0.8)],
+      'error':()=>[P('M10 3.4 17.2 16.6H2.8z'),P('M10 8.4v3.4'),D(10,14.2,0.5)],
+      'offline':()=>[P('M3.4 8.1a10 10 0 0 1 13.2 0M6 10.7a6 6 0 0 1 8 0M8.3 13.2a2.6 2.6 0 0 1 3.4 0'),D(10,15.6,0.6),P('M4 4l12 12')],
+      // tier.*
+      'banked':()=>[P('M4 7c0-1.3 2.7-2.3 6-2.3s6 1 6 2.3-2.7 2.3-6 2.3-6-1-6-2.3zM4 7v5c0 1.3 2.7 2.3 6 2.3s6-1 6-2.3V7')],
+      'measured':()=>[P('M4 13a6 6 0 0 1 12 0'),P('M10 13l3.2-3')],
+      'modeled':()=>[P('M4 14c3.5 0 4.5-8 12-8'),P('M13 6h3v3')],
+      'advisory':()=>[P('M7 11V6.4a1.2 1.2 0 0 1 2.4 0V10M9.4 9.6V4.8a1.2 1.2 0 0 1 2.4 0V10M11.8 6.2a1.2 1.2 0 0 1 2.4 0V12a4 4 0 0 1-4 4H9a3 3 0 0 1-2.3-1.1L4.2 12.2s.8-1 2-.5l.8.4')],
+      // ui / chrome — the generic glyphs every screen composes from (adopted from Batches 2–6)
+      'search':()=>[C(9,9,5.4),P('M13 13l3.5 3.5')],
+      'user':()=>[C(10,7,3),P('M4.5 16a5.5 5.5 0 0 1 11 0')],
+      'users':()=>[C(7.5,8,2.4),P('M3.4 15.2a4.1 4.1 0 0 1 8.2 0'),P('M13 6.4a2.3 2.3 0 0 1 0 4.4M13.6 15.2a4.1 4.1 0 0 0-1.7-3.3')],
+      'lock':()=>[P('M6.4 9.2V7a3.6 3.6 0 0 1 7.2 0v2.2'),P('M5.4 9.2h9.2v6.6H5.4z'),D(10,12.2,0.8)],
+      'key':()=>[C(7,10,3),P('M9.6 9.4 16 3M13.5 5.5l1.6 1.6M12 7l1.6 1.6')],
+      'card':()=>[P('M3 6h14v8H3zM3 9h14')],
+      'tag':()=>[P('M10 3H4v6l7 7 6-6-7-7z'),D(6.6,6.6,1)],
+      'bell':()=>[P('M6 8a4 4 0 0 1 8 0c0 4 1.5 5 1.5 5h-11S6 12 6 8z'),P('M8.5 16a1.6 1.6 0 0 0 3 0')],
+      'mail':()=>[P('M3 5h14v10H3zM3 6l7 5 7-5')],
+      'gear':()=>[C(10,10,2.4),P('M10 3.2v1.8M10 15v1.8M16.8 10H15M5 10H3.2M14.8 5.2 13.5 6.5M6.5 13.5 5.2 14.8M14.8 14.8 13.5 13.5M6.5 6.5 5.2 5.2')],
+      'home':()=>[P('M4 9l6-5 6 5v7H4z')],
+      'doc':()=>[P('M6 3h6l3 3v11H6zM12 3v3h3'),P('M8 10h5M8 13h5')],
+      'receipt':()=>[P('M6 3h8v14l-2-1.3-2 1.3-2-1.3-2 1.3z'),P('M8 7h4M8 10h4')],
+      'star':()=>[P('M10 3.5l1.9 3.9 4.3.6-3.1 3 .7 4.3L10 13.3 6.3 15.3l.7-4.3-3.1-3 4.3-.6z')],
+      'sparkles':()=>[P('M10 3l1.6 3.6L15 8l-3.4 1.4L10 13l-1.6-3.6L5 8l3.4-1.4z'),P('M15.5 13l.7 1.6 1.8.7-1.8.7-.7 1.6-.7-1.6-1.8-.7 1.8-.7z')],
+      'gift':()=>[P('M4 9h12v7H4zM4 6.5h12V9H4zM10 6.5V16'),P('M10 6.5C10 4.8 8.7 4 7.6 4.4S6.6 6.5 10 6.5M10 6.5C10 4.8 11.3 4 12.4 4.4S13.4 6.5 10 6.5')],
+      'share':()=>[C(6,10,2),C(14,6,2),C(14,14,2),P('M7.8 9l4.4-2M7.8 11l4.4 2')],
+      'copy':()=>[P('M7.5 7.5h7v8h-7zM5.5 12.5h-1v-8h8v1')],
+      'grip':()=>[D(7.5,6,1),D(12.5,6,1),D(7.5,10,1),D(12.5,10,1),D(7.5,14,1),D(12.5,14,1)],
+      'up':()=>[C(10,10,7),P('M10 13.5V7M7 9.5 10 6.5l3 3')],
+      'down':()=>[C(10,10,7),P('M10 6.5V13M13 10.5 10 13.5l-3-3')],
+      'x':()=>[P('M5.5 5.5l9 9M14.5 5.5l-9 9')],
+      'chevron':()=>[P('M5 8l5 5 5-5')],
+      'chevronR':()=>[P('M8 5l5 5-5 5')],
+      'plus':()=>[P('M10 4v12M4 10h12')],
+      'minus':()=>[P('M4 10h12')],
+      'download':()=>[P('M10 3v9M6.5 8.5 10 12l3.5-3.5M4 15.5h12')],
+      'trash':()=>[P('M4 6h12M8 6V4.5h4V6M6 6l.8 10h6.4L14 6')],
+      'clock':()=>[C(10,10,7),P('M10 6.4V10l2.4 1.6')],
+      'back':()=>[P('M15 10H4M9 5 4 10l5 5')],
+      'arrow':()=>[P('M4 10h11M11 5l5 5-5 5')],
+      'info':()=>[C(10,10,7.2),P('M10 9v4M10 6.6h.01')],
+      'warn':()=>[P('M10 3.4 17.2 16.6H2.8z'),P('M10 8.4v3.4'),D(10,14.2,0.5)],
+      'check':()=>[P('M4 10.5 8 14.5 16 5.5')],
+      'refresh':()=>[P('M15.5 8A6 6 0 1 0 16 11'),P('M16 4v4h-4')],
+      'tiers':()=>[P('M4 15h3V9H4zM8.5 15h3V5h-3zM13 15h3v-4h-3z')],
+      'swap':()=>[P('M5 7h10l-2.5-2.5M15 13H5l2.5 2.5')],
+      'logout':()=>[P('M8 4H4v12h4M12 7l3 3-3 3M15 10H7')],
+      'phone':()=>[P('M6.5 3.5h7v13h-7z'),P('M9 14.5h2')],
+      'monitor':()=>[P('M3 5h14v9H3zM7.5 17h5M10 14v3')],
+      'dot':()=>[D(10,10,3)],
+      'bolt':()=>[P('M11 3 5 11h4l-1 6 6-8h-4z')],
+      'heat-pump':()=>[P('M10 4v7'),C(10,13,2.4),P('M8 4h4')],
+      'billchecked':()=>[C(10,10,6.8),P('M6.8 10.2 9 12.4 13.4 7.8')],
+      'controllable':()=>[P('M10 3v6'),P('M6 6.5a6 6 0 1 0 8 0')],
+      'cal':()=>[P('M4 5h12v11H4zM4 8h12M8 3v3M12 3v3')],
+      'eye':()=>[P('M2.5 10S5.5 5 10 5s7.5 5 7.5 5-3 5-7.5 5-7.5-5-7.5-5z'),C(10,10,2.2)],
+      'link':()=>[P('M8 12a3 3 0 0 1 0-4l2-2a3 3 0 0 1 4 4l-1 1'),P('M12 8a3 3 0 0 1 0 4l-2 2a3 3 0 0 1-4-4l1-1')],
+      'power':()=>[P('M10 3v6'),P('M6 6.5a6 6 0 1 0 8 0')],
+      'shield':()=>[P('M10 3 4.5 5.2v4.3c0 3.4 2.3 5.6 5.5 7 3.2-1.4 5.5-3.6 5.5-7V5.2z')],
+      'sliders':()=>[P('M4 6h8M15 6h1M4 10h1M8 10h8M4 14h5M12 14h4'),D(13,6,1.4),D(6,10,1.4),D(10,14,1.4)],
+      'sun':()=>[C(10,10,3),P('M10 3v1.5M10 15.5V17M3 10h1.5M15.5 10H17')],
+      'wifi':()=>[P('M3 8a10 10 0 0 1 14 0M5.5 10.6a6 6 0 0 1 9 0M8 13.2a2.4 2.4 0 0 1 4 0'),D(10,16,0.6)],
+      'cross':()=>[P('M6 6l8 8M14 6l-8 8')],
+      // media / misc chrome (added here first — dropped from Batches 3/6 in the re-sync)
+      'alert':()=>[P('M7 3.2h6L16.8 7v6L13 16.8H7L3.2 13V7z'),P('M10 6.6v4.2'),D(10,13.2,0.6)],
+      'ellipsis':()=>[D(5,10,1.05),D(10,10,1.05),D(15,10,1.05)],
+      'moon':()=>[P('M14.6 11.6A6 6 0 0 1 8.2 4a5.7 5.7 0 1 0 6.4 7.6z')],
+      'pause':()=>[P('M7.6 5v10M12.4 5v10')],
+      'play':()=>[P('M6.8 5l7.6 5-7.6 5z')],
+      'puzzle':()=>[P('M8 4.6a1.6 1.6 0 0 1 3.2 0c0 .7.5 1 1.1 1H13.8v2.5c0 .6.3 1.1 1 1.1a1.6 1.6 0 0 1 0 3.2c-.7 0-1 .5-1 1.1V16H11.3c-.6 0-1.1-.3-1.1-1a1.6 1.6 0 0 0-3.2 0c0 .7-.5 1-1.1 1H4v-2.4c0-.6.3-1.1 1-1.1a1.6 1.6 0 0 0 0-3.2c-.7 0-1-.5-1-1.1V5.6h2.9c.6 0 1.1-.3 1.1-1z')],
+      'skip':()=>[P('M6 5l6 5-6 5zM14 5v10')],
+      'trenddown':()=>[P('M4 6.5l4.8 4.8L11.2 8.9l4.8 4.8'),P('M12.8 13.7h3.2v-3.2')],
+      'truck':()=>[P('M3 6h9v7.5H3zM12 8.4h3l2 2.6v2.5h-5'),C(6,15.2,1.3),C(14.4,15.2,1.3)],
+      // quiz answer glyphs — adopted verbatim from the onboarding quiz (Batch 2). The 10 others
+      // the quiz uses (check, clock, home, key, minus, phone, shield, sparkles, sun, up) resolve
+      // from the entries above; quiz draws from here too.
+      'building':()=>[P('M5 17V4h10v13'),P('M8 7h1M11 7h1M8 10h1M11 10h1M8 13h1M11 13h1')],
+      'door':()=>[P('M6 17V4h8v13'),C(11.5,10,.6,{fill:'currentColor',stroke:'none'})],
+      'file':()=>[P('M6 3h5l3 3v11H6z'),P('M11 3v3h3')],
+      'briefcase':()=>[P('M4 7h12v9H4z'),P('M7.5 7V5h5v2')],
+      'shuffle':()=>[P('M4 6h3l7 8h3M4 14h3l2-2.3M14 4l3 2-3 2M12 12l2 2 3-2')],
+      'snow':()=>[P('M10 3v14M4 6.5l12 7M16 6.5l-12 7')],
+      'thermo':()=>[P('M10 4v7'),C(10,13,2.4),P('M8 4h4')],
+      'fan':()=>[C(10,10,1.6),P('M10 8.4C10 5 7 4 6 6s1 4 4 2.4M11.6 10c3.4 0 4.4 3 2.4 4s-4-1-2.4-4M10 11.6c0 3.4-3 4.4-4 2.4s1-4 4-2.4')],
+      'ban':()=>[C(10,10,6.5),P('M5.5 5.5l9 9')],
+      'flame':()=>[P('M10 3s4 3.5 4 7a4 4 0 0 1-8 0c0-1.5 1-2.5 1-2.5S8 8 10 3z')],
+      'zap':()=>[P('M11 3 5 11h4l-1 6 6-8h-4z')],
+      'help':()=>[C(10,10,6.5),P('M8 8a2 2 0 1 1 2.6 1.9c-.4.2-.6.6-.6 1.1M10 13.4h.01')],
+      'disc':()=>[C(10,10,6.5),C(10,10,1.4,{fill:'currentColor',stroke:'none'})],
+      'menu':()=>[P('M5 6h10M5 10h10M5 14h6')],
+      'plug':()=>[P('M8 3v4M12 3v4M6 7h8v2a4 4 0 0 1-8 0zM10 13v4')],
+      'droplet':()=>[P('M10 3s5 5.5 5 8.5a5 5 0 0 1-10 0C5 8.5 10 3 10 3z')],
+      'waves':()=>[P('M3 7c1.5-1.5 3-1.5 4.5 0S10.5 8.5 12 7s3-1.5 4.5 0M3 12c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0')],
+      'car':()=>[P('M4 12l1.5-4.5h9L16 12M4 12h12v3H4zM5 12v-.5'),C(6.5,15,1),C(13.5,15,1)],
+      'map':()=>[P('M10 3c3 0 5 2 5 5 0 3.5-5 9-5 9S5 11.5 5 8c0-3 2-5 5-5z'),C(10,8,1.6)],
+      'calendar':()=>[P('M4 5h12v12H4zM4 8h12M7 3v3M13 3v3')],
+      'battery':()=>[P('M3 7h11v6H3zM14 9h2v2h-2'),P('M8 8 6.5 10.2H8.8L7.5 12')],
+      'scale':()=>[P('M10 4v12M6 16h8M5 7h10M5 7l-2 4h4zM15 7l-2 4h4z')],
+      'dollar':()=>[P('M10 3.5v13M12.6 6.4C12 5.4 11 5 10 5 8.4 5 7.2 5.8 7.2 7.2 7.2 10 13 9 13 12c0 1.5-1.3 2.4-3 2.4-1.2 0-2.3-.5-2.8-1.5')],
+      'hand':()=>[P('M7 11V5.5a1.2 1.2 0 0 1 2.4 0V10M9.4 9.5V4.5a1.2 1.2 0 0 1 2.4 0V10M11.8 6a1.2 1.2 0 0 1 2.4 0v6a4 4 0 0 1-4 4H9a3 3 0 0 1-2.3-1.1L4 12s.8-1 2-.5l1 .5')],
+    };
+    const f = m[name] || m['generic'];
+    return React.createElement('svg', c, ...f());
+  }
+  iconRegistry(){
+    const A_STANDALONE='Standalone (e.g. a device row) → give it an accessible name.';
+    const A_PAIRED='Paired with a visible text label → aria-hidden.';
+    const dev=[
+      ['device.ev-charger','EV charger','ev-charger'],['device.thermostat','Thermostat / HVAC','thermostat-hvac'],
+      ['device.water-heater','Water heater','water-heater'],['device.dryer','Dryer','dryer'],
+      ['device.dishwasher','Dishwasher','dishwasher'],['device.pool-pump','Pool pump / spa','pool-pump-spa'],
+      ['device.home-battery','Home battery','home-battery'],['device.solar','Solar / inverter','solar-inverter'],
+      ['device.smart-plug','Smart plug','smart-plug'],['device.hub','Smart-home hub','smart-home-hub'],
+      ['device.space-heater','Space heater','space-heater'],['device.well-pump','Well pump','well-pump'],
+      ['device.heat-pump','Heat pump','heat-pump'],
+      ['device.generic','Generic (fallback)','generic'],
+    ];
+    const act=[
+      ['action.shift','Shift / delay','shift-delay'],['action.charge','Charge','charge'],
+      ['action.discharge','Discharge','discharge'],['action.precool','Pre-cool','pre-cool'],
+      ['action.preheat','Pre-heat','pre-heat'],['action.hold-reserve','Hold reserve','hold-reserve'],
+      ['action.sell','Sell to grid','sell-to-grid'],['action.nudge','Nudge / advisory','nudge-advisory'],
+    ];
+    const stat=[
+      ['status.active','Active','active','var(--success)'],['status.dormant','Dormant · out of tier','dormant','var(--text-secondary)'],
+      ['status.stale','Stale','stale','var(--warning)'],['status.unclassified','Unclassified','unclassified','var(--info)'],
+      ['status.protected','Protected','protected','var(--info)'],['status.critical','Critical — never touch','critical','var(--danger)'],
+      ['status.error','Error','error','var(--danger)'],['status.offline','Offline','offline','var(--warning)'],
+      ['status.controllable','Controllable · control grant','controllable','var(--accent)'],
+    ];
+    const tier=[
+      ['tier.banked','Banked','banked','var(--tier-banked)'],['tier.measured','Measured','measured','var(--tier-measured)'],
+      ['tier.modeled','Modeled','modeled','var(--tier-modeled)'],['tier.advisory','Advisory','advisory','var(--tier-advisory)'],
+      ['tier.billchecked','Bill-checked','billchecked','var(--success)'],
+    ];
+    const A_UI='Context-dependent: an icon-only control gets an accessible name; an icon beside a visible label is aria-hidden.';
+    const ui=[
+      ['ui.search','Search','search'],['ui.gear','Settings','gear'],['ui.bell','Notifications','bell'],['ui.mail','Email','mail'],
+      ['ui.lock','Lock','lock'],['ui.key','Passkey','key'],['ui.card','Card','card'],['ui.tag','Price tag','tag'],['ui.download','Download','download'],
+      ['ui.trash','Delete','trash'],['ui.home','Home','home'],['ui.user','User','user'],['ui.users','Users','users'],
+      ['ui.info','Info','info'],['ui.warn','Warning','warn'],['ui.check','Check','check'],['ui.close','Close (x / cross)','x'],
+      ['ui.chevron','Chevron','chevron'],['ui.chevron-right','Chevron right','chevronR'],['ui.back','Back','back'],['ui.arrow','Arrow','arrow'],
+      ['ui.up','Up','up'],['ui.down','Down','down'],['ui.plus','Plus','plus'],['ui.minus','Minus','minus'],
+      ['ui.clock','Clock','clock'],['ui.refresh','Refresh','refresh'],['ui.doc','Document','doc'],['ui.receipt','Receipt / ledger','receipt'],['ui.star','Star','star'],
+      ['ui.sparkles','Sparkles','sparkles'],['ui.gift','Gift','gift'],['ui.share','Share','share'],['ui.copy','Copy','copy'],
+      ['ui.grip','Grip (drag)','grip'],['ui.dot','Dot','dot'],['ui.bolt','Bolt','bolt'],['ui.tiers','Tiers','tiers'],
+      ['ui.swap','Swap','swap'],['ui.logout','Sign out','logout'],['ui.phone','Phone','phone'],['ui.monitor','Monitor','monitor'],
+      ['ui.eye','Eye · visible-only','eye'],['ui.link','Link / connect','link'],['ui.power','Power','power'],['ui.shield','Shield','shield'],
+      ['ui.sliders','Sliders','sliders'],['ui.sun','Sun','sun'],['ui.wifi','Wi-Fi','wifi'],['ui.cal','Calendar','cal'],
+      ['ui.alert','Alert','alert'],['ui.ellipsis','More (⋯)','ellipsis'],['ui.moon','Moon','moon'],['ui.pause','Pause','pause'],
+      ['ui.play','Play','play'],['ui.skip','Skip','skip'],['ui.puzzle','Puzzle / integration','puzzle'],['ui.trenddown','Trend down','trenddown'],
+      ['ui.truck','Truck / moving','truck'],
+    ];
+    const quiz=[
+      ['quiz.home','Home','home'],['quiz.building','Building','building'],['quiz.door','Door','door'],['quiz.key','Key','key'],
+      ['quiz.file','File','file'],['quiz.sun','Sun','sun'],['quiz.briefcase','Briefcase','briefcase'],['quiz.shuffle','Shuffle','shuffle'],
+      ['quiz.snow','Snow / cool','snow'],['quiz.thermo','Thermostat','thermo'],['quiz.fan','Fan','fan'],['quiz.ban','Ban / none','ban'],
+      ['quiz.flame','Flame / heat','flame'],['quiz.zap','Zap','zap'],['quiz.clock','Clock','clock'],['quiz.minus','Minus','minus'],
+      ['quiz.help','Help / unsure','help'],['quiz.disc','Disc','disc'],['quiz.menu','Menu','menu'],['quiz.phone','Phone','phone'],
+      ['quiz.plug','Plug','plug'],['quiz.droplet','Droplet','droplet'],['quiz.waves','Waves','waves'],['quiz.car','Car','car'],
+      ['quiz.map','Map','map'],['quiz.calendar','Calendar','calendar'],['quiz.battery','Battery','battery'],['quiz.shield','Shield','shield'],
+      ['quiz.scale','Scale','scale'],['quiz.up','Up','up'],['quiz.check','Check','check'],['quiz.dollar','Dollar','dollar'],
+      ['quiz.sparkles','Sparkles','sparkles'],['quiz.hand','Hand','hand'],
+    ];
+    const mk=(rows,defColor,a11y,fallbackKey)=> rows.map(r=>({ key:r[0], name:r[1], icon:this.iconReg(r[2],22), color:r[3]||defColor, a11y, fallback: r[0]===fallbackKey,
+      tileStyle:'display:flex;gap:11px;align-items:flex-start;background:var(--surface-raised);border:1px solid '+(r[0]===fallbackKey?'var(--accent)':'var(--border-subtle)')+';border-radius:13px;padding:12px 13px;box-shadow:var(--elev-1)' }));
+    return [
+      { title:'Device categories', prefix:'device.*', note:'One per controllable load. device.generic is the mandatory fallback — resolve to it whenever a category is unknown (we capture unrecognised brands/categories in the quiz).', items:mk(dev,'var(--accent)',A_STANDALONE,'device.generic') },
+      { title:'Action / lever types', prefix:'action.*', note:'What appears in Tonight\u2019s Plan and ledger rows — the lever PIF pulled.', items:mk(act,'var(--secondary)',A_PAIRED) },
+      { title:'Status', prefix:'status.*', note:'Device and connection state. Always shown with its text label — never colour alone.', items:mk(stat,'var(--text-secondary)',A_PAIRED) },
+      { title:'Evidence tiers', prefix:'tier.*', note:'How a dollar figure was derived. Every figure carries exactly one tier.', items:mk(tier,'var(--text-secondary)',A_PAIRED) },
+      { title:'UI / chrome icons', prefix:'ui.*', note:'The generic glyphs every screen composes from — nav, controls, chrome. Adopted verbatim from the screen batches; one canonical drawing each. Every screen icon (chrome included) resolves from here.', items:mk(ui,'var(--text-secondary)',A_UI) },
+      { title:'Quiz answer glyphs', prefix:'quiz.*', note:'The answer-chip glyphs the onboarding quiz (Batch 2) draws from. Adopted verbatim from the quiz; the quiz now resolves them from here so it draws from Foundations too. Ten (home, key, sun, clock, minus, phone, shield, sparkles, up, check) are shared with the sets above — one canonical drawing each.', items:mk(quiz,'var(--text-secondary)',A_PAIRED) },
+    ];
+  }
+
+  renderVals(){
+    const theme = this.state.theme;
+    const rm = this.reduceMotion();
+
+    const LINES = {
+      0:"Ready to build your savings? Let's jump in!", 1:"Great start!", 2:"Nice — that helps a lot!",
+      3:"You're doing great!", 4:"Love it — keep going!", 5:"Looking good!", 6:"You're on a roll!",
+      7:"So close now!", 8:"Almost done!", 9:"All charged up!"
+    };
+    const IONA = {
+      welcome: '<svg viewBox="0 0 84 84" width="48" height="48"><defs><radialGradient id="ib1" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient></defs><g transform="translate(42,48) scale(0.28)"><path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" fill="#F5B23D"/><circle cx="0" cy="0" r="72" fill="url(#ib1)"/><circle cx="-24" cy="-8" r="11" fill="#0B1220"/><circle cx="24" cy="-8" r="11" fill="#0B1220"/><circle cx="-20" cy="-12" r="4" fill="#fff"/><circle cx="28" cy="-12" r="4" fill="#fff"/><path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/><circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><path d="M62,-6 Q92,-30 86,-58" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/><circle cx="86" cy="-62" r="12" fill="#2FE39A"/></g></svg>',
+      thumbs: '<svg viewBox="0 0 84 84" width="48" height="48"><defs><radialGradient id="ib2" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient></defs><g transform="translate(42,48) scale(0.28)"><path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" fill="#F5B23D"/><circle cx="0" cy="0" r="72" fill="url(#ib2)"/><path d="M-34,-8 Q-24,-18 -14,-8" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/><path d="M14,-8 Q24,-18 34,-8" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/><path d="M-24,16 Q0,44 24,16" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/><circle cx="-44" cy="12" r="8" fill="#5CF3B6" opacity="0.5"/><circle cx="44" cy="12" r="8" fill="#5CF3B6" opacity="0.5"/><path d="M60,10 Q86,4 92,-16" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/><circle cx="94" cy="-20" r="13" fill="#2FE39A"/><rect x="90" y="-34" width="8" height="14" rx="4" fill="#2FE39A"/></g></svg>',
+      celebrate: '<svg viewBox="0 0 84 84" width="48" height="48"><defs><radialGradient id="ib3" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient></defs><g transform="translate(42,48) scale(0.28)"><path d="M74,-40 l3,7 l7,3 l-7,3 l-3,7 l-3,-7 l-7,-3 l7,-3 z" fill="#5CF3B6"/><circle cx="0" cy="0" r="72" fill="url(#ib3)"/><path d="M-24,-12 l3,7 l7,1 l-5,5 l1,7 l-6,-4 l-6,4 l1,-7 l-5,-5 l7,-1 z" fill="#0B1220"/><path d="M24,-12 l3,7 l7,1 l-5,5 l1,7 l-6,-4 l-6,4 l1,-7 l-5,-5 l7,-1 z" fill="#0B1220"/><path d="M-18,18 Q0,40 18,18 Q0,30 -18,18 Z" fill="#0B1220"/><path d="M60,-6 Q84,-26 80,-52" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/><path d="M-60,-6 Q-84,-26 -80,-52" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/><circle cx="80" cy="-56" r="11" fill="#2FE39A"/><circle cx="-80" cy="-56" r="11" fill="#2FE39A"/><path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" transform="translate(78,0)" fill="#F5B23D" stroke="#0B1220" stroke-width="2"/></g></svg>'
+    };
+    const done = this.state.done, charge = done/9;
+    const pose = done>=9 ? 'celebrate' : (done>=2 ? 'thumbs' : 'welcome');
+    const fillStyle = { position:'absolute', left:'5px', top:'5px', bottom:'5px',
+      width:'calc(' + charge.toFixed(4) + ' * (100% - 10px))', borderRadius:'11px',
+      background:'linear-gradient(90deg,#2FE39A,#12B76A)',
+      boxShadow:'0 0 18px rgba(47,227,154,.45) inset, 0 0 14px rgba(47,227,154,.35)',
+      transition: rm ? 'none' : 'width .55s cubic-bezier(.2,0,0,1)' };
+    const boltStyle = (left, lit)=>({ position:'absolute', left, top:'5px', bottom:'5px', width:'16px',
+      transform:'translateX(-50%)', zIndex:3, color: lit ? '#F5B23D' : '#6b5a2a', opacity: lit ? 1 : .85,
+      filter: lit ? 'drop-shadow(0 0 8px rgba(245,178,61,.8))' : 'none',
+      transition: rm ? 'none' : 'filter .4s, opacity .4s' });
+    const ionaFace = React.createElement('span', { style:{ display:'inline-flex',
+      filter:'drop-shadow(0 0 6px rgba(47,227,154,.55))',
+      transform: done>=9 ? 'scale(1.12)' : 'none',
+      transition: rm ? 'none' : 'transform .4s cubic-bezier(.2,0,0,1)' },
+      dangerouslySetInnerHTML:{ __html: IONA[pose] } });
+
+    const singleOpts = [ {k:'allday',label:'Most of the day'}, {k:'workdays',label:'Away on workdays'}, {k:'varies',label:'Varies'} ];
+    const multiOpts = [ {k:'ev',label:'EV charger'}, {k:'well',label:'Well pump'}, {k:'heat',label:'Space heaters'} ];
+    const tabOpts = [ {k:'day',label:'Day'}, {k:'week',label:'Week'}, {k:'month',label:'Month'}, {k:'year',label:'Year'} ];
+    const multiCount = Object.keys(this.state.multi).filter(k=>this.state.multi[k]).length;
+
+    const uOn = this.state.unread;
+    const unreadTrackStyle = { appearance:'none', border:'none', cursor:'pointer', padding:'2px', width:'48px', height:'28px',
+      borderRadius:'999px', background: uOn ? 'var(--accent)' : 'var(--border-strong)', display:'inline-flex', alignItems:'center',
+      justifyContent: uOn ? 'flex-end' : 'flex-start', transition:'background .2s cubic-bezier(.2,0,0,1)', flex:'none' };
+    const unreadKnobStyle = { width:'22px', height:'22px', borderRadius:'999px', background: uOn ? 'var(--text-onfill)' : '#FFFFFF',
+      boxShadow:'0 1px 2px rgba(0,0,0,.3)', display:'block' };
+    const launcherAvatar = React.createElement('span', { style:{ display:'inline-flex',
+      filter:'drop-shadow(0 0 8px rgba(47,227,154,.4))' },
+      dangerouslySetInnerHTML:{ __html: this.launcherAvatarSvg(uOn) } });
+
+    const segBase = {
+      appearance:'none', border:'none', background:'transparent',
+      color:'var(--text-secondary)', font:"600 13px Inter, system-ui, sans-serif",
+      padding:'8px 15px', borderRadius:'999px', cursor:'pointer',
+      display:'inline-flex', alignItems:'center', gap:'6px', minHeight:'36px',
+      transition:'background .2s cubic-bezier(.2,0,0,1), color .2s cubic-bezier(.2,0,0,1)',
+    };
+    const segActive = { background:'var(--surface-base)', color:'var(--text-primary)', boxShadow:'var(--elev-1)' };
+
+    const icon = (mode)=>{
+      const c = { width:14, height:14, viewBox:'0 0 16 16', fill:'none' };
+      if(mode==='light'){
+        return React.createElement('svg', c,
+          React.createElement('circle',{cx:8,cy:8,r:3.2,fill:'currentColor'}),
+          React.createElement('path',{d:'M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15M3 3l1.1 1.1M11.9 11.9 13 13M13 3l-1.1 1.1M4.1 11.9 3 13',stroke:'currentColor','strokeWidth':1.3,'strokeLinecap':'round'}));
+      }
+      if(mode==='dark'){
+        return React.createElement('svg', c,
+          React.createElement('path',{d:'M13 9.5A6 6 0 0 1 6.5 3 5.6 5.6 0 1 0 13 9.5z',fill:'currentColor'}));
+      }
+      // system / auto
+      return React.createElement('svg', c,
+        React.createElement('circle',{cx:8,cy:8,r:6,stroke:'currentColor','strokeWidth':1.4}),
+        React.createElement('path',{d:'M8 2a6 6 0 0 1 0 12z',fill:'currentColor'}));
+    };
+
+    const mk = (mode,label)=>({
+      mode, label, active: theme===mode,
+      icon: icon(mode),
+      onSelect: ()=> this.setState({ theme: mode }),
+      style: theme===mode ? Object.assign({}, segBase, segActive) : segBase,
+    });
+
+    const roles = [
+      { name:'surface.base',   light:'#FFFFFF', dark:'#0B1220', swatch:'var(--surface-base)' },
+      { name:'surface.raised', light:'#F4F7FB', dark:'#141E32', swatch:'var(--surface-raised)' },
+      { name:'surface.sunken', light:'#E9EEF6', dark:'#070C16', swatch:'var(--surface-sunken)' },
+      { name:'text.primary',   light:'#16233B', dark:'#E9EEF7', swatch:'var(--text-primary)' },
+      { name:'text.secondary', light:'#586378', dark:'#A2AEC4', swatch:'var(--text-secondary)' },
+      { name:'border.strong',  light:'#7C8BA3', dark:'#62738F', swatch:'var(--border-strong)' },
+      { name:'primary',        light:'#1B3A6B', dark:'#6C9BF0', swatch:'var(--primary)' },
+      { name:'secondary',      light:'#0E7C7B', dark:'#3FBFBC', swatch:'var(--secondary)' },
+      { name:'accent',         light:'#077A46', dark:'#2FE39A', swatch:'var(--accent)' },
+      { name:'accentBright',   light:'#0FA968', dark:'#2FE39A', swatch:'var(--accent-bright)' },
+      { name:'success',        light:'#077A46', dark:'#2FE39A', swatch:'var(--success)' },
+      { name:'warning',        light:'#9A6400', dark:'#F5B23D', swatch:'var(--warning)' },
+      { name:'danger',         light:'#C22F2F', dark:'#FF6B6B', swatch:'var(--danger)' },
+      { name:'info',           light:'#1B5FB8', dark:'#7FB2FF', swatch:'var(--info)' },
+      { name:'tier-banked',    light:'#077A46', dark:'#2FE39A', swatch:'var(--tier-banked)' },
+      { name:'tier-measured',  light:'#1B5FB8', dark:'#7FB2FF', swatch:'var(--tier-measured)' },
+      { name:'tier-modeled',   light:'#9A6400', dark:'#F5B23D', swatch:'var(--tier-modeled)' },
+      { name:'tier-advisory',  light:'#A61E88', dark:'#E08AC8', swatch:'var(--tier-advisory)' },
+    ];
+
+    const on = this.state.toggleOn;
+    const trackStyle = {
+      appearance:'none', border:'none', cursor:'pointer', padding:'2px',
+      width:'48px', height:'28px', borderRadius:'999px',
+      background: on ? 'var(--accent)' : 'var(--border-strong)',
+      display:'inline-flex', alignItems:'center',
+      justifyContent: on ? 'flex-end' : 'flex-start',
+      transition:'background .2s cubic-bezier(.2,0,0,1)', flex:'none',
+    };
+    const knobStyle = {
+      width:'22px', height:'22px', borderRadius:'999px',
+      background: on ? 'var(--text-onfill)' : '#FFFFFF',
+      boxShadow:'0 1px 2px rgba(0,0,0,.3)', display:'block',
+    };
+
+    return {
+      theme,
+      iconCats: this.iconRegistry(),
+      icoSetIcon: this.iconReg('generic',18), icoThemeIcon: this.iconReg('pre-cool',18), icoA11yIcon: this.iconReg('unclassified',18),
+      markSrc: this.resolvedDark() ? 'assets/pif-mark-dark.png' : 'assets/pif-mark-light.png',
+      segs: [ mk('light','Light'), mk('dark','Dark'), mk('system','System') ],
+      roles,
+      savingsDisplay: 'about $' + Math.round(this.state.savings),
+      replaySavings: ()=> this.animateSavings(),
+      toggleOn: on,
+      onToggle: ()=> this.setState(s=>({ toggleOn: !s.toggleOn })),
+      trackStyle,
+      knobStyle,
+
+      // chips & tabs
+      singleChips: singleOpts.map(o=>({ label:o.label, selected:this.state.single===o.k, dot:this.ringDot(this.state.single===o.k), style:this.chipStyle(this.state.single===o.k), onSelect:()=>this.setState({ single:o.k }) })),
+      multiChips: multiOpts.map(o=>({ label:o.label, active:!!this.state.multi[o.k], dot:this.checkDot(!!this.state.multi[o.k]), style:this.chipStyle(!!this.state.multi[o.k]), onSelect:()=>this.toggleMulti(o.k) })),
+      multiCount,
+      multiCountLabel: multiCount===1 ? 'selected' : 'selected',
+      tabChips: tabOpts.map(t=>({ label:t.label, active:this.state.tab===t.k, style:this.tabStyle(this.state.tab===t.k), onSelect:()=>this.setState({ tab:t.k }) })),
+
+      // launcher
+      unread: uOn,
+      onToggleUnread: ()=> this.setState(s=>({ unread: !s.unread })),
+      unreadTrackStyle, unreadKnobStyle,
+      tabsStd: this.launcherTabs('std', rm),
+      tabsPremium: this.launcherTabs('premium', rm),
+      launcherAvatar,
+
+      // battery
+      done,
+      rmFlag: rm ? '1' : '0',
+      fillStyle,
+      b1Style: boltStyle('33.333%', done>=3),
+      b2Style: boltStyle('66.666%', done>=6),
+      shellFull: done>=9 ? 'full' : '',
+      battMsg: LINES[done],
+      ionaFace,
+      battNext: ()=> this.battAdvance(1),
+      battBack: ()=> this.battAdvance(-1),
+      battReset: ()=> this.setState({ done:0 }),
+    };
+  }
+}
+</script>
+</body>
+</html>

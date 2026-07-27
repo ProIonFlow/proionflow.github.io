@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- PIF-Billing-Lifecycle-Batch6 v17 (complete F-series + F10 move) — 26 Jul, F2 consent Terms/Privacy → Batch 10 -->
+<!-- §15 icon re-sync: no device/status/tier registry icons here (billing UI chrome only, drawn from the Foundations ui.* set); no rename-map keys present — nothing to canonicalize. -->
+<!-- Iona faces (Empathetic on F6/F9, Celebrating on F8) reuse the canonical Foundations §11 geometry verbatim. -->
+<!-- BUILD NOTE — money surface: trust mood throughout. Calm, premium, bank-statement legibility.
+     No celebration, no accent glows. Cross-file nav uses URL-hash deep-links (wireframe convenience;
+     real app = in-app routes). Reached from Settings → Plan & billing (Batch 5 s14) and the launcher. -->
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#FFFFFF;font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--primary);text-decoration:none}
+  a:hover{color:var(--secondary);text-decoration:underline}
+  button,select,input,textarea{font-family:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+  .pif-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  :root,[data-theme="light"],[data-theme="system"]{
+    --surface-base:#FFFFFF; --surface-raised:#F4F7FB; --surface-sunken:#E9EEF6;
+    --text-primary:#16233B; --text-secondary:#586378; --text-onfill:#FFFFFF;
+    --border-subtle:#C9D4E3; --border-strong:#7C8BA3;
+    --primary:#1B3A6B; --secondary:#0E7C7B; --accent:#077A46; --accent-bright:#0FA968;
+    --success:#077A46; --warning:#9A6400; --danger:#C22F2F; --info:#1B5FB8;
+    --elev-1:0 1px 2px rgba(22,35,59,.06),0 1px 3px rgba(22,35,59,.08);
+    --elev-2:0 2px 6px rgba(22,35,59,.08),0 4px 12px rgba(22,35,59,.10);
+    --elev-3:0 8px 24px rgba(22,35,59,.14);
+  }
+  [data-theme="dark"]{
+    --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+    --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+    --border-subtle:#2A3852; --border-strong:#62738F;
+    --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+    --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+    --elev-1:0 1px 2px rgba(0,0,0,.40);
+    --elev-2:0 4px 14px rgba(0,0,0,.50);
+    --elev-3:0 10px 30px rgba(0,0,0,.60);
+  }
+  @media (prefers-color-scheme:dark){
+    [data-theme="system"]{
+      --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+      --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+      --border-subtle:#2A3852; --border-strong:#62738F;
+      --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+      --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+      --elev-1:0 1px 2px rgba(0,0,0,.40); --elev-2:0 4px 14px rgba(0,0,0,.50); --elev-3:0 10px 30px rgba(0,0,0,.60);
+    }
+  }
+  @keyframes pifShimmer{0%{background-position:-240px 0}100%{background-position:240px 0}}
+  @keyframes pifFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes pifFanIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+  @keyframes pifSpin{to{transform:rotate(360deg)}}
+  [data-rm="1"] *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" data-rm="{{ rmFlag }}" style="min-height:100vh;width:100%;background:var(--surface-base);color:var(--text-primary);font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;transition:background .3s cubic-bezier(.2,0,0,1),color .3s cubic-bezier(.2,0,0,1)">
+<div style="max-width:1100px;margin:0 auto;padding:24px 24px 96px">
+
+  <!-- ============ REVIEW HARNESS ============ -->
+  <div role="region" aria-label="Review harness" style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;margin-bottom:24px;box-shadow:var(--elev-1)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">Review harness</span>
+      <span style="font-size:12px;color:var(--text-secondary)">— not part of the product · flip any state</span>
+      <sc-if value="{{ rmOn }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--info);background:color-mix(in srgb,var(--info) 14%,transparent);border:1px solid var(--info);border-radius:999px;padding:3px 9px">Reduced motion on</span></sc-if>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:18px">
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Screen</div><div role="tablist" aria-label="Screen" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segScreen }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Tier</div><div role="tablist" aria-label="Tier" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ segTier }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Data state</div><div role="tablist" aria-label="Data state" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segState }}" as="s" hint-placeholder-count="5"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Pending change</div><div role="tablist" aria-label="Pending change" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segPending }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Card (F2)</div><div role="tablist" aria-label="Card state" style="display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segCard }}" as="s" hint-placeholder-count="6"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Change (F4)</div><div role="tablist" aria-label="Change flow" style="display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segChange }}" as="s" hint-placeholder-count="4"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Dunning (F5)</div><div role="tablist" aria-label="Dunning stage" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segDunning }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Suspend (F6)</div><div role="tablist" aria-label="Suspension state" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segSuspend }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Ending (F9)</div><div role="tablist" aria-label="Termination reason" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segEnding }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Referrals (F8)</div><div role="tablist" aria-label="Referrals data" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segRef }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Move (F10)</div><div role="tablist" aria-label="Move flow" style="display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segMove }}" as="s" hint-placeholder-count="5"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Theme</div><div role="tablist" aria-label="Theme" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ segTheme }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.icon }}{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Motion</div><button onClick="{{ onToggleRm }}" aria-pressed="{{ rmOn }}" style="{{ rmBtnStyle }}">{{ rmBtnLabel }}</button></div>
+    </div>
+  </div>
+
+  <!-- ============ TOP BAR ============ -->
+  <div style="display:flex;align-items:center;gap:14px;padding:0 4px 20px;border-bottom:1px solid var(--border-subtle);margin-bottom:24px;position:relative">
+    <div style="display:flex;align-items:center;gap:9px">
+      <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
+      <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+    </div>
+    <nav aria-label="Primary" style="display:flex;gap:2px;margin-left:8px">
+      <a href="PIF-Dashboard-Ledger-Batch3.dc.html" style="{{ navInactiveStyle }}">Dashboard</a>
+      <a href="PIF-Dashboard-Ledger-Batch3.dc.html#ledger" style="{{ navInactiveStyle }}">Ledger</a>
+      <a href="PIF-Devices-Connect-Batch4.dc.html" style="{{ navInactiveStyle }}">Devices</a>
+      <a href="PIF-Settings-Help-Batch5.dc.html" style="{{ navInactiveStyle }}">Settings</a>
+      <span style="{{ navActiveStyle }}">Billing</span>
+    </nav>
+    <div style="margin-left:auto;position:relative">
+      <button onClick="{{ onAvatar }}" aria-label="Account settings" aria-expanded="{{ acctOpen }}" style="width:40px;height:40px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface-raised);color:var(--text-primary);font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">AR</button>
+      <sc-if value="{{ acctOpen }}" hint-placeholder-val="{{ false }}">
+        <div role="menu" aria-label="Account" style="position:absolute;right:0;top:48px;z-index:50;min-width:190px;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:14px;box-shadow:var(--elev-3);padding:6px;animation:pifFanIn .2s both">
+          <a href="PIF-Settings-Help-Batch5.dc.html" role="menuitem" style="text-decoration:none;display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:9px;font:600 13px Inter,system-ui,sans-serif;color:var(--text-primary)" style-hover="background:var(--surface-sunken)">{{ icoGear }}Settings</a>
+          <button role="menuitem" onClick="{{ onPlugOut }}" style="appearance:none;border:none;cursor:pointer;width:100%;text-align:left;display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:9px;font:600 13px Inter,system-ui,sans-serif;color:var(--danger);background:transparent" style-hover="background:var(--surface-sunken)">{{ icoLogout }}Plug out</button>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- toast -->
+  <sc-if value="{{ toastShow }}" hint-placeholder-val="{{ false }}">
+    <div role="status" aria-live="polite" style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:90;background:var(--text-primary);color:var(--surface-base);font:600 13px Inter,system-ui,sans-serif;padding:12px 20px;border-radius:999px;box-shadow:var(--elev-3);max-width:90vw">{{ toast }}</div>
+  </sc-if>
+
+  <!-- ============ GLOBAL DATA-STATE OVERLAYS ============ -->
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:12px" aria-hidden="true"><sc-for list="{{ skeleton }}" as="s" hint-placeholder-count="5"><div style="height:74px;border-radius:16px;background:linear-gradient(90deg,var(--surface-raised) 25%,var(--surface-sunken) 37%,var(--surface-raised) 63%);background-size:480px 100%;animation:pifShimmer 1.3s infinite linear;border:1px solid var(--border-subtle)"></div></sc-for></div>
+  </sc-if>
+  <sc-if value="{{ isOffline }}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="background:var(--surface-raised);border:1px solid var(--warning);border-radius:16px;padding:26px;text-align:center;max-width:420px;margin:0 auto"><div style="color:var(--warning);display:flex;justify-content:center;margin-bottom:10px">{{ icoOffline }}</div><div style="font-size:16px;font-weight:700;margin-bottom:4px">You're offline</div><div style="font-size:13px;color:var(--text-secondary)">Your billing details will load when you're back online. No charges are affected.</div></div>
+  </sc-if>
+  <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="background:var(--surface-raised);border:1px solid var(--danger);border-radius:16px;padding:26px;text-align:center;max-width:420px;margin:0 auto"><div style="color:var(--danger);display:flex;justify-content:center;margin-bottom:10px">{{ icoWarn }}</div><div style="font-size:16px;font-weight:700;margin-bottom:4px">Couldn't load billing</div><div style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">Something went wrong reaching your billing details. Your subscription is unaffected.</div><button onClick="{{ onRetry }}" style="appearance:none;border:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:10px 18px;border-radius:11px;background:var(--primary);color:var(--text-onfill);min-height:42px">Try again</button></div>
+  </sc-if>
+
+  <sc-if value="{{ showContent }}" hint-placeholder-val="{{ true }}">
+
+  <!-- ============ F1 — BILLING & SUBSCRIPTION OVERVIEW ============ -->
+  <sc-if value="{{ isF1 }}" hint-placeholder-val="{{ true }}">
+    <div style="animation:pifFadeIn .3s both;max-width:720px">
+      <button onClick="{{ onBackHistory }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:27px;font-weight:700;margin:0 0 4px">Billing &amp; subscription</h1>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 20px">Your plan, payment method and invoices — all in one place.</p>
+
+      <!-- pending-change countdown chip -->
+      <sc-if value="{{ pendingChip.show }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ pendingChip.onOpen }}" style="appearance:none;cursor:pointer;display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:color-mix(in srgb,var(--warning) 9%,var(--surface-raised));border:1px solid var(--warning);border-radius:14px;padding:13px 16px;margin-bottom:16px;color:inherit" style-hover="background:color-mix(in srgb,var(--warning) 14%,var(--surface-raised))">
+          <span style="color:var(--warning);flex:none">{{ icoClock }}</span>
+          <span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:700">{{ pendingChip.title }}</span><span style="display:block;font-size:12.5px;color:var(--text-secondary)">{{ pendingChip.sub }}</span></span>
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--warning);background:color-mix(in srgb,var(--warning) 14%,transparent);border:1px solid var(--warning);border-radius:999px;padding:4px 11px;flex:none">{{ pendingChip.badge }}</span>
+        </button>
+      </sc-if>
+
+      <!-- current plan + auto-renewal disclosure -->
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:20px;box-shadow:var(--elev-1);margin-bottom:14px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+          <span style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-secondary)">Current plan</span>
+          <a href="PIF-Acquisition-Batch7.dc.html#a11" style="font:600 12.5px Inter,system-ui,sans-serif">Compare tiers</a>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+          <span style="font-family:'Space Grotesk',system-ui;font-size:26px;font-weight:700">{{ plan.name }}</span>
+          <span style="font-family:'Space Grotesk',system-ui;font-size:18px;font-weight:600;color:var(--text-secondary)">{{ plan.price }}/mo</span>
+        </div>
+        <!-- auto-renewal disclosure: prominent, at the money surface (ROSCA / CA-ARL) -->
+        <div style="display:flex;gap:11px;align-items:flex-start;background:color-mix(in srgb,var(--info) 8%,var(--surface-base));border:1px solid var(--info);border-radius:12px;padding:13px 15px;margin-bottom:14px">
+          <span style="color:var(--info);flex:none;margin-top:1px">{{ icoRefresh }}</span>
+          <div style="font-size:13px;line-height:19px"><b>Renews automatically each month at {{ plan.price }} until you cancel.</b><span style="color:var(--text-secondary)"> Cancel anytime — your plan runs to the end of the paid month; no refund for the current month.</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1px;border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden">
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Next charge</span><span style="font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums">{{ plan.nextDate }} · {{ plan.price }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Billing cycle</span><span style="font-size:13.5px;font-weight:600">Monthly</span></div>
+        </div>
+      </div>
+
+      <!-- payment-method summary -->
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px 20px;box-shadow:var(--elev-1);margin-bottom:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <span style="width:44px;height:30px;border-radius:7px;background:var(--surface-sunken);border:1px solid var(--border-subtle);display:inline-flex;align-items:center;justify-content:center;color:var(--text-secondary);flex:none">{{ icoCard }}</span>
+        <div style="flex:1;min-width:150px"><div style="font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace">{{ pm.line }}</div><div style="font-size:12.5px;color:var(--text-secondary)">{{ pm.sub }}</div></div>
+        <button onClick="{{ onUpdatePay }}" style="appearance:none;cursor:pointer;font:700 12.5px Inter,system-ui,sans-serif;padding:9px 16px;border-radius:999px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:40px">Update</button>
+      </div>
+
+      <!-- recent invoices -->
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px 20px;box-shadow:var(--elev-1);margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px"><span style="font-size:14px;font-weight:700">Recent invoices</span><button onClick="{{ onSeeAll }}" style="appearance:none;border:none;background:transparent;cursor:pointer;font:600 12.5px Inter,system-ui,sans-serif;color:var(--primary)" style-hover="text-decoration:underline">See all</button></div>
+        <div style="display:flex;flex-direction:column;gap:1px;border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden">
+          <sc-for list="{{ recentInvoices }}" as="i" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:12px;padding:12px 15px;background:var(--surface-sunken)"><span style="flex:1;font-size:13px;font-weight:600">{{ i.date }}</span><span style="font-size:13px;font-variant-numeric:tabular-nums">{{ i.amt }}</span><button onClick="{{ onInvoice }}" aria-label="Download invoice {{ i.date }}" style="appearance:none;cursor:pointer;color:var(--primary);background:transparent;border:none;padding:4px;min-height:32px">{{ icoDownload }}</button></div></sc-for>
+        </div>
+      </div>
+
+      <!-- quick links -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button onClick="{{ onChangePlan }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:13px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 18px;box-shadow:var(--elev-1);color:inherit" style-hover="background:var(--surface-sunken)">
+          <span style="color:var(--secondary);flex:none">{{ icoSwap }}</span>
+          <span style="flex:1;min-width:0"><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:14px;font-weight:700">Change plan</span></span><span style="display:block;font-size:12.5px;color:var(--text-secondary)">Move up or down a tier. See what changes before you confirm.</span></span>
+          <span style="color:var(--text-secondary);flex:none">{{ icoChevronR }}</span>
+        </button>
+        <button onClick="{{ onCancel }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:13px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 18px;box-shadow:var(--elev-1);color:inherit" style-hover="background:var(--surface-sunken)">
+          <span style="color:var(--text-secondary);flex:none">{{ icoCross }}</span>
+          <span style="flex:1;min-width:0"><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:14px;font-weight:700">Cancel subscription</span></span><span style="display:block;font-size:12.5px;color:var(--text-secondary)">Cancel anytime — your plan runs to the end of the paid month; no refund for the current month.</span></span>
+          <span style="color:var(--text-secondary);flex:none">{{ icoChevronR }}</span>
+        </button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ F2 — PAYMENT METHOD ============ -->
+  <sc-if value="{{ isF2 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:560px">
+      <button onClick="{{ onBackF1 }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <sc-if value="{{ card.success }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:28px;box-shadow:var(--elev-2);text-align:center">
+          <div style="width:52px;height:52px;border-radius:999px;background:color-mix(in srgb,var(--success) 13%,transparent);color:var(--success);display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px">{{ icoCheckBig }}</div>
+          <h1 style="font-family:'Space Grotesk',system-ui;font-size:21px;font-weight:700;margin:0 0 6px">Card saved</h1>
+          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0 0 20px">{{ card.savedLine }} is now your payment method. Your next charge uses this card.</p>
+          <button onClick="{{ onBackF1 }}" style="appearance:none;border:none;cursor:pointer;font:700 14px Inter,system-ui,sans-serif;padding:12px 22px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:46px"><span aria-hidden="true">←</span> Back</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ card.form }}" hint-placeholder-val="{{ true }}">
+        <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">{{ card.title }}</h1>
+        <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 20px">{{ card.subtitle }}</p>
+
+        <!-- Stripe Elements hosted fields (placeholders only — never real inputs) -->
+        <div role="group" aria-label="Card details (secured by Stripe)" style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:12px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:12px;display:flex;align-items:center;gap:7px">{{ icoLock }}Card details</div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:6px">Card number</div>
+          <div style="{{ card.numFieldStyle }}"><span style="color:var(--text-secondary);font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:.06em">{{ card.numPlaceholder }}</span><span style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:6px;padding:3px 7px">{{ card.brandTag }}</span></div>
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <div style="flex:1"><div style="font-size:12px;font-weight:600;margin-bottom:6px">Expiry (MM · YY)</div><div style="{{ card.expFieldStyle }}"><span style="color:var(--text-secondary);font-family:'JetBrains Mono',monospace;font-size:14px">MM · YY</span></div></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600;margin-bottom:6px">CVC</div><div style="{{ card.cvcFieldStyle }}"><span style="color:var(--text-secondary);font-family:'JetBrains Mono',monospace;font-size:14px">CVC</span></div></div>
+          </div>
+          <sc-if value="{{ card.hasError }}" hint-placeholder-val="{{ false }}">
+            <p role="alert" style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:18px;color:var(--danger);margin:12px 0 0;font-weight:600"><span style="flex:none;margin-top:1px">{{ icoWarnSm }}</span><span>{{ card.errorMsg }}</span></p>
+          </sc-if>
+          <div style="display:flex;gap:8px;align-items:flex-start;font-size:11.5px;line-height:16px;color:var(--text-secondary);margin-top:13px;padding-top:13px;border-top:1px solid var(--border-subtle)"><span style="flex:none;margin-top:1px;color:var(--secondary)">{{ icoLockSm }}</span><span>Your card details go straight to Stripe — they never touch PIF's servers. Brand, expiry and CVC are checked by Stripe. By subscribing you agree to our <a href="PIF-Legal-Batch10.dc.html#tos" style="font-weight:600">Terms</a> and <a href="PIF-Legal-Batch10.dc.html#privacy" style="font-weight:600">Privacy Policy</a>.</span></div>
+        </div>
+
+        <!-- PIF-owned fields (normal, validated) -->
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:12px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:12px">Billing details</div>
+          <label for="b6-name" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:6px">Cardholder name <span style="color:var(--danger)">*</span></label>
+          <input id="b6-name" value="{{ nameVal }}" onInput="{{ onName }}" aria-invalid="{{ nameInvalid }}" placeholder="Name as it appears on the card" style="{{ nameStyle }}" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+          <sc-if value="{{ nameErr }}" hint-placeholder-val="{{ false }}"><p role="alert" style="font-size:12px;color:var(--danger);margin:6px 0 0;font-weight:600">Enter the name on the card.</p></sc-if>
+          <label for="b6-addr" style="display:block;font-size:12.5px;font-weight:600;margin:14px 0 6px">Billing address <span style="color:var(--danger)">*</span></label>
+          <input id="b6-addr" value="{{ addrVal }}" onInput="{{ onAddr }}" aria-invalid="{{ addrInvalid }}" placeholder="Street address" style="{{ addrStyle }}" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <input value="{{ cityVal }}" onInput="{{ onCity }}" aria-label="City" placeholder="City" style="{{ cityStyle }}" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+            <input value="{{ zipVal }}" onInput="{{ onZip }}" aria-label="ZIP" inputmode="numeric" maxlength="5" placeholder="ZIP" style="{{ zipStyle }}" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+          </div>
+          <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:13px 0 0">Expiry must be this month or later. All fields are re-validated server-side — the server is the authority on “now.”</p>
+        </div>
+
+        <button onClick="{{ onSaveCard }}" aria-disabled="{{ card.saving }}" style="{{ card.saveStyle }}"><sc-if value="{{ card.saving }}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width:16px;height:16px;border:2px solid currentColor;border-top-color:transparent;border-radius:999px;display:inline-block;animation:pifSpin .7s linear infinite;margin-right:8px;vertical-align:-2px"></span></sc-if>{{ card.saveLabel }}</button>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ============ F3 — INVOICES & RECEIPTS ============ -->
+  <sc-if value="{{ isF3 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:680px">
+      <button onClick="{{ onBackF1 }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Invoices &amp; receipts</h1>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 20px">Every subscription charge, newest first. Download any invoice as a PDF.</p>
+
+      <sc-if value="{{ invEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;padding:44px 24px;background:var(--surface-raised);border:1px dashed var(--border-strong);border-radius:16px">
+          <div style="color:var(--text-secondary);display:flex;justify-content:center;margin-bottom:12px">{{ icoDoc }}</div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:4px">No invoices yet</div>
+          <div style="font-size:13px;color:var(--text-secondary);max-width:340px;margin:0 auto">Your first invoice will appear here after your first charge.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ invShow }}" hint-placeholder-val="{{ true }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;box-shadow:var(--elev-1);overflow:hidden">
+          <div style="display:grid;grid-template-columns:1fr 1.4fr auto auto;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border-subtle);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary)"><span>Date</span><span>Description</span><span style="text-align:right">Amount</span><span style="width:28px"></span></div>
+          <sc-for list="{{ invoices }}" as="i" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:1fr 1.4fr auto auto;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border-subtle)">
+              <span style="font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums">{{ i.date }}</span>
+              <span style="font-size:13px;color:var(--text-secondary)">{{ i.desc }}</span>
+              <span style="font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums;text-align:right">{{ i.amt }}</span>
+              <button onClick="{{ onInvoice }}" aria-label="Download invoice {{ i.date }}" style="appearance:none;cursor:pointer;color:var(--primary);background:transparent;border:none;padding:4px;min-height:32px;display:inline-flex;justify-content:center">{{ icoDownload }}</button>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ============ F4 — CHANGE PLAN ============ -->
+  <sc-if value="{{ isF4 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:720px">
+      <button onClick="{{ f4.onBack }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+
+      <sc-if value="{{ f4.browse }}" hint-placeholder-val="{{ true }}">
+        <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Change your plan</h1>
+        <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 8px">Upgrades take effect now and are prorated. Downgrades take effect at the end of your paid month — nothing changes until then.</p>
+        <button onClick="{{ f4.onCompare }}" style="appearance:none;border:none;background:transparent;cursor:pointer;font:600 12.5px Inter,system-ui,sans-serif;color:var(--primary);padding:0;margin-bottom:18px" style-hover="text-decoration:underline">Compare every feature side by side →</button>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ f4.cards }}" as="c" hint-placeholder-count="3">
+            <div style="{{ c.cardStyle }}">
+              <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+                <span style="font-family:'Space Grotesk',system-ui;font-size:19px;font-weight:700">{{ c.name }}</span>
+                <span style="font-size:15px;font-weight:600;color:var(--text-secondary)">{{ c.price }}/mo</span>
+                <sc-if value="{{ c.isCurrent }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;font-size:11px;font-weight:700;color:var(--secondary);background:color-mix(in srgb,var(--secondary) 13%,transparent);border:1px solid var(--secondary);border-radius:999px;padding:2px 10px">Current plan</span></sc-if>
+              </div>
+              <div style="font-size:13px;line-height:19px;color:var(--text-secondary);margin-bottom:12px">{{ c.blurb }}</div>
+              <sc-if value="{{ c.canSelect }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                  <button onClick="{{ c.onSelect }}" style="{{ c.ctaStyle }}">{{ c.ctaLabel }}</button>
+                  <span style="font-size:12px;font-weight:600;color:{{ c.dirColor }}">{{ c.dirNote }}</span>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:16px 2px 0"><b style="color:var(--text-primary)">≈</b> figures are estimates — modeled from typical behaviour and shown with the estimates footnote until metered or bill-checked. A full side-by-side comparison arrives in Batch 7.</p>
+      </sc-if>
+
+      <sc-if value="{{ f4.already }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:24px;box-shadow:var(--elev-1);text-align:center">
+          <div style="font-size:16px;font-weight:700;margin-bottom:6px">You're already on {{ plan.name }}</div>
+          <p style="font-size:13px;color:var(--text-secondary);margin:0 0 16px">Pick a different tier to change your plan.</p>
+          <button onClick="{{ f4.onBrowse }}" style="appearance:none;border:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:10px 18px;border-radius:11px;background:var(--primary);color:var(--text-onfill);min-height:42px">See plans</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ f4.upgrade }}" hint-placeholder-val="{{ false }}">
+        <h1 style="font-family:'Space Grotesk',system-ui;font-size:23px;font-weight:700;margin:0 0 4px">Upgrade to {{ f4.tgtName }}</h1>
+        <div style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);border:1px solid var(--accent);border-radius:999px;padding:3px 11px;margin-bottom:16px">{{ icoBolt }}Upgrade takes effect now</div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+          <div style="font-size:13px;font-weight:700;margin-bottom:10px">Activates right away</div>
+          <div style="display:flex;flex-direction:column;gap:9px"><sc-for list="{{ f4.levers }}" as="l" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:9px"><span style="color:var(--accent);flex:none">{{ icoCheckSm }}</span><span style="flex:1;font-size:13.5px">{{ l.name }}</span><span style="font-size:12.5px;font-weight:600;color:var(--text-secondary)">{{ l.val }}</span></div></sc-for></div>
+        </div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:6px"><span style="font-size:13px;color:var(--text-secondary)">Prorated difference today</span><span style="font-size:15px;font-weight:700;font-variant-numeric:tabular-nums">{{ f4.prorated }}</span></div>
+          <div style="font-size:13px;color:var(--text-secondary)">Then {{ f4.tgtPrice }}/mo from {{ plan.nextDate }}.</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:13px;padding-top:13px;border-top:1px solid var(--border-subtle)"><span style="width:38px;height:26px;border-radius:6px;background:var(--surface-sunken);border:1px solid var(--border-subtle);display:inline-flex;align-items:center;justify-content:center;color:var(--text-secondary);flex:none">{{ icoCard }}</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace">{{ pm.line }}</div><div style="font-size:12px;color:var(--text-secondary)">{{ pm.sub }} · charged securely by Stripe</div></div><button onClick="{{ onUpdatePay }}" style="appearance:none;cursor:pointer;font:700 12px Inter,system-ui,sans-serif;padding:7px 13px;border-radius:999px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:36px">Change</button></div>
+        </div>
+        <button onClick="{{ f4.onConfirmUpgrade }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:50px;box-shadow:var(--elev-1)">Confirm upgrade — {{ f4.prorated }} today</button>
+      </sc-if>
+
+      <sc-if value="{{ f4.downgrade }}" hint-placeholder-val="{{ false }}">
+        <h1 style="font-family:'Space Grotesk',system-ui;font-size:23px;font-weight:700;margin:0 0 4px">Downgrade to {{ f4.tgtName }}</h1>
+        <div style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--warning);background:color-mix(in srgb,var(--warning) 12%,transparent);border:1px solid var(--warning);border-radius:999px;padding:3px 11px;margin-bottom:16px">{{ icoClock }}Takes effect {{ f4.downDate }} — nothing changes until then</div>
+        <div style="background:color-mix(in srgb,var(--warning) 7%,var(--surface-raised));border:1px solid var(--warning);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px">What you'd leave on the table</div>
+          <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:12px">These go dormant on {{ f4.downDate }}. We show their estimated value so the choice is honest.</div>
+          <div style="display:flex;flex-direction:column;gap:9px"><sc-for list="{{ f4.levers }}" as="l" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:9px"><span style="color:var(--warning);flex:none">{{ icoDot }}</span><span style="flex:1;font-size:13.5px">{{ l.name }}</span><span style="font-size:12.5px;font-weight:600;color:var(--text-secondary)">{{ l.val }}</span></div></sc-for></div>
+        </div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;box-shadow:var(--elev-1);margin-bottom:14px;font-size:13px;line-height:19px;color:var(--text-secondary)">You keep <b style="color:var(--text-primary)">{{ plan.name }}</b> and its full feature set through the paid month. On <b style="color:var(--text-primary)">{{ f4.downDate }}</b> you move to {{ f4.tgtName }} and billing drops to {{ f4.tgtPrice }}/mo. You can cancel this anytime before it applies.</div>
+        <button onClick="{{ f4.onConfirmDowngrade }}" style="appearance:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:50px">Schedule downgrade for {{ f4.downDate }}</button>
+      </sc-if>
+
+      <sc-if value="{{ f4.success }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:28px;box-shadow:var(--elev-2);text-align:center">
+          <div style="width:52px;height:52px;border-radius:999px;background:color-mix(in srgb,var(--success) 13%,transparent);color:var(--success);display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px">{{ icoCheckBig }}</div>
+          <h1 style="font-family:'Space Grotesk',system-ui;font-size:21px;font-weight:700;margin:0 0 6px">{{ f4.successTitle }}</h1>
+          <p style="font-size:13px;line-height:20px;color:var(--text-secondary);margin:0 0 20px">{{ f4.successBody }}</p>
+          <button onClick="{{ f4.onBackBilling }}" style="appearance:none;border:none;cursor:pointer;font:700 14px Inter,system-ui,sans-serif;padding:12px 22px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:46px"><span aria-hidden="true">←</span> Back</button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ============ F7 — UNSUBSCRIBE (honest model) ============ -->
+  <sc-if value="{{ isF7 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:560px">
+      <button onClick="{{ onKeepPlanF1 }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Before you cancel</h1>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 18px">Here's exactly what cancelling does — no surprises.</p>
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:20px;box-shadow:var(--elev-1);margin-bottom:16px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--text-secondary);flex:none;margin-top:1px">{{ icoCard }}</span><div style="font-size:13.5px;line-height:20px"><b>Unsubscribing stops next month's charge.</b><span style="color:var(--text-secondary)"> There's no refund and no proration for the current month.</span></div></div>
+        <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoClock }}</span><div style="font-size:13.5px;line-height:20px">You keep full service — <b>active until {{ cancelUntil }}</b>. Nothing changes before then.</div></div>
+        <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoRefresh }}</span><div style="font-size:13.5px;line-height:20px">After that it lapses and your devices <b>hand control back to your own defaults</b> — you're never left stranded.</div></div>
+      </div>
+      <button onClick="{{ onContinueCancel }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:50px;box-shadow:var(--elev-1);margin-bottom:10px">Continue to cancel</button>
+      <button onClick="{{ onKeepPlanF1 }}" style="appearance:none;cursor:pointer;width:100%;font:700 14px Inter,system-ui,sans-serif;padding:12px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px">Never mind, keep my plan</button>
+    </div>
+  </sc-if>
+
+  <!-- ============ F7a — SORRY TO SEE YOU GO + WHY ============ -->
+  <sc-if value="{{ isF7a }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:560px">
+      <button onClick="{{ onKeepPlanF1 }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <div style="text-align:center;margin-bottom:18px"><div style="display:flex;justify-content:center;margin-bottom:10px">{{ ionaSad }}</div><h1 style="font-family:'Space Grotesk',system-ui;font-size:23px;font-weight:700;margin:0 0 6px">Sorry to see you go</h1><p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 auto;max-width:420px">If you have a moment, tell me why — it's optional, and it genuinely helps me do better for the next person. No wrong answers.</p></div>
+      <div role="group" aria-label="Reasons for cancelling (select any that apply)" style="display:flex;flex-wrap:wrap;gap:9px;justify-content:center">
+        <sc-for list="{{ reasonChips }}" as="r" hint-placeholder-count="10"><button role="checkbox" aria-checked="{{ r.selected }}" onClick="{{ r.onPick }}" style="{{ r.style }}" style-hover="border-color:var(--secondary)"><span style="color:var(--text-secondary)">{{ r.icon }}</span>{{ r.label }}</button></sc-for>
+      </div>
+      <sc-if value="{{ reasonAny }}" hint-placeholder-val="{{ false }}"><div style="text-align:center;font-size:12px;font-weight:600;color:var(--text-secondary);margin-top:10px">{{ reasonCountLabel }}</div></sc-if>
+      <sc-if value="{{ showMissing }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:14px"><label for="b6-missing" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:7px">Which one?</label><input id="b6-missing" value="{{ cancelMissing }}" onInput="{{ onMissing }}" placeholder="e.g. a device brand, a rate plan, a feature…" style="width:100%;appearance:none;border:1px solid var(--border-strong);background:var(--surface-base);color:var(--text-primary);border-radius:11px;padding:11px 14px;font:500 14px Inter,system-ui,sans-serif;min-height:44px" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></div>
+      </sc-if>
+      <sc-if value="{{ showOther }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:14px"><label for="b6-other" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:7px">Please tell us more</label><textarea id="b6-other" value="{{ cancelOther }}" onInput="{{ onOther }}" placeholder="What made you choose Other? It helps me improve." style="width:100%;min-height:84px;resize:vertical;appearance:none;border:1px solid var(--border-strong);background:var(--surface-base);color:var(--text-primary);border-radius:12px;padding:11px 14px;font:500 14px Inter,system-ui,sans-serif" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></textarea></div>
+      </sc-if>
+      <sc-if value="{{ showMoveOfframp }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ onMoveOfframp }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;width:100%;background:color-mix(in srgb,var(--secondary) 8%,var(--surface-raised));border:1px solid var(--secondary);border-radius:14px;padding:14px 16px;margin-top:16px;color:inherit" style-hover="background:color-mix(in srgb,var(--secondary) 13%,var(--surface-raised))"><span style="color:var(--secondary);flex:none">{{ icoRefresh }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:700">Moving within our area? You might keep PIF</span><span style="display:block;font-size:12.5px;color:var(--text-secondary)">Check your new address before you cancel — PIF may come with you.</span></span><span style="color:var(--secondary);flex:none">{{ icoChevronR }}</span></button>
+      </sc-if>
+      <div style="display:flex;gap:10px;margin-top:18px">
+        <button onClick="{{ onFeedbackContinue }}" style="appearance:none;border:none;cursor:pointer;flex:1;font:700 15px Inter,system-ui,sans-serif;padding:13px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:48px">Continue</button>
+        <button onClick="{{ onSkipFeedback }}" style="appearance:none;cursor:pointer;font:700 14px Inter,system-ui,sans-serif;padding:13px 20px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px">Skip</button>
+      </div>
+      <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:14px 2px 0;text-align:center">Your feedback helps us improve — it isn't shared with anyone outside PIF.</p>
+    </div>
+  </sc-if>
+
+  <!-- ============ F7a-i — KEEP MORE OF YOUR SAVINGS FOR LESS? ============ -->
+  <sc-if value="{{ isF7ai }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:560px">
+      <button onClick="{{ onKeepPlanF1 }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <div style="text-align:center;margin-bottom:16px"><div style="display:flex;justify-content:center;margin-bottom:10px">{{ ionaBig }}</div><h1 style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin:0 0 6px">Keep more of your savings for less?</h1><p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 auto;max-width:430px">Before you go — there's a cheaper plan that still works for your home. No pressure either way.</p></div>
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:16px">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px"><span style="font-family:'Space Grotesk',system-ui;font-size:19px;font-weight:700">Switch to {{ saveOffer.target }}</span><span style="font-size:15px;font-weight:600;color:var(--text-secondary)">{{ saveOffer.price }}/mo</span></div>
+        <div style="display:flex;gap:11px;align-items:flex-start;margin-bottom:10px"><span style="color:var(--accent);flex:none;margin-top:1px">{{ icoCheckSm }}</span><div style="font-size:13px;line-height:19px"><b>You keep</b> {{ saveOffer.keep }}.</div></div>
+        <div style="display:flex;gap:11px;align-items:flex-start"><span style="color:var(--text-secondary);flex:none;margin-top:1px">{{ icoDot }}</span><div style="font-size:13px;line-height:19px;color:var(--text-secondary)"><b style="color:var(--text-primary)">Goes dormant:</b> {{ saveOffer.dormant }}.</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button onClick="{{ onSwitchSave }}" style="appearance:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--surface-raised);color:var(--text-primary);border:1px solid var(--border-strong);min-height:50px">Switch to {{ saveOffer.target }} · {{ saveOffer.price }}/mo</button>
+        <button onClick="{{ onDeclineSave }}" style="appearance:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--surface-raised);color:var(--text-primary);border:1px solid var(--border-strong);min-height:50px">No thanks, continue to cancel</button>
+      </div>
+      <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:14px 2px 0;text-align:center">I'll only ask this once — I won't nag you about it.</p>
+    </div>
+  </sc-if>
+
+  <!-- ============ F7b — UNSUBSCRIBE CONFIRMED + UNDO ============ -->
+  <sc-if value="{{ isF7b }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:560px">
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:28px;box-shadow:var(--elev-2);text-align:center">
+        <div style="display:flex;justify-content:center;margin-bottom:12px">{{ ionaSadSm }}</div>
+        <h1 style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin:0 0 6px">You're set</h1>
+        <p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 auto 20px;max-width:420px">You'll keep everything until <b style="color:var(--text-primary)">{{ cancelUntil }}</b>, then your subscription ends.</p>
+        <button onClick="{{ onKeepSubscription }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:50px;box-shadow:var(--elev-1);margin-bottom:10px">Changed your mind? Keep my subscription</button>
+        <button onClick="{{ onExportData }}" style="appearance:none;cursor:pointer;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 14px Inter,system-ui,sans-serif;padding:12px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px;margin-bottom:16px">{{ icoDownload }}Export my data</button>
+        <div style="display:flex;gap:10px;align-items:flex-start;text-align:left;background:color-mix(in srgb,var(--secondary) 8%,var(--surface-base));border:1px solid var(--secondary);border-radius:12px;padding:13px 15px"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoRefresh }}</span><div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)">After {{ cancelUntil }}, your devices hand control back to your own defaults — nothing is left running or stranded. You can re-subscribe anytime.</div></div>
+        <button onClick="{{ onDoneCancel }}" style="appearance:none;border:none;background:transparent;cursor:pointer;color:var(--text-secondary);font:600 13px Inter,system-ui,sans-serif;padding:14px 0 2px" style-hover="color:var(--text-primary)"><span aria-hidden="true">←</span> Back</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ F5 — DUNNING (failed payment) ============ -->
+  <sc-if value="{{ isF5 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:560px">
+      <button onClick="{{ onBackF1 }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <div style="background:var(--surface-raised);border:1px solid {{ f5.color }};border-radius:16px;padding:20px;box-shadow:var(--elev-1);margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="width:40px;height:28px;border-radius:6px;background:var(--surface-sunken);border:1px solid var(--border-subtle);display:inline-flex;align-items:center;justify-content:center;color:{{ f5.color }};flex:none">{{ icoCard }}</span><span style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:{{ f5.color }};background:color-mix(in srgb,{{ f5.color }} 12%,transparent);border:1px solid {{ f5.color }};border-radius:999px;padding:3px 10px">{{ f5.badge }}</span></div>
+        <h1 style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin:0 0 8px">{{ f5.title }}</h1>
+        <p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 0 14px">{{ f5.body }}</p>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border-subtle);border-radius:12px;background:var(--surface-sunken)"><span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600">{{ pm.line }}</span><span style="font-size:12.5px;color:var(--text-secondary)">{{ pm.sub }}</span></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,{{ f5.color }} 8%,var(--surface-base));border:1px solid {{ f5.color }};border-radius:12px;padding:13px 15px;margin-bottom:16px"><span style="color:{{ f5.color }};flex:none;margin-top:1px">{{ icoClock }}</span><div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)">{{ f5.note }}</div></div>
+      <button onClick="{{ onUpdatePay }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:50px;box-shadow:var(--elev-1)">Update payment method</button>
+    </div>
+  </sc-if>
+
+  <!-- ============ F6 — SUSPENSION (graceful hand-back) ============ -->
+  <sc-if value="{{ isF6 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:560px">
+      <button onClick="{{ onBackF1 }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:28px;box-shadow:var(--elev-2);text-align:center">
+        <div style="display:flex;justify-content:center;margin-bottom:12px">{{ ionaSadSm }}</div>
+        <h1 style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin:0 0 6px">{{ f6.title }}</h1>
+        <p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 auto 18px;max-width:430px">{{ f6.body }}</p>
+        <div style="display:flex;gap:10px;align-items:flex-start;text-align:left;background:color-mix(in srgb,var(--secondary) 8%,var(--surface-base));border:1px solid var(--secondary);border-radius:12px;padding:13px 15px;margin-bottom:18px"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoRefresh }}</span><div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)">Your devices have already handed control back to your own defaults — nothing is left running or stranded. Reactivate anytime to resume savings.</div></div>
+        <button onClick="{{ onReactivate }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:50px;box-shadow:var(--elev-1)">{{ f6.cta }}</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ F8 — REFERRALS (reward mood) ============ -->
+  <sc-if value="{{ isF8 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:560px">
+      <button onClick="{{ onBackF1 }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <div style="text-align:center;margin-bottom:18px"><div style="display:flex;justify-content:center;margin-bottom:8px">{{ ionaCelebrate }}</div><h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Give a friend 50% off — earn $5 each</h1><p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 auto;max-width:440px">Share your link. They save half their first month; you earn $5 in credit — with no cap.</p></div>
+      <div style="background:var(--surface-raised);border:1px solid var(--accent);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:10px">Invite a friend</div>
+        <label for="f8-em" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:6px">Friend&rsquo;s email</label>
+        <input id="f8-em" type="email" value="{{ f8.inviteEmail }}" onInput="{{ f8.onInviteEmail }}" placeholder="friend@email.com" style="width:100%;appearance:none;border:1px solid var(--border-strong);background:var(--surface-base);color:var(--text-primary);border-radius:11px;padding:12px 14px;font:500 14px Inter,system-ui,sans-serif;min-height:46px;margin-bottom:12px" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+        <label for="f8-note" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:6px">Add a note <span style="font-weight:400;color:var(--text-secondary)">(optional)</span></label>
+        <textarea id="f8-note" value="{{ f8.inviteNote }}" onInput="{{ f8.onInviteNote }}" placeholder="Thought you'd love this — it shifts my energy use to save money." style="width:100%;min-height:64px;resize:vertical;appearance:none;border:1px solid var(--border-strong);background:var(--surface-base);color:var(--text-primary);border-radius:11px;padding:11px 14px;font:500 14px Inter,system-ui,sans-serif;margin-bottom:14px" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></textarea>
+        <button onClick="{{ f8.onSendInvite }}" aria-disabled="{{ f8.inviteDisabled }}" style="{{ f8.inviteStyle }}">Send invite</button>
+      </div>
+      <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:0 2px 16px">Your friend will see your name so they know the invite&rsquo;s from you. That&rsquo;s the only thing we share — and we only use their email to send this one invite.</p>
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;box-shadow:var(--elev-1);margin-bottom:16px"><div style="font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:10px">How it works</div><div style="display:flex;flex-direction:column;gap:8px"><sc-for list="{{ f8.terms }}" as="t" hint-placeholder-count="4"><div style="display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:18px;color:var(--text-secondary)"><span style="color:var(--accent);flex:none;margin-top:1px">{{ icoCheckSm }}</span><span>{{ t }}</span></div></sc-for></div></div>
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px"><span style="color:var(--text-secondary)">{{ icoUsers }}</span><span style="font-size:14px;font-weight:700">Your referrals</span><sc-if value="{{ f8.populated }}" hint-placeholder-val="{{ true }}"><span style="margin-left:auto;font-size:12px;font-weight:700;color:var(--success)">{{ f8.earned }}</span></sc-if></div>
+      <sc-if value="{{ f8.populated }}" hint-placeholder-val="{{ true }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;box-shadow:var(--elev-1);overflow:hidden">
+          <sc-for list="{{ f8.items }}" as="r" hint-placeholder-count="3"><div style="padding:12px 16px;border-bottom:1px solid var(--border-subtle)"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="flex:1;min-width:120px;font-size:13.5px;font-weight:600;word-break:break-all">{{ r.email }}</span><span style="{{ r.badgeStyle }}">{{ r.status }}</span><sc-if value="{{ r.canResend }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.onResend }}" style="appearance:none;cursor:pointer;font:700 11.5px Inter,system-ui,sans-serif;padding:6px 11px;border-radius:999px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:32px">Resend</button></sc-if></div><sc-if value="{{ r.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:var(--text-secondary);margin-top:4px">{{ r.note }}</div></sc-if></div></sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ f8.empty }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;padding:34px 24px;background:var(--surface-raised);border:1px dashed var(--border-strong);border-radius:16px"><div style="color:var(--text-secondary);display:flex;justify-content:center;margin-bottom:10px">{{ icoGift }}</div><div style="font-size:14.5px;font-weight:700;margin-bottom:4px">No referrals yet</div><div style="font-size:13px;color:var(--text-secondary)">Invite a friend by email to get started — they save 50% on month one; you earn $5 once they complete their first full-price month.</div></div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ============ F9 — SERVICE ENDING (PIF-initiated, WITH refund) ============ -->
+  <sc-if value="{{ isF9 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:560px">
+      <button onClick="{{ onBackF1 }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <div style="text-align:center;margin-bottom:18px"><div style="display:flex;justify-content:center;margin-bottom:10px">{{ ionaSad }}</div><h1 style="font-family:'Space Grotesk',system-ui;font-size:23px;font-weight:700;margin:0 0 8px">{{ f9.title }}</h1><p style="font-size:13.5px;line-height:21px;color:var(--text-secondary);margin:0 auto;max-width:440px">{{ f9.reason }}</p></div>
+      <div style="background:color-mix(in srgb,var(--success) 8%,var(--surface-raised));border:1px solid var(--success);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px"><span style="font-size:14px;font-weight:700">Prorated refund</span><span style="font-family:'Space Grotesk',system-ui;font-size:20px;font-weight:700;color:var(--success);font-variant-numeric:tabular-nums">{{ f9.refund }}</span></div>
+        <div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)">Because <b style="color:var(--text-primary)">we’re</b> ending the service, we’re refunding the unused part of your paid period — back to your card in 5–10 business days. You keep full service until {{ f9.endDate }}.</div>
+      </div>
+      <button onClick="{{ onExportData }}" style="appearance:none;cursor:pointer;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 14px Inter,system-ui,sans-serif;padding:13px;border-radius:12px;background:var(--surface-raised);color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px;margin-bottom:14px">{{ icoDownload }}Export my data</button>
+      <div style="display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,var(--secondary) 8%,var(--surface-base));border:1px solid var(--secondary);border-radius:12px;padding:13px 15px"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoRefresh }}</span><div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)">After {{ f9.endDate }}, your devices hand control back to your own defaults — nothing is left running or stranded.</div></div>
+    </div>
+  </sc-if>
+
+  <!-- ============ F10 — MOVE YOUR SERVICE (hopeful) ============ -->
+  <sc-if value="{{ isF10 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:560px">
+      <button onClick="{{ onBackF1 }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+
+      <sc-if value="{{ move.isEntry }}" hint-placeholder-val="{{ true }}">
+        <div style="text-align:center;margin-bottom:16px"><div style="display:flex;justify-content:center;margin-bottom:8px">{{ ionaBig }}</div><h1 style="font-family:'Space Grotesk',system-ui;font-size:23px;font-weight:700;margin:0 0 6px">Moving? PIF may come with you</h1><p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 auto;max-width:430px">Let's check your new place. Your home is anchored to its utility meter, so we just re-point it at the new address.</p></div>
+        <label for="f10-zip" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:7px">New address or ZIP</label>
+        <input id="f10-zip" inputmode="numeric" maxlength="5" value="{{ move.zip }}" onInput="{{ move.onZip }}" placeholder="e.g. 27701" style="width:100%;font:600 18px 'Space Grotesk',system-ui;letter-spacing:.1em;text-align:center;padding:15px;border-radius:14px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:56px;outline:none;margin-bottom:16px" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
+        <button onClick="{{ move.onCheck }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:50px;box-shadow:var(--elev-1)">Check my new address</button>
+      </sc-if>
+
+      <sc-if value="{{ move.isResolving }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:36px 24px;box-shadow:var(--elev-1);text-align:center">
+          <span aria-hidden="true" style="width:34px;height:34px;border:3px solid var(--border-subtle);border-top-color:var(--secondary);border-radius:999px;display:inline-block;animation:pifSpin .8s linear infinite;margin-bottom:16px"></span>
+          <div style="font-size:15px;font-weight:700;margin-bottom:4px">Checking your new address…</div>
+          <div style="font-size:13px;color:var(--text-secondary)">Matching ZIP → utility → rate plan.</div>
+          <button onClick="{{ move.onResolved }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:10px 18px;border-radius:999px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:40px;margin-top:18px">Continue</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ move.isSame }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:11px;align-items:flex-start;background:color-mix(in srgb,var(--success) 8%,var(--surface-raised));border:1px solid var(--success);border-radius:14px;padding:15px 16px;margin-bottom:16px"><span style="color:var(--success);flex:none;margin-top:1px">{{ icoCheckSm }}</span><div style="font-size:14px;line-height:20px"><b>Good news — PIF works at {{ move.newAddress }}.</b><span style="color:var(--text-secondary)"> Your plan and savings continue.</span></div></div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:16px"><div style="display:flex;flex-direction:column;gap:1px;border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden"><div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">New utility</span><span style="font-size:13.5px;font-weight:600">{{ move.newUtilA }}</span></div><div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Rate plan</span><span style="font-size:13.5px;font-weight:600">{{ move.newRateA }}</span></div><div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Your plan</span><span style="font-size:13.5px;font-weight:600">{{ move.curTierName }} · unchanged</span></div></div></div>
+        <button onClick="{{ move.onConfirmMove }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:50px;box-shadow:var(--elev-1)">Move my service</button>
+      </sc-if>
+
+      <sc-if value="{{ move.isChange }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:11px;align-items:flex-start;background:color-mix(in srgb,var(--warning) 8%,var(--surface-raised));border:1px solid var(--warning);border-radius:14px;padding:15px 16px;margin-bottom:16px"><span style="color:var(--warning);flex:none;margin-top:1px">{{ icoWarnSm }}</span><div style="font-size:13.5px;line-height:20px"><b>PIF works at {{ move.newAddress }}, but the economics change.</b><span style="color:var(--text-secondary)"> {{ move.newUtilB }} bills a flat rate — no peak/off-peak spread — so {{ move.curTierName }} won’t earn its fee there. {{ move.recTier }} is the better fit.</span></div></div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:16px"><div style="display:flex;flex-direction:column;gap:1px;border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden"><div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">New utility</span><span style="font-size:13.5px;font-weight:600">{{ move.newUtilB }}</span></div><div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Rate plan</span><span style="font-size:13.5px;font-weight:600">{{ move.newRateB }}</span></div></div></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <button onClick="{{ move.onSwitchTier }}" style="appearance:none;cursor:pointer;width:100%;font:700 14px Inter,system-ui,sans-serif;padding:13px;border-radius:12px;background:var(--surface-raised);color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px">Switch to {{ move.recTier }} &amp; move</button>
+          <button onClick="{{ move.onKeepTier }}" style="appearance:none;cursor:pointer;width:100%;font:700 14px Inter,system-ui,sans-serif;padding:13px;border-radius:12px;background:var(--surface-raised);color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px">Keep {{ move.curTierName }} &amp; move anyway</button>
+          <button onClick="{{ move.onWhyRefit }}" style="appearance:none;border:none;background:transparent;cursor:pointer;font:600 12.5px Inter,system-ui,sans-serif;color:var(--primary);padding:6px 0" style-hover="text-decoration:underline">See why {{ move.recTier }} fits better</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ move.isOOM }}" hint-placeholder-val="{{ false }}">
+        <h1 style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin:0 0 6px">PIF isn’t live in {{ move.oomArea }} yet</h1>
+        <p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 0 16px">We can’t optimize there right now — so when you move, your service will end. I’ll be straight with you rather than pretend otherwise. Leave your details and I’ll email the moment we go live.</p>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px;display:flex;flex-direction:column;gap:14px">
+          <div><label for="f10-oz" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:6px">New ZIP</label><input id="f10-oz" inputmode="numeric" maxlength="5" value="{{ move.zip }}" onInput="{{ move.onZip }}" placeholder="e.g. 24801" style="width:100%;font:600 15px 'Space Grotesk',system-ui;letter-spacing:.08em;padding:12px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></div>
+          <div><label for="f10-em" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:6px">Email</label><input id="f10-em" type="email" value="{{ move.email }}" onInput="{{ move.onEmail }}" placeholder="you@email.com" style="width:100%;font:400 15px Inter,system-ui;padding:12px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></div>
+          <button role="checkbox" aria-checked="{{ move.consent }}" onClick="{{ move.onConsent }}" style="appearance:none;background:transparent;border:none;cursor:pointer;display:flex;align-items:flex-start;gap:12px;text-align:left;padding:0"><span style="{{ move.consentBox }}"><sc-if value="{{ move.consentOn }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="var(--text-onfill)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></sc-if></span><span style="font-size:13px;line-height:19px;color:var(--text-primary)">Email me when PIF launches in my new area. <span style="color:var(--text-secondary)">Required to send the notification — nothing else.</span></span></button>
+        </div>
+        <button onClick="{{ move.onWaitlist }}" aria-disabled="{{ move.canWait }}" style="{{ move.waitStyle }}">Notify me when PIF is live there</button>
+        <div style="display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,var(--secondary) 8%,var(--surface-base));border:1px solid var(--secondary);border-radius:12px;padding:13px 15px;margin-top:14px"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoRefresh }}</span><div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)">When you move, service ends at the end of your paid month (no refund for the current month), and your devices hand control back to your own defaults — nothing stranded.</div></div>
+      </sc-if>
+
+      <sc-if value="{{ move.isOomDone }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:28px;box-shadow:var(--elev-2);text-align:center">
+          <div style="width:52px;height:52px;border-radius:999px;background:color-mix(in srgb,var(--success) 13%,transparent);color:var(--success);display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px">{{ icoCheckBig }}</div>
+          <h1 style="font-family:'Space Grotesk',system-ui;font-size:21px;font-weight:700;margin:0 0 6px">You're on the list</h1>
+          <p style="font-size:13px;line-height:20px;color:var(--text-secondary);margin:0 0 20px">We'll email you the moment PIF is live in your new area. Your current service continues until you move, then hands back gracefully.</p>
+          <button onClick="{{ onBackF1 }}" style="appearance:none;border:none;cursor:pointer;font:700 14px Inter,system-ui,sans-serif;padding:12px 22px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:46px"><span aria-hidden="true">←</span> Back</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ move.isDone }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:28px;box-shadow:var(--elev-2);text-align:center">
+          <div style="display:flex;justify-content:center;margin-bottom:12px">{{ ionaBig }}</div>
+          <h1 style="font-family:'Space Grotesk',system-ui;font-size:21px;font-weight:700;margin:0 0 6px">You're all set at your new home</h1>
+          <p style="font-size:13px;line-height:20px;color:var(--text-secondary);margin:0 0 20px">Your service is re-pointed to {{ move.newAddress }} — same account, new utility and rate. Savings pick up as soon as you're moved in.</p>
+          <button onClick="{{ onBackF1 }}" style="appearance:none;border:none;cursor:pointer;font:700 14px Inter,system-ui,sans-serif;padding:12px 22px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:46px"><span aria-hidden="true">←</span> Back</button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  </sc-if>
+
+</div>
+
+<!-- ============ PENDING-CHANGE SHEET ============ -->
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+  <div role="dialog" aria-modal="true" aria-label="Scheduled plan change" style="position:fixed;inset:0;z-index:80;background:rgba(8,12,20,.5);display:flex;align-items:center;justify-content:center;padding:24px" onClick="{{ onCloseSheet }}">
+    <div onClick="{{ stopProp }}" style="width:100%;max-width:420px;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:18px;padding:22px;box-shadow:var(--elev-3)">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px"><span style="color:var(--warning)">{{ icoClock }}</span><span style="font-size:17px;font-weight:700;font-family:'Space Grotesk',system-ui">{{ sheet.title }}</span></div>
+      <p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 0 18px">{{ sheet.body }}</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button onClick="{{ onKeepPlan }}" style="appearance:none;border:none;cursor:pointer;font:700 14px Inter,system-ui,sans-serif;padding:13px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:48px">{{ sheet.keepLabel }}</button>
+        <button onClick="{{ onCloseSheet }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:11px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:44px">Keep the scheduled change</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ overlayOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ onOverlayClose }}" aria-hidden="true" style="position:fixed;inset:0;z-index:40;background:transparent"></div>
+</sc-if>
+<!-- ============ IONA GLOBAL LAUNCHER ============ -->
+<div style="position:fixed;right:24px;bottom:24px;z-index:70;display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+  <sc-if value="{{ fanOpen }}" hint-placeholder-val="{{ false }}">
+    <div role="menu" aria-label="Iona" style="display:flex;flex-direction:column;align-items:flex-end;gap:9px">
+      <sc-for list="{{ fanTabs }}" as="t" hint-placeholder-count="5">
+        <button role="menuitem" onClick="{{ t.onSelect }}" style="{{ t.style }}"><span style="color:var(--text-secondary)">{{ t.icon }}</span><span>{{ t.label }}</span></button>
+      </sc-for>
+    </div>
+  </sc-if>
+  <button onClick="{{ onLauncher }}" aria-label="Ask Iona" aria-expanded="{{ fanOpen }}" style="appearance:none;border:none;background:transparent;cursor:pointer;padding:0;line-height:0;border-radius:999px">{{ launcherEl }}</button>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:1150},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;f1&quot;,&quot;f2&quot;,&quot;f3&quot;,&quot;f4&quot;,&quot;f5&quot;,&quot;f6&quot;,&quot;f8&quot;,&quot;f9&quot;,&quot;f10&quot;,&quot;f7&quot;,&quot;f7a&quot;,&quot;f7ai&quot;,&quot;f7b&quot;],&quot;default&quot;:&quot;f1&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;tier&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;basic&quot;,&quot;optimum&quot;,&quot;premium&quot;],&quot;default&quot;:&quot;optimum&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;dataState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;loading&quot;,&quot;error&quot;,&quot;offline&quot;,&quot;empty&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;pending&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;downgrade&quot;,&quot;unsubscribe&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;changeState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;browse&quot;,&quot;upgrade&quot;,&quot;downgrade&quot;,&quot;success&quot;],&quot;default&quot;:&quot;browse&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;dunning&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;first&quot;,&quot;grace&quot;,&quot;final&quot;],&quot;default&quot;:&quot;first&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;suspend&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;suspended&quot;,&quot;reactivating&quot;],&quot;default&quot;:&quot;suspended&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;ending&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;generic&quot;,&quot;exit&quot;],&quot;default&quot;:&quot;generic&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;referrals&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;populated&quot;,&quot;empty&quot;],&quot;default&quot;:&quot;populated&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;moveState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;entry&quot;,&quot;resolving&quot;,&quot;same&quot;,&quot;change&quot;,&quot;oom&quot;],&quot;default&quot;:&quot;entry&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;cardState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;addfirst&quot;,&quot;replace&quot;,&quot;saving&quot;,&quot;declined&quot;,&quot;expired&quot;,&quot;success&quot;],&quot;default&quot;:&quot;replace&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    var hs=''; try{ var h=(window.location.hash||'').replace('#',''); if(/^(f10|f7ai|f7a|f7b|f[1-9])$/.test(h)) hs=h; }catch(e){}
+    this.state = {
+      theme: props.initialTheme || 'light', rm:false,
+      screen: hs || props.screen || 'f1',
+      tier: props.tier || 'optimum',
+      dataState: props.dataState || 'normal',
+      pending: props.pending || 'none',
+      cardState: props.cardState || 'replace',
+      sheetOpen:false, fanOpen:false, acctOpen:false, toast:'',
+      f4step: props.changeState || 'browse', f4target:null,
+      cancelReasons:{}, cancelMissing:'', cancelOther:'',
+      dunning: props.dunning || 'first', suspend: props.suspend || 'suspended', ending: props.ending || 'generic', referrals: props.referrals || 'populated',
+      moveStep: props.moveState || 'entry', moveZip:'', moveEmail:'', moveConsent:false,
+      inviteEmail:'', inviteNote:'',
+      name:'Alex Rivera', addr:'812 Maple Ave', city:'Richmond', zip:'23220',
+      touched:{},
+    };
+  }
+  set(k,v){ const p={}; p[k]=v; this.setState(p); }
+  componentDidMount(){ this._esc=(e)=>{ if(e.key==='Escape') this.setState({acctOpen:false,fanOpen:false}); }; try{ window.addEventListener('keydown', this._esc); }catch(e){} }
+  componentWillUnmount(){ try{ window.removeEventListener('keydown', this._esc); }catch(e){} }
+  wrapApprox(text){ const parts=String(text||'').split('≈ '); const out=[]; parts.forEach((p,i)=>{ if(i>0){ out.push(React.createElement('span',{key:'ah'+i,'aria-hidden':'true'},'≈'), React.createElement('span',{key:'sr'+i,className:'pif-sr'},'approximately ')); } if(p) out.push(p); }); return React.createElement(React.Fragment,null,...out); }
+  toastMsg(m){ this.setState({toast:m}); clearTimeout(this._t); this._t=setTimeout(()=>this.setState({toast:''}),3000); }
+
+  ico(name,size){
+    const c={ width:size||18, height:size||18, viewBox:'0 0 20 20', fill:'none', style:{flex:'none'}, 'aria-hidden':'true' };
+    const P=(d,ex)=>React.createElement('path',Object.assign({ d, stroke:'currentColor', strokeWidth:1.6, strokeLinecap:'round', strokeLinejoin:'round' },ex||{}));
+    const C=(cx,cy,r,ex)=>React.createElement('circle',Object.assign({ cx,cy,r, stroke:'currentColor', strokeWidth:1.6 },ex||{}));
+    const D=(cx,cy,r)=>React.createElement('circle',{ cx,cy,r, fill:'currentColor' });
+    const m={
+      card:()=>[P('M3 6h14v8H3zM3 9h14')],
+      doc:()=>[P('M6 3h6l3 3v11H6zM12 3v3h3'),P('M8 11h5M8 14h5')],
+      download:()=>[P('M10 3v9M6.5 8.5 10 12l3.5-3.5M4 15.5h12')],
+      clock:()=>[C(10,10,7),P('M10 6.4V10l2.4 1.6')],
+      lock:()=>[P('M6.4 9.2V7a3.6 3.6 0 0 1 7.2 0v2.2'),P('M5.4 9.2h9.2v6.6H5.4z'),D(10,12.2,.8)],
+      check:()=>[P('M4 10.5 8 14.5 16 5.5')],
+      cross:()=>[P('M6 6l8 8M14 6l-8 8')],
+      warn:()=>[P('M10 3.4 17.2 16.6H2.8z'),P('M10 8.4v3.4'),D(10,14.2,.5)],
+      chevronR:()=>[P('M8 5l5 5-5 5')],
+      back:()=>[P('M15 10H4M9 5 4 10l5 5')],
+      gear:()=>[C(10,10,2.4),P('M10 3.2v1.8M10 15v1.8M16.8 10H15M5 10H3.2M14.8 5.2 13.5 6.5M6.5 13.5 5.2 14.8M14.8 14.8 13.5 13.5M6.5 6.5 5.2 5.2')],
+      logout:()=>[P('M8 4H4v12h4M12 7l3 3-3 3M15 10H7')],
+      refresh:()=>[P('M15.5 8A6 6 0 1 0 16 11'),P('M16 4v4h-4')],
+      swap:()=>[P('M5 7h10l-2.5-2.5M15 13H5l2.5 2.5')],
+      info:()=>[C(10,10,7.2),P('M10 9v4M10 6.6h.01')],
+      offline:()=>[P('M3.4 8.1a10 10 0 0 1 13.2 0M6 10.7a6 6 0 0 1 8 0M8.3 13.2a2.6 2.6 0 0 1 3.4 0'),D(10,15.6,.6),P('M4 4l12 12')],
+      bell:()=>[P('M6 8a4 4 0 0 1 8 0c0 4 1.5 5 1.5 5h-11S6 12 6 8z'),P('M8.5 16a1.6 1.6 0 0 0 3 0')],
+      sparkles:()=>[P('M10 3l1.6 3.6L15 8l-3.4 1.4L10 13l-1.6-3.6L5 8l3.4-1.4z')],
+      up:()=>[C(10,10,7),P('M10 13.5V7M7 9.5 10 6.5l3 3')],
+      bolt:()=>[P('M11 3 5 11h4l-1 6 6-8h-4z')],
+      dot:()=>[D(10,10,3)],
+      x:()=>[P('M5.5 5.5l9 9M14.5 5.5l-9 9')],
+      trenddown:()=>[P('M4 6.5l4.8 4.8L11.2 8.9l4.8 4.8'),P('M12.8 13.7h3.2v-3.2')],
+      dollar:()=>[P('M10 3.5v13'),P('M13 6.6C13 5.3 11.6 4.7 10 4.7s-3 .7-3 2S8.4 9 10 9.3s3 .8 3 2.2-1.4 2-3 2-3-.7-3-2')],
+      moon:()=>[P('M14.6 11.6A6 6 0 0 1 8.2 4a5.7 5.7 0 1 0 6.4 7.6z')],
+      help:()=>[C(10,10,7),P('M8 8a2 2 0 1 1 2.7 1.9c-.6.2-.9.6-.9 1.3'),D(10,14,.7)],
+      puzzle:()=>[P('M8 4.6a1.6 1.6 0 0 1 3.2 0c0 .7.5 1 1.1 1H13.8v2.5c0 .6.3 1.1 1 1.1a1.6 1.6 0 0 1 0 3.2c-.7 0-1 .5-1 1.1V16H11.3c-.6 0-1.1-.3-1.1-1a1.6 1.6 0 0 0-3.2 0c0 .7-.5 1-1.1 1H4v-2.4c0-.6.3-1.1 1-1.1a1.6 1.6 0 0 0 0-3.2c-.7 0-1-.5-1-1.1V5.6h2.9c.6 0 1.1-.3 1.1-1z')],
+      truck:()=>[P('M3 6h9v7.5H3zM12 8.4h3l2 2.6v2.5h-5'),C(6,15.2,1.3),C(14.4,15.2,1.3)],
+      shield:()=>[P('M10 3 4.7 5.1v4.1c0 3.3 2.2 5.4 5.3 6.8 3.1-1.4 5.3-3.5 5.3-6.8V5.1z')],
+      pause:()=>[P('M7.6 5v10M12.4 5v10')],
+      ellipsis:()=>[D(5,10,1.05),D(10,10,1.05),D(15,10,1.05)],
+      gift:()=>[P('M4 9h12v7H4zM4 6.5h12V9H4zM10 6.5V16'),P('M10 6.5C10 4.8 8.7 4 7.6 4.4S6.6 6.5 10 6.5M10 6.5C10 4.8 11.3 4 12.4 4.4S13.4 6.5 10 6.5')],
+      copy:()=>[P('M7.5 7.5h7v8h-7zM5.5 12.5h-1v-8h8v1')],
+      share:()=>[C(6,10,2),C(14,6,2),C(14,14,2),P('M7.8 9l4.4-2M7.8 11l4.4 2')],
+      users:()=>[C(7.5,8,2.4),P('M3.4 15.2a4.1 4.1 0 0 1 8.2 0'),P('M13 6.4a2.3 2.3 0 0 1 0 4.4M13.6 15.2a4.1 4.1 0 0 0-1.7-3.3')],
+    };
+    const f=m[name]||m.info;
+    return React.createElement('svg',c,...f());
+  }
+  themeIcon(mode){
+    const c={ width:13,height:13,viewBox:'0 0 16 16',fill:'none' };
+    if(mode==='light') return React.createElement('svg',c,React.createElement('circle',{cx:8,cy:8,r:3.1,fill:'currentColor'}),React.createElement('path',{d:'M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M13 3l-1 1M4 12l-1 1',stroke:'currentColor',strokeWidth:1.3,strokeLinecap:'round'}));
+    if(mode==='dark') return React.createElement('svg',c,React.createElement('path',{d:'M13 9.5A6 6 0 0 1 6.5 3 5.6 5.6 0 1 0 13 9.5z',fill:'currentColor'}));
+    return React.createElement('svg',c,React.createElement('circle',{cx:8,cy:8,r:6,stroke:'currentColor',strokeWidth:1.4}),React.createElement('path',{d:'M8 2a6 6 0 0 1 0 12z',fill:'currentColor'}));
+  }
+  ionaEl(size){
+    const svg='<svg viewBox="0 0 84 84" width="'+size+'" height="'+size+'"><defs><radialGradient id="b6ib" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient></defs><g transform="translate(42,48) scale(0.30)"><path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" fill="#F5B23D"/><circle cx="0" cy="0" r="72" fill="url(#b6ib)"/><circle cx="-24" cy="-8" r="11" fill="#0B1220"/><circle cx="24" cy="-8" r="11" fill="#0B1220"/><circle cx="-20" cy="-12" r="4" fill="#fff"/><circle cx="28" cy="-12" r="4" fill="#fff"/><path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/><circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/></g></svg>';
+    return React.createElement('span',{ style:{ display:'inline-flex' }, dangerouslySetInnerHTML:{ __html:svg } });
+  }
+  launcherSvg(){
+    const head='<svg viewBox="-120 -120 240 240" width="58" height="58"><defs><radialGradient id="b6la" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient></defs>';
+    const q='<text x="0" y="-76" fill="#F5B23D" font-size="58" font-weight="700" text-anchor="middle" font-family="Inter,system-ui">?</text>';
+    const body='<circle cx="0" cy="0" r="72" fill="url(#b6la)"/><circle cx="-24" cy="-8" r="11" fill="#0B1220"/><circle cx="24" cy="-8" r="11" fill="#0B1220"/><circle cx="-20" cy="-12" r="4" fill="#fff"/><circle cx="28" cy="-12" r="4" fill="#fff"/><path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/>';
+    const cheeks='<circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/>';
+    return head+q+body+cheeks+'</svg>';
+  }
+  launcherEl(){ return React.createElement('span',{ style:{ display:'inline-flex', filter:'drop-shadow(0 6px 16px rgba(0,0,0,.28))' }, dangerouslySetInnerHTML:{ __html:this.launcherSvg() } }); }
+  ionaCelebrateEl(size){
+    // Canonical Foundations "Celebrating" expression (Batch 0 §11) — reused verbatim.
+    const gid='b6cel'+size, ggl='b6celg'+size;
+    const svg='<svg viewBox="-120 -120 240 240" width="'+size+'" height="'+size+'" role="img" aria-label="Iona, celebrating"><defs>'
+      +'<radialGradient id="'+gid+'" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient>'
+      +'<radialGradient id="'+ggl+'" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#2FE39A" stop-opacity="0.55"/><stop offset="1" stop-color="#2FE39A" stop-opacity="0"/></radialGradient></defs>'
+      +'<ellipse cx="0" cy="0" rx="118" ry="118" fill="url(#'+ggl+')"/>'
+      +'<path d="M74,-40 l3,7 l7,3 l-7,3 l-3,7 l-3,-7 l-7,-3 l7,-3 z" fill="#5CF3B6"/>'
+      +'<circle cx="0" cy="0" r="72" fill="url(#'+gid+')"/>'
+      +'<path d="M-24,-12 l3,7 l7,1 l-5,5 l1,7 l-6,-4 l-6,4 l1,-7 l-5,-5 l7,-1 z" fill="#0B1220"/>'
+      +'<path d="M24,-12 l3,7 l7,1 l-5,5 l1,7 l-6,-4 l-6,4 l1,-7 l-5,-5 l7,-1 z" fill="#0B1220"/>'
+      +'<path d="M-18,18 Q0,40 18,18 Q0,30 -18,18 Z" fill="#0B1220"/>'
+      +'<path d="M60,-6 Q84,-26 80,-52" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/>'
+      +'<path d="M-60,-6 Q-84,-26 -80,-52" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/>'
+      +'<circle cx="80" cy="-56" r="11" fill="#2FE39A"/><circle cx="-80" cy="-56" r="11" fill="#2FE39A"/>'
+      +'<path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" transform="translate(78,0)" fill="#F5B23D" stroke="#0B1220" stroke-width="2"/></svg>';
+    return React.createElement('span',{ style:{ display:'inline-flex' }, dangerouslySetInnerHTML:{ __html:svg } });
+  }
+  ionaSadEl(size){
+    // Canonical Foundations "Empathetic" expression (Batch 0 §11) — reused verbatim, never redrawn.
+    const gid='b6emp'+size, ggl='b6empg'+size;
+    const svg='<svg viewBox="-120 -120 240 240" width="'+size+'" height="'+size+'" role="img" aria-label="Iona, empathetic"><defs>'
+      +'<radialGradient id="'+gid+'" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient>'
+      +'<radialGradient id="'+ggl+'" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#2FE39A" stop-opacity="0.55"/><stop offset="1" stop-color="#2FE39A" stop-opacity="0"/></radialGradient></defs>'
+      +'<ellipse cx="0" cy="6" rx="95" ry="95" fill="url(#'+ggl+')" opacity="0.6"/>'
+      +'<path d="M-8,-100 L10,-100 L-2,-80 L14,-80 L-14,-52 L-4,-76 L-18,-76 Z" fill="#F5B23D" opacity="0.85"/>'
+      +'<circle cx="0" cy="4" r="72" fill="url(#'+gid+')"/>'
+      +'<path d="M-36,-6 Q-24,-16 -12,-15" fill="none" stroke="#0B1220" stroke-width="5" stroke-linecap="round"/>'
+      +'<path d="M36,-6 Q24,-16 12,-15" fill="none" stroke="#0B1220" stroke-width="5" stroke-linecap="round"/>'
+      +'<circle cx="-24" cy="-2" r="10" fill="#0B1220"/><circle cx="24" cy="-2" r="10" fill="#0B1220"/>'
+      +'<circle cx="-20" cy="-6" r="3.5" fill="#fff"/><circle cx="28" cy="-6" r="3.5" fill="#fff"/>'
+      +'<path d="M30,10 q7,12 0,18 q-7,-6 0,-18 z" fill="#7FB2FF"/>'
+      +'<path d="M-20,34 Q0,18 20,34" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/>'
+      +'<path d="M62,20 Q80,36 74,58" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/>'
+      +'<path d="M-62,20 Q-80,36 -74,58" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/></svg>';
+    return React.createElement('span',{ style:{ display:'inline-flex' }, dangerouslySetInnerHTML:{ __html:svg } });
+  }
+
+  segStyle(active){
+    const base={ appearance:'none',border:'none',background:'transparent',color:'var(--text-secondary)',font:'600 12px Inter,system-ui,sans-serif',padding:'7px 12px',borderRadius:'999px',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:'5px',minHeight:'34px' };
+    return active ? Object.assign({},base,{ background:'var(--surface-base)',color:'var(--text-primary)',boxShadow:'var(--elev-1)' }) : base;
+  }
+  seg(list,cur,key){ return list.map(o=>({ label:o.label, active:cur===o.k, onSelect:()=>this.set(key,o.k), style:this.segStyle(cur===o.k) })); }
+  navStyle(active){ return { display:'inline-flex',alignItems:'center',background:active?'var(--surface-sunken)':'transparent',color:active?'var(--text-primary)':'var(--text-secondary)',font:'600 14px Inter,system-ui,sans-serif',padding:'8px 15px',borderRadius:'10px',textDecoration:'none' }; }
+  tabBtnStyle(i,rm){ return { display:'inline-flex',alignItems:'center',gap:'9px',padding:'9px 15px',borderRadius:'999px',border:'1px solid var(--border-subtle)',background:'var(--surface-raised)',color:'var(--text-primary)',font:'600 13px Inter,system-ui,sans-serif',cursor:'pointer',minHeight:'40px',boxShadow:'var(--elev-2)',appearance:'none',animation:rm?'none':('pifFanIn .28s cubic-bezier(.2,0,0,1.2) both '+(i*45)+'ms') }; }
+  fanTabs(rm){
+    const ext=(u)=>()=>{ this.setState({fanOpen:false}); try{ window.location.href=u; }catch(e){} };
+    const soon=(m)=>()=>{ this.setState({fanOpen:false}); this.toastMsg(m); };
+    const list=[
+      { label:'Help', icon:this.ico('info',17), onSelect:ext('PIF-Settings-Help-Batch5.dc.html#s12') },
+      { label:'Messages', icon:this.ico('bell',17), onSelect:ext('PIF-Messages-Batch8.dc.html#h1') },
+    ];
+    if(this.state.tier!=='premium') list.push({ label:'Upgrade', icon:this.ico('up',17), onSelect:()=>this.setState({ fanOpen:false, screen:'f4', f4step:'browse', f4target:null }) });
+    list.push({ label:'Settings', icon:this.ico('gear',17), onSelect:ext('PIF-Settings-Help-Batch5.dc.html#s1') });
+    list.push({ label:'Close', icon:this.ico('x',17), onSelect:()=>this.setState({fanOpen:false}) });
+    return list.map((t,i)=>({ label:t.label, icon:t.icon, onSelect:t.onSelect, style:this.tabBtnStyle(i,rm) }));
+  }
+
+  inputStyle(bad){ return 'width:100%;appearance:none;border:1px solid '+(bad?'var(--danger)':'var(--border-strong)')+';background:var(--surface-base);color:var(--text-primary);border-radius:11px;padding:12px 14px;font:500 14px Inter,system-ui,sans-serif;min-height:46px;outline:none'; }
+
+  renderVals(){
+    const st=this.state, rm=st.rm, scr=st.screen, tier=st.tier;
+    const isLoading=st.dataState==='loading', isOffline=st.dataState==='offline', isError=st.dataState==='error', isEmpty=st.dataState==='empty';
+    const showContent = !(isLoading||isOffline||isError);
+
+    const segScreen=this.seg([{k:'f1',label:'F1 Overview'},{k:'f2',label:'F2 Payment'},{k:'f3',label:'F3 Invoices'},{k:'f4',label:'F4 Change'},{k:'f5',label:'F5 Dunning'},{k:'f6',label:'F6 Suspended'},{k:'f8',label:'F8 Referrals'},{k:'f9',label:'F9 Ending'},{k:'f10',label:'F10 Move'},{k:'f7',label:'F7 Cancel'},{k:'f7a',label:'F7a Why'},{k:'f7ai',label:'F7a-i Save'},{k:'f7b',label:'F7b Done'}], scr, 'screen');
+    const segChange=[{k:'browse',label:'Browse'},{k:'upgrade',label:'Upgrade'},{k:'downgrade',label:'Downgrade'},{k:'success',label:'Success'}].map(o=>({ label:o.label, active:st.f4step===o.k, onSelect:()=>this.setState({ f4step:o.k, f4target:null }), style:this.segStyle(st.f4step===o.k) }));
+    const segTier=this.seg([{k:'basic',label:'Basic'},{k:'optimum',label:'Optimum'},{k:'premium',label:'Premium'}], tier, 'tier');
+    const segState=this.seg([{k:'normal',label:'Normal'},{k:'loading',label:'Loading'},{k:'error',label:'Error'},{k:'offline',label:'Offline'},{k:'empty',label:'Empty'}], st.dataState, 'dataState');
+    const segPending=this.seg([{k:'none',label:'None'},{k:'downgrade',label:'Downgrade'},{k:'unsubscribe',label:'Unsubscribe'}], st.pending, 'pending');
+    const segCard=this.seg([{k:'addfirst',label:'Add first'},{k:'replace',label:'Replace'},{k:'saving',label:'Saving'},{k:'declined',label:'Declined'},{k:'expired',label:'Expired'},{k:'success',label:'Success'}], st.cardState, 'cardState');
+    const segTheme=['light','dark','system'].map(mode=>({ label:mode.charAt(0).toUpperCase()+mode.slice(1), active:st.theme===mode, icon:this.themeIcon(mode), onSelect:()=>this.set('theme',mode), style:this.segStyle(st.theme===mode) }));
+    const rmBtnStyle={ appearance:'none',cursor:'pointer',font:'600 12px Inter,system-ui,sans-serif',padding:'8px 14px',borderRadius:'999px',minHeight:'34px',border:'1px solid '+(rm?'var(--info)':'var(--border-strong)'),background:rm?'color-mix(in srgb,var(--info) 14%,transparent)':'var(--surface-sunken)',color:rm?'var(--info)':'var(--text-secondary)' };
+
+    const TIERS={ basic:{name:'Basic',price:'$5'}, optimum:{name:'Optimum',price:'$15'}, premium:{name:'Premium',price:'$25'} };
+    const plan=Object.assign({ nextDate:'Aug 1, 2026' }, TIERS[tier]||TIERS.optimum);
+
+    // pending-change chip + sheet
+    let pendingChip={show:false}, sheet={};
+    if(st.pending==='downgrade'){
+      pendingChip={ show:true, onOpen:()=>this.set('sheetOpen',true), title:'Scheduled: move to Basic', sub:'Takes effect at the end of your paid month.', badge:'Basic in 12 days ⏱' };
+      sheet={ title:'Scheduled downgrade', body:"You're scheduled to move to Basic on Aug 6, 2026. Keep Optimum instead?", keepLabel:'Keep Optimum' };
+    } else if(st.pending==='unsubscribe'){
+      pendingChip={ show:true, onOpen:()=>this.set('sheetOpen',true), title:'Scheduled: subscription ends', sub:'Your plan runs to the end of the paid month.', badge:'Ends in 8 days ⏱' };
+      sheet={ title:'Scheduled cancellation', body:"You're scheduled to end your subscription on Aug 2, 2026. Keep "+plan.name+" instead?", keepLabel:'Keep '+plan.name };
+    }
+
+    // payment method summary
+    const pm = st.cardState==='addfirst'
+      ? { line:'No card on file', sub:'Add a card to keep your subscription active.' }
+      : { line:'•••• 4242', sub:'Visa · expires 08/27' };
+
+    const recentInvoices=[{date:'Jul 1, 2026',amt:plan.price+'.00'},{date:'Jun 1, 2026',amt:plan.price+'.00'},{date:'May 1, 2026',amt:plan.price+'.00'}];
+
+    // F2 card model
+    const cs=st.cardState;
+    const cardErr = cs==='declined'?"Your card was declined. Try another card or contact your bank." : cs==='expired'?"That card has expired. Enter a card with a valid expiry date." : '';
+    const fieldBase='display:flex;align-items:center;gap:10px;background:var(--surface-base);border:1px solid var(--border-strong);border-radius:11px;padding:13px 14px;min-height:48px';
+    const fieldBad='display:flex;align-items:center;gap:10px;background:var(--surface-base);border:1px solid var(--danger);border-radius:11px;padding:13px 14px;min-height:48px';
+    const hasErr = cs==='declined'||cs==='expired';
+    const card={
+      form: cs!=='success', success: cs==='success', saving: cs==='saving', hasError:hasErr, errorMsg:cardErr,
+      title: cs==='addfirst' ? 'Add a payment method' : 'Replace your card',
+      subtitle: cs==='addfirst' ? 'Add the card we’ll charge each month for your subscription.' : 'Enter a new card. Your subscription keeps its schedule.',
+      numPlaceholder:'1234 1234 1234 1234', brandTag:'Stripe',
+      numFieldStyle: (hasErr?fieldBad:fieldBase), expFieldStyle:(cs==='expired'?fieldBad:fieldBase), cvcFieldStyle:fieldBase,
+      savedLine:'Visa •••• 4242',
+      saveLabel: cs==='saving' ? 'Saving…' : (cs==='addfirst'?'Save card':'Replace card'),
+      saveStyle:'appearance:none;border:none;cursor:'+(cs==='saving'?'wait':'pointer')+';width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:50px;box-shadow:var(--elev-1);opacity:'+(cs==='saving'?.8:1),
+    };
+    const t=st.touched||{};
+    const nameBad=t.name && st.name.trim().length===0, addrBad=t.addr && st.addr.trim().length===0;
+
+    // F3 invoices
+    const invoices=[
+      {date:'Jul 1, 2026',desc:plan.name+' plan · Jul 2026',amt:plan.price+'.00'},
+      {date:'Jun 1, 2026',desc:plan.name+' plan · Jun 2026',amt:plan.price+'.00'},
+      {date:'May 1, 2026',desc:plan.name+' plan · May 2026',amt:plan.price+'.00'},
+      {date:'Apr 1, 2026',desc:plan.name+' plan · Apr 2026',amt:plan.price+'.00'},
+      {date:'Mar 1, 2026',desc:plan.name+' plan · Mar 2026',amt:plan.price+'.00'},
+      {date:'Feb 1, 2026',desc:plan.name+' plan · Feb 2026',amt:plan.price+'.00'},
+    ];
+
+    // F4 — change plan (upgrade immediate/prorated · downgrade scheduled)
+    const rankT={basic:0,optimum:1,premium:2}, keysT=['basic','optimum','premium'], priceNum={basic:5,optimum:15,premium:25};
+    const cur=rankT[tier];
+    const adds={ optimum:[{name:'Automatic load control',val:'≈ $18/mo'},{name:'Pre-cool & smart scheduling',val:'≈ $6/mo'}], premium:[{name:'Battery & EV arbitrage',val:'≈ $9/mo'},{name:'VPP enrollment & priority support',val:'≈ $5/mo'}] };
+    const tierBlurb={ basic:'Advisory only — PIF tells you the best move; you act on it.', optimum:'Adds automatic control — PIF shifts loads and pre-cools for you.', premium:'Adds arbitrage & VPP — your battery and EV earn, with priority support.' };
+    const leversBetween=(a,b)=>{ let out=[]; for(let r=a+1;r<=b;r++){ const k=keysT[r]; if(adds[k]) out=out.concat(adds[k]); } return out; };
+    const DOWNDATE='Aug 6, 2026';
+    const f4step=st.f4step||'browse';
+    const tgt = st.f4target || (f4step==='downgrade' ? keysT[Math.max(0,cur-1)] : keysT[Math.min(2,cur+1)]);
+    const tgtRank=rankT[tgt], upDir=tgtRank>cur, dnDir=tgtRank<cur, sameDir=tgtRank===cur;
+    const ctaBase='appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:10px 16px;border-radius:999px;min-height:42px;';
+    const f4Cards=keysT.map(k=>{ const r=rankT[k], isCur=r===cur, isUp=r>cur;
+      return { name:TIERS[k].name, price:TIERS[k].price, blurb:tierBlurb[k], isCurrent:isCur, canSelect:!isCur,
+        dirNote: isCur?'' : (isUp?'Upgrade takes effect now':'Downgrade takes effect '+DOWNDATE),
+        dirColor: isUp?'var(--accent)':'var(--warning)', ctaLabel:'Choose '+TIERS[k].name,
+        ctaStyle: ctaBase + (isUp?'background:var(--primary);color:var(--text-onfill);border:none':'background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong)'),
+        onSelect: isCur?null:()=>this.setState({ f4target:k, f4step: isUp?'upgrade':'downgrade' }),
+        cardStyle:'background:var(--surface-raised);border:1px solid '+(isCur?'var(--secondary)':'var(--border-subtle)')+';border-radius:16px;padding:18px 20px;box-shadow:var(--elev-1)' };
+    });
+    const f4={
+      browse: f4step==='browse', already:(f4step==='upgrade'||f4step==='downgrade')&&sameDir,
+      upgrade: f4step==='upgrade'&&upDir, downgrade: f4step==='downgrade'&&dnDir, success: f4step==='success',
+      cards:f4Cards, tgtName:TIERS[tgt].name, tgtPrice:TIERS[tgt].price, downDate:DOWNDATE,
+      levers: (dnDir ? leversBetween(tgtRank,cur) : leversBetween(cur,tgtRank)).map(x=>({ name:x.name, val:this.wrapApprox(x.val) })),
+      prorated: this.wrapApprox('≈ $'+(Math.max(0,(priceNum[tgt]-priceNum[tier]))*0.42).toFixed(2)),
+      backLabel: f4step==='browse' ? 'Billing' : 'Plans',
+      onBack:()=> f4step==='browse' ? this.set('screen','f1') : this.setState({ f4step:'browse', f4target:null }),
+      onBrowse:()=>this.setState({ f4step:'browse', f4target:null }),
+      onCompare:()=>{ try{ window.location.href='PIF-Acquisition-Batch7.dc.html#a11'; }catch(e){} },
+      onConfirmUpgrade:()=>this.setState({ f4step:'success' }),
+      onConfirmDowngrade:()=>this.setState({ f4step:'success', pending:'downgrade' }),
+      onBackBilling:()=>this.setState({ screen:'f1', f4step:'browse', f4target:null }),
+      successTitle: dnDir ? 'Downgrade scheduled' : ('You’re on '+TIERS[tgt].name+' now'),
+      successBody: dnDir ? ('You keep '+plan.name+' until '+DOWNDATE+'. On that date you move to '+TIERS[tgt].name+' and billing drops to '+TIERS[tgt].price+'/mo. Cancel anytime before then from Billing.') : ('Your '+TIERS[tgt].name+' levers are active now. The prorated difference was charged to your saved card; from '+plan.nextDate+' you’ll be billed '+TIERS[tgt].price+'/mo.'),
+    };
+
+    // F7 — cancellation flow (honest, empathetic, non-manipulative)
+    const CANCEL_UNTIL='Aug 1, 2026';
+    const reasonsDef=[
+      {k:'value',label:'Not saving enough',icon:'trenddown'},
+      {k:'price',label:'Too expensive right now',icon:'dollar'},
+      {k:'usage',label:'Don’t use it as much as I’d like',icon:'moon'},
+      {k:'hard',label:'Hard to use / confusing',icon:'help'},
+      {k:'missing',label:'Missing a device or feature I need',icon:'puzzle'},
+      {k:'reliability',label:'Reliability / technical issues',icon:'warn'},
+      {k:'moving',label:'Moving / changing home or utility',icon:'truck'},
+      {k:'privacy',label:'Privacy concerns',icon:'shield'},
+      {k:'break',label:'Just taking a break',icon:'pause'},
+      {k:'other',label:'Other',icon:'ellipsis'},
+    ];
+    const reasonChips=reasonsDef.map(r=>{ const sel=!!st.cancelReasons[r.k];
+      return { label:r.label, icon:this.ico(r.icon,16), selected:sel?'true':'false', onPick:()=>this.setState(s=>{ const m=Object.assign({},s.cancelReasons); if(m[r.k]) delete m[r.k]; else m[r.k]=true; return { cancelReasons:m }; }),
+        style:'appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font:600 13px Inter,system-ui,sans-serif;padding:10px 14px;border-radius:999px;min-height:42px;border:1px solid '+(sel?'var(--secondary)':'var(--border-strong)')+';background:'+(sel?'color-mix(in srgb,var(--secondary) 12%,var(--surface-sunken))':'var(--surface-sunken)')+';color:var(--text-primary)' };
+    });
+    const selCount=Object.keys(st.cancelReasons).length;
+    const saveEligible = (st.cancelReasons.value||st.cancelReasons.price) && (tier==='optimum'||tier==='premium');
+    const saveOffer = tier==='premium'
+      ? { target:'Optimum', price:'$15', keep:'automatic control, pre-cool and smart scheduling', dormant:'battery & EV arbitrage and VPP earnings' }
+      : { target:'Basic', price:'$5', keep:'advisory guidance and your full savings ledger', dormant:'automatic load control and pre-cooling' };
+    const goConfirm = ()=>this.setState({ screen:'f7b', pending:'unsubscribe' });
+
+    // F5 dunning · F6 suspension · F9 service-ending · F8 referrals
+    const dunColor = st.dunning==='final' ? 'var(--warning)' : 'var(--info)';
+    const dunDef={
+      first:{ badge:'Payment issue', title:'Your last payment didn’t go through', body:'It happens — a card expires, or a bank blips. We’ll automatically retry over the next few days; updating your card makes sure it clears.', note:'We’ll retry until Jul 26, 2026. If it’s still unresolved then, your plan pauses and device control hands back to your own defaults — nothing dramatic, and you can reactivate anytime.' },
+      grace:{ badge:'Retrying', title:'We’re retrying your payment', body:'Attempt 2 of 4 — next retry Jul 22, 2026. You don’t have to do anything, but updating your card now resolves it right away.', note:'We’ll keep retrying until Jul 26, 2026. If it doesn’t clear, your plan pauses and control hands back gracefully.' },
+      final:{ badge:'Last reminder', title:'One last try before your plan pauses', body:'We’ll make a final attempt on Jul 26, 2026. If it doesn’t clear, your plan pauses — your devices simply return to your own defaults, and you can reactivate anytime.', note:'Update your card now to avoid the pause.' },
+    };
+    const f5=Object.assign({ color:dunColor }, dunDef[st.dunning]||dunDef.first);
+    const reactivating = st.suspend==='reactivating';
+    const f6={ reactivating, title: reactivating?'Reactivating your plan':'Your plan is paused', body: reactivating?'Confirm your payment method and you’ll pick up right where you left off — nothing was lost.':'A payment couldn’t be collected in time, so your subscription is paused. No charges are being made while it’s paused.', cta: reactivating?'Update payment method':'Reactivate my plan' };
+    const endingExit = st.ending==='exit';
+    const f9={ exit:endingExit, endDate:'Aug 1, 2026', refund:'$'+(priceNum[tier]*19/31).toFixed(2),
+      title: endingExit?'We’re winding down PIF in your area':'We’re ending PIF service',
+      reason: endingExit?'PIF is leaving your market. The local energy programs and rate structures here no longer let us deliver savings we’re confident in, so we’re responsibly winding down service in your area. This isn’t about anything you did.':'We’ve made the difficult decision to end this service and are winding PIF down responsibly. This isn’t about anything you did.' };
+    const refPop = st.referrals!=='empty';
+    const refItemsDef=[
+      { email:'jordan.m@…', status:'$5 credited', color:'var(--success)' },
+      { email:'marcus.t@…', status:'$5 credited', color:'var(--success)' },
+      { email:'priya.s@…', status:'Pending $5', color:'var(--warning)', note:'Credits when they complete their first full-price month.' },
+      { email:'dana.r@…', status:'Joined · 50% off applied', color:'var(--info)' },
+      { email:'sam.k@…', status:'Invited', color:'var(--text-secondary)', resend:true },
+    ];
+    const refItems=refItemsDef.map(x=>({ email:x.email, status:x.status, hasNote:!!x.note, note:x.note||'', canResend:!!x.resend, onResend:()=>this.toastMsg('Invite re-sent to '+x.email+'.'), badgeStyle:'font-size:11px;font-weight:700;color:'+x.color+';background:color-mix(in srgb,'+x.color+' 13%,transparent);border:1px solid '+x.color+';border-radius:999px;padding:2px 10px;white-space:nowrap' }));
+    const inviteOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((st.inviteEmail||'').trim());
+    const f8={ populated:refPop, empty:!refPop, earned:'$10 earned · no cap', items:refItems, referrer:'Alex Rivera',
+      terms:[
+        'Your friend gets 50% off their first month when they join through your invite.',
+        'You earn $5 in account credit for every friend who joins — no cap.',
+        'Your $5 lands once your friend completes their first full-price month (after their discounted first month).',
+        'Each invite is single-use — tied to the email you send it to.',
+      ],
+      inviteEmail:st.inviteEmail, onInviteEmail:(e)=>this.set('inviteEmail',e.target.value),
+      inviteNote:st.inviteNote, onInviteNote:(e)=>this.set('inviteNote',e.target.value),
+      inviteDisabled: inviteOk?'false':'true',
+      inviteStyle:'appearance:none;border:none;cursor:'+(inviteOk?'pointer':'not-allowed')+';width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:'+(inviteOk?'var(--primary)':'var(--border-strong)')+';color:var(--text-onfill);min-height:50px;opacity:'+(inviteOk?1:.6),
+      onSendInvite:()=>{ if(!inviteOk) return; this.setState({ inviteEmail:'', inviteNote:'' }, ()=>this.toastMsg('Invite sent — we emailed a personal invite from Alex Rivera.')); } };
+    const segDunning=this.seg([{k:'first',label:'First fail'},{k:'grace',label:'Retrying'},{k:'final',label:'Final'}], st.dunning, 'dunning');
+    const segSuspend=this.seg([{k:'suspended',label:'Suspended'},{k:'reactivating',label:'Reactivating'}], st.suspend, 'suspend');
+    const segEnding=this.seg([{k:'generic',label:'Generic'},{k:'exit',label:'Market exit'}], st.ending, 'ending');
+    const segRef=this.seg([{k:'populated',label:'Populated'},{k:'empty',label:'Empty'}], st.referrals, 'referrals');
+
+    // F10 — move / relocation (hopeful retention off-ramp)
+    const moveStep=st.moveStep||'entry';
+    const move={
+      isEntry:moveStep==='entry', isResolving:moveStep==='resolving', isSame:moveStep==='same', isChange:moveStep==='change', isOOM:moveStep==='oom', isOomDone:moveStep==='oomdone', isDone:moveStep==='done',
+      zip:st.moveZip, onZip:(e)=>this.set('moveZip', e.target.value),
+      zipOk: /^\d{5}$/.test((st.moveZip||'').trim()),
+      onCheck:()=>{ if(/^\d{5}$/.test((st.moveZip||'').trim())) this.set('moveStep','resolving'); },
+      onResolved:()=>this.set('moveStep','same'),
+      newAddress:'512 Oak St, Durham, NC 27701',
+      newUtilA:'Duke Energy Progress', newRateA:'TOU-D · 4–9pm peak',
+      newUtilB:'Piedmont Electric', newRateB:'Flat rate — one price all day',
+      recTier:'Basic', curTierName: plan.name,
+      onConfirmMove:()=>this.set('moveStep','done'),
+      onKeepTier:()=>this.setState({ moveStep:'done' }, ()=>this.toastMsg('Moved — keeping your '+plan.name+' plan at the new address.')),
+      onSwitchTier:()=>this.setState({ moveStep:'done', pending:'downgrade' }, ()=>this.toastMsg('Switching to Basic — scheduled for your next cycle at the new address.')),
+      onWhyRefit:()=>this.toastMsg('Your new utility bills a flat rate — no peak/off-peak spread for PIF to work with, so automatic shifting can’t beat it. Same re-fit logic as the quiz.'),
+      oomArea:'rural West Virginia',
+      email:st.moveEmail, onEmail:(e)=>this.set('moveEmail', e.target.value),
+      consent:st.moveConsent?'true':'false', consentOn:st.moveConsent, onConsent:()=>this.set('moveConsent', !st.moveConsent),
+      consentBox:'width:24px;height:24px;border-radius:6px;flex:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:'+(st.moveConsent?'var(--accent)':'transparent')+';border:2px solid '+(st.moveConsent?'var(--accent)':'var(--border-strong)'),
+      canWait: st.moveConsent && /^\d{5}$/.test((st.moveZip||'').trim()) && (st.moveEmail||'').trim().length>0,
+      waitStyle:(function(can){ return 'appearance:none;border:none;cursor:'+(can?'pointer':'not-allowed')+';width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:'+(can?'var(--primary)':'var(--border-strong)')+';color:var(--text-onfill);min-height:50px;opacity:'+(can?1:.65); })(st.moveConsent && /^\d{5}$/.test((st.moveZip||'').trim()) && (st.moveEmail||'').trim().length>0),
+      onWaitlist:()=>{ if(!(st.moveConsent && (st.moveEmail||'').trim().length>0 && /^\d{5}$/.test((st.moveZip||'').trim()))) return; this.set('moveStep','oomdone'); },
+    };
+    const segMove=this.seg([{k:'entry',label:'Address'},{k:'resolving',label:'Resolving'},{k:'same',label:'A·same'},{k:'change',label:'B·re-fit'},{k:'oom',label:'C·waitlist'}], moveStep, 'moveStep');
+
+    return {
+      theme:st.theme, rmFlag: rm?'1':'0', rmOn:rm,
+      segScreen, segChange, segTier, segState, segPending, segCard, segDunning, segSuspend, segEnding, segRef, segMove, segTheme, rmBtnStyle, rmBtnLabel: rm?'On':'Off',
+      onToggleRm:()=>this.set('rm',!rm),
+      ionaMark:this.ionaEl(30),
+      navActiveStyle:this.navStyle(true), navInactiveStyle:this.navStyle(false),
+      acctOpen:st.acctOpen, onAvatar:()=>this.setState(s=>({ acctOpen:!s.acctOpen, fanOpen:false })),
+      onPlugOut:()=>{ this.setState({ acctOpen:false }); try{ window.location.href='PIF-Auth-Batch1.dc.html'; }catch(e){} },
+
+      isLoading, isOffline, isError, showContent, skeleton:[1,2,3,4,5],
+      onRetry:()=>this.set('dataState','normal'),
+
+      isF1:scr==='f1', isF2:scr==='f2', isF3:scr==='f3', isF4:scr==='f4', f4,
+      isF5:scr==='f5', isF6:scr==='f6', isF8:scr==='f8', isF9:scr==='f9',
+      f5, f6, f9, f8, ionaCelebrate:this.ionaCelebrateEl(72),
+      isF10:scr==='f10', move,
+      showMoveOfframp: !!st.cancelReasons.moving, onMoveOfframp:()=>this.setState({ screen:'f10', moveStep:'entry' }),
+      icoGift:this.ico('gift',20), icoCopy:this.ico('copy',16), icoShare:this.ico('share',16), icoUsers:this.ico('users',18),
+      onReactivate:()=>this.set('screen','f2'),
+      onCopyCode:()=>this.toastMsg('Referral code copied.'),
+      onShareRef:()=>this.toastMsg('Share sheet — opens on the mobile shell.'),
+      isF7:scr==='f7', isF7a:scr==='f7a', isF7ai:scr==='f7ai', isF7b:scr==='f7b',
+      ionaSad:this.ionaSadEl(78), ionaSadSm:this.ionaSadEl(64), ionaBig:this.ionaEl(72),
+      cancelUntil:CANCEL_UNTIL, reasonChips, reasonCountLabel:(selCount+' selected'), reasonAny:selCount>0,
+      showMissing: !!st.cancelReasons.missing, showOther: !!st.cancelReasons.other,
+      cancelMissing:st.cancelMissing, onMissing:(e)=>this.set('cancelMissing',e.target.value),
+      cancelOther:st.cancelOther, onOther:(e)=>this.set('cancelOther',e.target.value),
+      onContinueCancel:()=>this.set('screen','f7a'), onKeepPlanF1:()=>this.set('screen','f1'),
+      onFeedbackContinue:()=> saveEligible ? this.set('screen','f7ai') : goConfirm(),
+      onSkipFeedback:()=>goConfirm(),
+      saveOffer,
+      onSwitchSave:()=>this.setState({ pending:'downgrade', screen:'f1' }, ()=>this.toastMsg('Switched to '+saveOffer.target+' — your downgrade is scheduled for next cycle.')),
+      onDeclineSave:()=>goConfirm(),
+      onKeepSubscription:()=>this.setState({ pending:'none', screen:'f1' }, ()=>this.toastMsg('Kept your subscription — nothing changes.')),
+      onExportData:()=>this.toastMsg('Data export requested — check your email within 24 hours.'),
+      onDoneCancel:()=>this.set('screen','f1'),
+      onBackHistory:()=>{ try{ window.history.back(); }catch(e){} },
+      icoBolt:this.ico('bolt',15), icoCheckSm:this.ico('check',15), icoDot:this.ico('dot',12),
+      icoBack:this.ico('back',16), icoGear:this.ico('gear',17), icoLogout:this.ico('logout',17),
+      icoCard:this.ico('card',22), icoDownload:this.ico('download',20), icoDoc:this.ico('doc',30),
+      icoClock:this.ico('clock',18), icoRefresh:this.ico('refresh',18), icoSwap:this.ico('swap',18),
+      icoCross:this.ico('cross',18), icoChevronR:this.ico('chevronR',16), icoWarn:this.ico('warn',30),
+      icoWarnSm:this.ico('warn',15), icoLock:this.ico('lock',15), icoLockSm:this.ico('lock',13),
+      icoCheckBig:this.ico('check',26), icoOffline:this.ico('offline',30),
+      backBtnStyle:'appearance:none;border:none;background:transparent;cursor:pointer;color:var(--text-secondary);font:600 13px Inter,system-ui,sans-serif;padding:8px 0;min-height:24px;display:inline-flex;align-items:center;gap:6px;margin-bottom:14px',
+
+      // F1
+      plan, pm, recentInvoices, pendingChip,
+      onUpdatePay:()=>this.set('screen','f2'),
+      onSeeAll:()=>this.set('screen','f3'),
+      onInvoice:()=>this.toastMsg('Invoice PDF — coming in Batch 6B'),
+      onChangePlan:()=>this.setState({ screen:'f4', f4step:'browse', f4target:null }),
+      onCancel:()=>this.set('screen','f7'),
+
+      // pending sheet
+      sheetOpen:st.sheetOpen, sheet, stopProp:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); },
+      onCloseSheet:()=>this.set('sheetOpen',false),
+      onKeepPlan:()=>this.setState({ sheetOpen:false, pending:'none' }, ()=>this.toastMsg('Kept '+plan.name+' — the scheduled change was cancelled.')),
+
+      // F2
+      card,
+      nameVal:st.name, onName:(e)=>this.setState(s=>({ name:e.target.value, touched:Object.assign({},s.touched,{name:true}) })), nameStyle:this.inputStyle(nameBad), nameInvalid:nameBad?'true':'false', nameErr:nameBad,
+      addrVal:st.addr, onAddr:(e)=>this.setState(s=>({ addr:e.target.value, touched:Object.assign({},s.touched,{addr:true}) })), addrStyle:this.inputStyle(addrBad), addrInvalid:addrBad?'true':'false',
+      cityVal:st.city, onCity:(e)=>this.set('city',e.target.value), cityStyle:this.inputStyle(false),
+      zipVal:st.zip, onZip:(e)=>this.set('zip',e.target.value), zipStyle:this.inputStyle(false),
+      onBackF1:()=>this.set('screen','f1'),
+      onSaveCard:()=>{ if(st.cardState==='saving') return; this.set('cardState','success'); },
+
+      // F3
+      invoices, invEmpty:isEmpty, invShow:!isEmpty,
+
+      // launcher
+      fanOpen:st.fanOpen, fanTabs:this.fanTabs(rm), launcherEl:this.launcherEl(),
+      onLauncher:()=>this.setState(s=>({ fanOpen:!s.fanOpen, acctOpen:false })),
+      overlayOpen: st.acctOpen || st.fanOpen,
+      onOverlayClose: ()=>this.setState({ acctOpen:false, fanOpen:false }),
+
+      toast:st.toast, toastShow:!!st.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>

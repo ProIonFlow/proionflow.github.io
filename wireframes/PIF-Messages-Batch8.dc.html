@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- PIF-Messages-Batch8 v4 — 26 Jul, harness unread toggle resets read state + relabelled "Demo:" -->
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#FFFFFF;font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--primary);text-decoration:none}
+  a:hover{color:var(--secondary);text-decoration:underline}
+  button,select,input,textarea{font-family:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+  .pif-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  :root,[data-theme="light"],[data-theme="system"]{
+    --surface-base:#FFFFFF; --surface-raised:#F4F7FB; --surface-sunken:#E9EEF6;
+    --text-primary:#16233B; --text-secondary:#586378; --text-onfill:#FFFFFF;
+    --border-subtle:#C9D4E3; --border-strong:#7C8BA3;
+    --primary:#1B3A6B; --secondary:#0E7C7B; --accent:#077A46; --accent-bright:#0FA968;
+    --success:#077A46; --warning:#9A6400; --danger:#C22F2F; --info:#1B5FB8;
+    --elev-1:0 1px 2px rgba(22,35,59,.06),0 1px 3px rgba(22,35,59,.08);
+    --elev-2:0 2px 6px rgba(22,35,59,.08),0 4px 12px rgba(22,35,59,.10);
+    --elev-3:0 8px 24px rgba(22,35,59,.14);
+  }
+  [data-theme="dark"]{
+    --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+    --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+    --border-subtle:#2A3852; --border-strong:#62738F;
+    --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+    --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+    --elev-1:0 1px 2px rgba(0,0,0,.40); --elev-2:0 4px 14px rgba(0,0,0,.50); --elev-3:0 10px 30px rgba(0,0,0,.60);
+  }
+  @media (prefers-color-scheme:dark){
+    [data-theme="system"]{
+      --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+      --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+      --border-subtle:#2A3852; --border-strong:#62738F;
+      --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+      --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+      --elev-1:0 1px 2px rgba(0,0,0,.40); --elev-2:0 4px 14px rgba(0,0,0,.50); --elev-3:0 10px 30px rgba(0,0,0,.60);
+    }
+  }
+  @keyframes pifFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes pifFanIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+  @keyframes pifSpin{to{transform:rotate(360deg)}}
+  @keyframes pifShimmer{0%{opacity:.5}50%{opacity:1}100%{opacity:.5}}
+  [data-rm="1"] *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" data-rm="{{ rmFlag }}" style="min-height:100vh;width:100%;background:var(--surface-base);color:var(--text-primary);font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;transition:background .3s cubic-bezier(.2,0,0,1),color .3s cubic-bezier(.2,0,0,1)">
+<div style="max-width:1100px;margin:0 auto;padding:24px 24px 96px">
+
+  <!-- ============ REVIEW HARNESS ============ -->
+  <div role="region" aria-label="Review harness" style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;margin-bottom:24px;box-shadow:var(--elev-1)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">Review harness</span>
+      <span style="font-size:12px;color:var(--text-secondary)">— not part of the product · flip any state</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:18px">
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Screen</div><div role="tablist" aria-label="Screen" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segScreen }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Tier</div><div role="tablist" aria-label="Tier" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ segTier }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Filter</div><div role="tablist" aria-label="Filter" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ segFilter }}" as="s" hint-placeholder-count="4"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Data</div><div role="tablist" aria-label="Data state" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ segData }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Unread</div><button onClick="{{ onToggleUnread }}" aria-pressed="{{ unreadOn }}" style="{{ unreadBtnStyle }}">{{ unreadBtnLabel }}</button></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Theme</div><div role="tablist" aria-label="Theme" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ segTheme }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.icon }}{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Motion</div><button onClick="{{ onToggleRm }}" aria-pressed="{{ rmOn }}" style="{{ rmBtnStyle }}">{{ rmBtnLabel }}</button></div>
+    </div>
+  </div>
+
+  <!-- ============ TOP BAR — SIGNED IN (app shell) ============ -->
+  <div style="display:flex;align-items:center;gap:14px;padding:0 4px 20px;border-bottom:1px solid var(--border-subtle);margin-bottom:24px;position:relative">
+    <div style="display:flex;align-items:center;gap:9px">
+      <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
+      <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+    </div>
+    <nav aria-label="Primary" style="display:flex;gap:2px;margin-left:8px">
+      <a href="PIF-Dashboard-Ledger-Batch3.dc.html" style="{{ navInactiveStyle }}">Dashboard</a>
+      <a href="PIF-Dashboard-Ledger-Batch3.dc.html#ledger" style="{{ navInactiveStyle }}">Ledger</a>
+      <a href="PIF-Devices-Connect-Batch4.dc.html" style="{{ navInactiveStyle }}">Devices</a>
+      <a href="PIF-Settings-Help-Batch5.dc.html" style="{{ navInactiveStyle }}">Settings</a>
+      <a href="PIF-Billing-Lifecycle-Batch6.dc.html" style="{{ navInactiveStyle }}">Billing</a>
+    </nav>
+    <div style="margin-left:auto;position:relative">
+      <button onClick="{{ onAvatar }}" aria-label="Account settings" aria-expanded="{{ acctOpen }}" style="width:40px;height:40px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface-raised);color:var(--text-primary);font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">AR</button>
+      <sc-if value="{{ acctOpen }}" hint-placeholder-val="{{ false }}">
+        <div role="menu" aria-label="Account" style="position:absolute;right:0;top:48px;z-index:50;min-width:190px;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:14px;box-shadow:var(--elev-3);padding:6px;animation:pifFanIn .2s both">
+          <a href="PIF-Settings-Help-Batch5.dc.html" role="menuitem" style="text-decoration:none;display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:9px;font:600 13px Inter,system-ui,sans-serif;color:var(--text-primary)" style-hover="background:var(--surface-sunken)">{{ icoGear }}Settings</a>
+          <button role="menuitem" onClick="{{ onPlugOut }}" style="appearance:none;border:none;cursor:pointer;width:100%;text-align:left;display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:9px;font:600 13px Inter,system-ui,sans-serif;color:var(--danger);background:transparent" style-hover="background:var(--surface-sunken)">{{ icoLogout }}Plug out</button>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+  <button onClick="{{ onBackHistory }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+
+  <!-- toast -->
+  <sc-if value="{{ toastShow }}" hint-placeholder-val="{{ false }}">
+    <div role="status" aria-live="polite" style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:90;background:var(--text-primary);color:var(--surface-base);font:600 13px Inter,system-ui,sans-serif;padding:12px 20px;border-radius:999px;box-shadow:var(--elev-3);max-width:90vw">{{ toast }}</div>
+  </sc-if>
+
+  <!-- ============ H1 — MESSAGES INBOX ============ -->
+  <sc-if value="{{ isH1 }}" hint-placeholder-val="{{ true }}">
+  <div style="animation:pifFadeIn .3s both;max-width:720px">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+      <div>
+        <h1 style="font-family:'Space Grotesk',system-ui;font-size:28px;font-weight:700;letter-spacing:-.01em;margin:0 0 4px">Messages</h1>
+        <p style="font-size:14px;color:var(--text-secondary);margin:0">Alerts, savings nudges and tips — most recent first.</p>
+      </div>
+      <sc-if value="{{ showMarkAll }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ onMarkAll }}" style="appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font:600 13px Inter,system-ui,sans-serif;padding:9px 14px;border-radius:11px;background:var(--surface-base);border:1px solid var(--border-strong);color:var(--text-primary);min-height:40px" style-hover="background:var(--surface-sunken)">{{ icoCheck }}Mark all read</button>
+      </sc-if>
+    </div>
+
+    <!-- filter tabs + unread-only control -->
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+      <div role="tablist" aria-label="Message type" style="display:flex;gap:4px;padding:4px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px;flex-wrap:wrap">
+        <sc-for list="{{ filterTabs }}" as="t" hint-placeholder-count="4">
+          <button role="tab" aria-selected="{{ t.active }}" onClick="{{ t.onSelect }}" style="{{ t.style }}"><sc-if value="{{ t.locked }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;color:var(--text-secondary)">{{ lockIcon }}</span></sc-if>{{ t.label }}<sc-if value="{{ t.locked }}" hint-placeholder-val="{{ false }}"><span style="font:700 9px Inter,system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent);border-radius:999px;padding:2px 6px">Premium</span></sc-if></button>
+        </sc-for>
+      </div>
+      <div role="tablist" aria-label="Read state" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px">
+        <sc-for list="{{ unreadSeg }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for>
+      </div>
+    </div>
+
+    <!-- loading skeleton -->
+    <sc-if value="{{ stLoading }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ skeletons }}" as="k" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:14px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:16px 18px;animation:pifShimmer 1.4s ease-in-out infinite">
+            <span style="width:36px;height:36px;border-radius:10px;background:var(--surface-sunken);flex:none"></span>
+            <div style="flex:1"><div style="height:11px;width:44%;background:var(--surface-sunken);border-radius:6px;margin-bottom:8px"></div><div style="height:10px;width:72%;background:var(--surface-sunken);border-radius:6px"></div></div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- tips-locked panel (non-premium) -->
+    <sc-if value="{{ stTipsLocked }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:44px 28px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;background:var(--surface-sunken);color:var(--text-secondary);margin-bottom:16px">{{ lockIconLg }}</span>
+        <h2 style="font-family:'Space Grotesk',system-ui;font-size:20px;font-weight:700;margin:0 0 8px">Tips are a Premium feature</h2>
+        <p style="font-size:14px;line-height:21px;color:var(--text-secondary);margin:0 auto 22px;max-width:380px;text-wrap:pretty">Advanced optimization guidance — pre-cooling strategy, arbitrage timing and more — comes with Premium.</p>
+        <a href="PIF-Acquisition-Batch7.dc.html#a11" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;font:700 14px Inter,system-ui,sans-serif;padding:13px 24px;border-radius:12px;background:var(--accent);color:var(--text-onfill);min-height:46px" style-hover="background:var(--accent-bright);text-decoration:none">Compare plans <span aria-hidden="true">→</span></a>
+      </div>
+    </sc-if>
+
+    <!-- empty state (branched to the real state) -->
+    <sc-if value="{{ stEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center;padding:52px 28px">
+        <sc-if value="{{ emptyShowIona }}" hint-placeholder-val="{{ true }}"><div style="display:flex;justify-content:center;margin-bottom:12px">{{ ionaWelcome }}</div></sc-if>
+        <sc-if value="{{ showEmptyIcon }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;background:var(--surface-sunken);color:var(--text-secondary);margin-bottom:14px">{{ icoBellMuted }}</span></sc-if>
+        <h2 style="font-family:'Space Grotesk',system-ui;font-size:20px;font-weight:700;margin:0 0 8px">{{ emptyTitle }}</h2>
+        <p style="font-size:14px;line-height:21px;color:var(--text-secondary);margin:0 auto;max-width:340px;text-wrap:pretty">{{ emptyBody }}</p>
+      </div>
+    </sc-if>
+
+    <!-- feed -->
+    <sc-if value="{{ stFeed }}" hint-placeholder-val="{{ true }}">
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+        <div style="margin-bottom:24px">
+          <div style="font:700 11px Inter,system-ui,sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--text-secondary);margin:0 2px 10px">{{ g.label }}</div>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <sc-for list="{{ g.items }}" as="m" hint-placeholder-count="3">
+              <button onClick="{{ m.onOpen }}" style="{{ m.rowStyle }}">
+                <span style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:11px;flex:none;background:{{ m.iconBg }};color:{{ m.color }}">{{ m.iconEl }}</span>
+                <span style="flex:1;min-width:0;text-align:left">
+                  <span style="display:flex;align-items:center;gap:8px">
+                    <span style="{{ m.titleStyle }}">{{ m.title }}</span>
+                    <sc-if value="{{ m.hasTier }}" hint-placeholder-val="{{ false }}"><span style="font:700 10px Inter,system-ui,sans-serif;color:var(--text-onfill);background:{{ m.tierColor }};border-radius:999px;padding:2px 8px;flex:none">{{ m.tier }}</span></sc-if>
+                  </span>
+                  <span style="display:block;font-size:13px;line-height:19px;color:var(--text-secondary);margin-top:2px;text-wrap:pretty">{{ m.snippetNode }}</span>
+                </span>
+                <span style="display:inline-flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none">
+                  <span style="font-size:12px;color:var(--text-secondary);white-space:nowrap">{{ m.time }}</span>
+                  <sc-if value="{{ m.unread }}" hint-placeholder-val="{{ true }}"><span aria-label="Unread" style="width:9px;height:9px;border-radius:999px;background:var(--accent)"></span></sc-if>
+                </span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+      <sc-if value="{{ showRetention }}" hint-placeholder-val="{{ true }}">
+        <p style="font-size:12px;color:var(--text-secondary);text-align:center;margin:4px 0 0">Messages are kept for about two months, then cleared automatically.</p>
+      </sc-if>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ============ H2 — SUPPORT HUB ============ -->
+  <sc-if value="{{ isH2 }}" hint-placeholder-val="{{ false }}">
+  <div style="animation:pifFadeIn .3s both;max-width:640px">
+    <h1 style="font-family:'Space Grotesk',system-ui;font-size:28px;font-weight:700;letter-spacing:-.01em;margin:0 0 4px">Support</h1>
+    <p style="font-size:14px;color:var(--text-secondary);margin:0 0 22px;text-wrap:pretty">Answers, a hand from Iona, or a message to our team — whichever you need.</p>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <a href="PIF-Settings-Help-Batch5.dc.html#s12" style="display:flex;align-items:center;gap:14px;text-decoration:none;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:16px;padding:18px 20px;box-shadow:var(--elev-1)" style-hover="background:var(--surface-raised)">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:color-mix(in srgb,var(--info) 12%,transparent);color:var(--info);flex:none">{{ icoHelp }}</span>
+        <span style="flex:1"><span style="display:block;font-size:15px;font-weight:700;color:var(--text-primary)">Help &amp; FAQ</span><span style="display:block;font-size:13px;color:var(--text-secondary);margin-top:2px">Search common questions and how-tos.</span></span>
+        <span style="color:var(--text-secondary)">{{ icoChevron }}</span>
+      </a>
+      <button onClick="{{ onAskIona }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:14px;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:16px;padding:18px 20px;box-shadow:var(--elev-1);width:100%" style-hover="background:var(--surface-raised)">
+        <span style="display:inline-flex;flex:none">{{ ionaSmall }}</span>
+        <span style="flex:1"><span style="display:block;font-size:15px;font-weight:700;color:var(--text-primary)">Ask Iona</span><span style="display:block;font-size:13px;color:var(--text-secondary);margin-top:2px">Get an instant answer from your PIF assistant.</span></span>
+        <span style="color:var(--text-secondary)">{{ icoChevron }}</span>
+      </button>
+      <a href="mailto:support@proionflow.com" style="display:flex;align-items:center;gap:14px;text-decoration:none;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:16px;padding:18px 20px;box-shadow:var(--elev-1)" style-hover="background:var(--surface-raised)">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);flex:none">{{ icoMail }}</span>
+        <span style="flex:1"><span style="display:block;font-size:15px;font-weight:700;color:var(--text-primary)">Contact support</span><span style="display:block;font-size:13px;color:var(--text-secondary);margin-top:2px">Email our team — we reply within one business day.</span></span>
+        <span style="color:var(--text-secondary)">{{ icoChevron }}</span>
+      </a>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-top:20px;padding:13px 16px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px">
+      <span style="width:9px;height:9px;border-radius:999px;background:var(--success);flex:none"></span>
+      <span style="font-size:13px;color:var(--text-secondary)">All systems operational</span>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+
+<sc-if value="{{ overlayOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ onOverlayClose }}" aria-hidden="true" style="position:fixed;inset:0;z-index:40;background:transparent"></div>
+</sc-if>
+<!-- ============ IONA GLOBAL LAUNCHER ============ -->
+<div style="position:fixed;right:24px;bottom:24px;z-index:70;display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+  <sc-if value="{{ fanOpen }}" hint-placeholder-val="{{ false }}">
+    <div role="menu" aria-label="Iona" style="display:flex;flex-direction:column;align-items:flex-end;gap:9px">
+      <sc-for list="{{ fanTabs }}" as="t" hint-placeholder-count="4">
+        <button role="menuitem" onClick="{{ t.onSelect }}" style="{{ t.style }}"><span style="color:var(--text-secondary)">{{ t.icon }}</span><span>{{ t.label }}</span></button>
+      </sc-for>
+    </div>
+  </sc-if>
+  <button onClick="{{ onLauncher }}" aria-label="Ask Iona" aria-expanded="{{ fanOpen }}" style="appearance:none;border:none;background:transparent;cursor:pointer;padding:0;line-height:0;border-radius:999px">{{ launcherEl }}</button>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:1100},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;tier&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;basic&quot;,&quot;optimum&quot;,&quot;premium&quot;],&quot;default&quot;:&quot;optimum&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;filter&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;all&quot;,&quot;alerts&quot;,&quot;nudges&quot;,&quot;tips&quot;],&quot;default&quot;:&quot;all&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;dataState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;empty&quot;,&quot;loading&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;unread&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Review&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    var hs=''; try{ var h=(window.location.hash||'').replace('#',''); if(/^h1$/.test(h)) hs='h1'; else if(/^h2$/.test(h)) hs='h2'; }catch(e){}
+    this.state = {
+      theme: props.initialTheme || 'light',
+      rm: !!props.previewReducedMotion,
+      screen: hs || 'h1',
+      tier: props.tier || 'optimum',
+      filter: props.filter || 'all',
+      dataState: props.dataState || 'normal',
+      unreadMaster: props.unread!==undefined ? !!props.unread : true,
+      unreadOnly:false,
+      readIds:{}, markedAll:false,
+      fanOpen:false, acctOpen:false, toast:''
+    };
+  }
+  set(k,v){ const p={}; p[k]=v; this.setState(p); }
+  componentDidMount(){ this._esc=(e)=>{ if(e.key==='Escape') this.setState({acctOpen:false,fanOpen:false}); }; try{ window.addEventListener('keydown', this._esc); }catch(e){} }
+  componentWillUnmount(){ try{ window.removeEventListener('keydown', this._esc); }catch(e){} }
+  toastMsg(m){ this.setState({toast:m}); clearTimeout(this._t); this._t=setTimeout(()=>this.setState({toast:''}),3000); }
+  wrapApprox(text){ const parts=String(text||'').split('≈ '); const out=[]; parts.forEach((p,i)=>{ if(i>0){ out.push(React.createElement('span',{key:'ah'+i,'aria-hidden':'true'},'≈'), React.createElement('span',{key:'sr'+i,className:'pif-sr'},'approximately ')); } if(p) out.push(p); }); return React.createElement(React.Fragment,null,...out); }
+
+  ico(name,size){
+    const c={ width:size||18, height:size||18, viewBox:'0 0 20 20', fill:'none', style:{flex:'none'}, 'aria-hidden':'true' };
+    const P=(d,ex)=>React.createElement('path',Object.assign({ d, stroke:'currentColor', strokeWidth:1.6, strokeLinecap:'round', strokeLinejoin:'round' },ex||{}));
+    const C=(cx,cy,r,ex)=>React.createElement('circle',Object.assign({ cx,cy,r, stroke:'currentColor', strokeWidth:1.6 },ex||{}));
+    const D=(cx,cy,r)=>React.createElement('circle',{ cx,cy,r, fill:'currentColor' });
+    const m={
+      check:()=>[P('M4 10.5 8 14.5 16 5.5')],
+      bell:()=>[P('M6 8a4 4 0 0 1 8 0c0 4 1.5 5 1.5 5h-11S6 12 6 8z'),P('M8.5 16a1.6 1.6 0 0 0 3 0')],
+      sparkles:()=>[P('M10 3l1.6 3.6L15 8l-3.4 1.4L10 13l-1.6-3.6L5 8l3.4-1.4z'),P('M15.5 13l.7 1.6 1.8.7-1.8.7-.7 1.6-.7-1.6-1.8-.7 1.8-.7z')],
+      bolt:()=>[P('M11 3 5 11h4l-1 6 6-8h-4z')],
+      star:()=>[P('M10 3.5l1.9 3.9 4.3.6-3.1 3 .7 4.3L10 13.3 6.3 15.3l.7-4.3-3.1-3 4.3-.6z')],
+      plug:()=>[P('M8 3v4M12 3v4M6 7h8v2a4 4 0 0 1-8 0zM10 13v4')],
+      card:()=>[P('M3 6h14v8H3zM3 9h14')],
+      pause:()=>[P('M7.6 5v10M12.4 5v10')],
+      shield:()=>[P('M10 3 4.7 5.1v4.1c0 3.3 2.2 5.4 5.3 6.8 3.1-1.4 5.3-3.5 5.3-6.8V5.1z')],
+      lock:()=>[P('M6.4 9.2V7a3.6 3.6 0 0 1 7.2 0v2.2'),P('M5.4 9.2h9.2v6.6H5.4z'),D(10,12.2,.8)],
+      mail:()=>[P('M3 5h14v10H3zM3 6l7 5 7-5')],
+      help:()=>[C(10,10,7),P('M8 8a2 2 0 1 1 2.7 1.9c-.6.2-.9.6-.9 1.3'),D(10,14,.7)],
+      info:()=>[C(10,10,7.2),P('M10 9v4M10 6.6h.01')],
+      gear:()=>[C(10,10,2.4),P('M10 3.2v1.8M10 15v1.8M16.8 10H15M5 10H3.2M14.8 5.2 13.5 6.5M6.5 13.5 5.2 14.8M14.8 14.8 13.5 13.5M6.5 6.5 5.2 5.2')],
+      logout:()=>[P('M8 4H4v12h4M12 7l3 3-3 3M15 10H7')],
+      chevron:()=>[P('M8 5l5 5-5 5')],
+      x:()=>[P('M5.5 5.5l9 9M14.5 5.5l-9 9')]
+    };
+    const f=m[name]||m.info;
+    return React.createElement('svg',c,...f());
+  }
+  themeIcon(mode){
+    const c={ width:13,height:13,viewBox:'0 0 16 16',fill:'none' };
+    if(mode==='light') return React.createElement('svg',c,React.createElement('circle',{cx:8,cy:8,r:3.1,fill:'currentColor'}),React.createElement('path',{d:'M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M13 3l-1 1M4 12l-1 1',stroke:'currentColor',strokeWidth:1.3,strokeLinecap:'round'}));
+    if(mode==='dark') return React.createElement('svg',c,React.createElement('path',{d:'M13 9.5A6 6 0 0 1 6.5 3 5.6 5.6 0 1 0 13 9.5z',fill:'currentColor'}));
+    return React.createElement('svg',c,React.createElement('circle',{cx:8,cy:8,r:6,stroke:'currentColor',strokeWidth:1.4}),React.createElement('path',{d:'M8 2a6 6 0 0 1 0 12z',fill:'currentColor'}));
+  }
+  ionaSvg(size){
+    const s=size||46;
+    const defs='<defs><radialGradient id="a8ib" cx="42%" cy="36%" r="72%"><stop offset="0%" stop-color="#5CF3B6"/><stop offset="55%" stop-color="#2FE39A"/><stop offset="100%" stop-color="#0E7C7B"/></radialGradient><radialGradient id="a8ig" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#2FE39A" stop-opacity="0.55"/><stop offset="100%" stop-color="#2FE39A" stop-opacity="0"/></radialGradient></defs>';
+    const welcoming='<ellipse cx="0" cy="0" rx="118" ry="118" fill="url(#a8ig)"></ellipse><path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" fill="#F5B23D"></path><circle cx="0" cy="0" r="72" fill="url(#a8ib)"></circle><circle cx="-24" cy="-8" r="11" fill="#0B1220"></circle><circle cx="24" cy="-8" r="11" fill="#0B1220"></circle><circle cx="-20" cy="-12" r="4" fill="#fff"></circle><circle cx="28" cy="-12" r="4" fill="#fff"></circle><path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"></path><circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"></circle><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"></circle><path d="M62,-6 Q92,-30 86,-58" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"></path><circle cx="86" cy="-62" r="12" fill="#2FE39A"></circle>';
+    return '<svg viewBox="-120 -120 240 240" width="'+s+'" height="'+s+'" role="img" aria-label="Iona, welcoming">'+defs+welcoming+'</svg>';
+  }
+  ionaFace(size){ return React.createElement('span',{ style:{ display:'inline-flex' }, dangerouslySetInnerHTML:{ __html:this.ionaSvg(size) } }); }
+  launcherEl(){ return React.createElement('span',{ style:{ display:'inline-flex', filter:'drop-shadow(0 6px 16px rgba(0,0,0,.28))' }, dangerouslySetInnerHTML:{ __html:this.ionaSvg(58) } }); }
+
+  segStyle(active){
+    const base={ appearance:'none',border:'none',background:'transparent',color:'var(--text-secondary)',font:'600 12px Inter,system-ui,sans-serif',padding:'7px 12px',borderRadius:'999px',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:'5px',minHeight:'32px' };
+    return active ? Object.assign({},base,{ background:'var(--surface-base)',color:'var(--text-primary)',boxShadow:'var(--elev-1)' }) : base;
+  }
+  seg(list,cur,key){ return list.map(o=>({ label:o.label, active:cur===o.k, onSelect:()=>this.set(key,o.k), style:this.segStyle(cur===o.k) })); }
+  navStyle(){ return { display:'inline-flex',alignItems:'center',textDecoration:'none',background:'transparent',color:'var(--text-secondary)',font:'600 14px Inter,system-ui,sans-serif',padding:'8px 15px',borderRadius:'10px',minHeight:'38px' }; }
+  tabBtnStyle(){ return { display:'inline-flex',alignItems:'center',gap:'9px',padding:'9px 15px',borderRadius:'999px',border:'1px solid var(--border-subtle)',background:'var(--surface-raised)',color:'var(--text-primary)',font:'600 13px Inter,system-ui,sans-serif',cursor:'pointer',boxShadow:'var(--elev-2)',minHeight:'40px' }; }
+  filterStyle(active){ return { appearance:'none',border:'none',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:'6px',font:'600 13px Inter,system-ui,sans-serif',padding:'8px 14px',borderRadius:'10px',minHeight:'38px',background:active?'var(--surface-base)':'transparent',color:active?'var(--text-primary)':'var(--text-secondary)',boxShadow:active?'var(--elev-1)':'none' }; }
+
+  fanTabs(){
+    const ext=(u)=>()=>{ this.setState({fanOpen:false}); try{ window.location.href=u; }catch(e){} };
+    const list=[
+      { label:'Help', icon:this.ico('help',17), onSelect:ext('PIF-Settings-Help-Batch5.dc.html#s12') },
+      { label:'Messages', icon:this.ico('bell',17), onSelect:()=>this.setState({fanOpen:false, screen:'h1'}) },
+      { label:'Settings', icon:this.ico('gear',17), onSelect:ext('PIF-Settings-Help-Batch5.dc.html#s1') },
+      { label:'Close', icon:this.ico('x',17), onSelect:()=>this.setState({fanOpen:false}) }
+    ];
+    return list.map(t=>({ label:t.label, icon:t.icon, onSelect:t.onSelect, style:this.tabBtnStyle() }));
+  }
+
+  messages(){
+    return [
+      { id:'m1', type:'alert', group:'new', icon:'card', color:'var(--danger)', title:'Payment failed', snippet:"We couldn't process your July payment — update your card to avoid a pause.", time:'2h', unread:true, href:'PIF-Billing-Lifecycle-Batch6.dc.html#f5' },
+      { id:'m2', type:'nudge', group:'new', icon:'sparkles', color:'var(--accent)', title:'38% of usage ran in cheap hours', snippet:'Up from 12% before PIF this week — nice work.', tier:'Measured', tierColor:'var(--info)', time:'5h', unread:true, href:'PIF-Dashboard-Ledger-Batch3.dc.html' },
+      { id:'m3', type:'nudge', group:'new', icon:'bolt', color:'var(--accent)', title:'Add your EV to unlock arbitrage', snippet:'Premium homes with a battery earn ≈ $9/mo (Modeled).', tier:'Modeled', tierColor:'var(--warning)', time:'1d', unread:false, href:'PIF-Acquisition-Batch7.dc.html#a11' },
+      { id:'m4', type:'alert', group:'earlier', icon:'plug', color:'var(--warning)', title:'Device offline', snippet:"Your smart thermostat hasn't reported in 3 days.", time:'2d', unread:false, href:'PIF-Devices-Connect-Batch4.dc.html' },
+      { id:'m5', type:'alert', group:'earlier', icon:'pause', color:'var(--text-secondary)', title:'Subscription paused', snippet:'Automations are on hold until payment is resolved.', time:'3d', unread:false, href:'PIF-Billing-Lifecycle-Batch6.dc.html#f6' },
+      { id:'m6', type:'alert', group:'earlier', icon:'shield', color:'var(--info)', title:'New device signed in', snippet:'A new browser plugged in to your account.', time:'4d', unread:false, href:'PIF-Settings-Help-Batch5.dc.html' },
+      { id:'m7', type:'tip', group:'earlier', icon:'star', color:'var(--accent)', title:'Pre-cool earlier on heat-wave days', snippet:'Shift HVAC ahead of the 4pm peak when highs top 95°F.', time:'5d', unread:false, href:'PIF-Settings-Help-Batch5.dc.html#s12' }
+    ];
+  }
+
+  renderVals(){
+    const st=this.state, rm=st.rm;
+    const isH1 = st.screen==='h1', isH2 = st.screen==='h2';
+    const tier = st.tier, premium = tier==='premium';
+    const filter = st.filter;
+
+    // ---- H1 feed ----
+    const isUnread=(m)=> st.unreadMaster && m.unread && !st.readIds[m.id] && !st.markedAll;
+    const unreadOnly = st.unreadOnly;
+    const typeLabel = { alerts:'alerts', nudges:'nudges', tips:'tips' }[filter] || '';
+
+    // basePool = the whole inbox for this tier (drives the "genuinely empty" check)
+    let basePool = (st.dataState==='empty') ? [] : this.messages();
+    if(!premium) basePool = basePool.filter(m=> m.type!=='tip');   // tips hidden for non-premium
+    const inboxEmpty = st.dataState==='empty' || basePool.length===0;
+
+    let typeList;
+    if(filter==='alerts') typeList = basePool.filter(m=>m.type==='alert');
+    else if(filter==='nudges') typeList = basePool.filter(m=>m.type==='nudge');
+    else if(filter==='tips') typeList = basePool.filter(m=>m.type==='tip');
+    else typeList = basePool;
+    const list = unreadOnly ? typeList.filter(isUnread) : typeList;
+
+    const tipsLocked = filter==='tips' && !premium;
+    const stLoading = isH1 && st.dataState==='loading';
+    const stTipsLocked = isH1 && !stLoading && tipsLocked;
+    const stEmpty = isH1 && !stLoading && !tipsLocked && list.length===0;
+    const stFeed = isH1 && !stLoading && !stEmpty && !stTipsLocked;
+
+    // branch empty copy to the real state
+    let emptyTitle='Nothing here yet', emptyBody='', emptyShowIona=false;
+    if(inboxEmpty){ emptyTitle='No messages yet'; emptyBody="When there's an alert, a savings nudge or a tip, it'll show up here."; }
+    else if(unreadOnly){ emptyTitle="You're all caught up"; emptyBody='No unread messages right now.'; emptyShowIona=true; }
+    else if(filter!=='all'){ emptyTitle='No '+typeLabel+' right now'; emptyBody='Nothing in this filter at the moment.'; }
+    else { emptyTitle="You're all caught up"; emptyBody='No messages right now.'; emptyShowIona=true; }
+
+    const mkItem=(m)=>{
+      const un=isUnread(m);
+      return {
+        title:m.title, time:m.time, unread:un,
+        snippetNode:this.wrapApprox(m.snippet),
+        iconEl:this.ico(m.icon,18), color:m.color,
+        iconBg:'color-mix(in srgb,'+m.color+' 13%,transparent)',
+        hasTier:!!m.tier, tier:m.tier||'', tierColor:m.tierColor||'var(--text-secondary)',
+        titleStyle:{ fontSize:'14.5px', fontWeight: un?800:600, color:'var(--text-primary)' },
+        rowStyle:{ appearance:'none', cursor:'pointer', width:'100%', display:'flex', alignItems:'flex-start', gap:'14px', textAlign:'left', padding:'15px 17px', borderRadius:'15px', border:'1px solid '+(un?'var(--border-strong)':'var(--border-subtle)'), background: un?'var(--surface-raised)':'var(--surface-base)', boxShadow: un?'var(--elev-1)':'none' },
+        onOpen:()=>{ this.setState(s=>{ const r=Object.assign({},s.readIds); r[m.id]=true; return { readIds:r }; }); try{ window.location.href=m.href; }catch(e){} }
+      };
+    };
+    const groupsRaw=[ {label:'New', key:'new'}, {label:'Earlier', key:'earlier'} ];
+    const groups = groupsRaw.map(g=>({ label:g.label, items:list.filter(m=>m.group===g.key).map(mkItem) })).filter(g=>g.items.length>0);
+    const anyUnread = list.some(isUnread);
+
+    // filter tabs
+    const filterDefs=[ {k:'all',label:'All'}, {k:'alerts',label:'Alerts'}, {k:'nudges',label:'Nudges'}, {k:'tips',label:'Tips'} ];
+    const filterTabs=filterDefs.map(d=>{
+      const locked = d.k==='tips' && !premium;
+      return { label:d.label, active: filter===d.k, locked, onSelect:()=>this.set('filter',d.k), style:this.filterStyle(filter===d.k) };
+    });
+
+    // harness segments
+    const segScreen=this.seg([{k:'h1',label:'H1 Messages'},{k:'h2',label:'H2 Support'}], st.screen, 'screen');
+    const segTier=this.seg([{k:'basic',label:'Basic'},{k:'optimum',label:'Optimum'},{k:'premium',label:'Premium'}], st.tier, 'tier');
+    const segFilter=this.seg([{k:'all',label:'All'},{k:'alerts',label:'Alerts'},{k:'nudges',label:'Nudges'},{k:'tips',label:'Tips'}], st.filter, 'filter');
+    const segData=this.seg([{k:'normal',label:'Normal'},{k:'empty',label:'Empty'},{k:'loading',label:'Loading'}], st.dataState, 'dataState');
+    const segTheme=['light','dark','system'].map(mode=>({ label:mode.charAt(0).toUpperCase()+mode.slice(1), active:st.theme===mode, icon:this.themeIcon(mode), onSelect:()=>this.set('theme',mode), style:this.segStyle(st.theme===mode) }));
+    const pillBtn=(on,onColor)=>({ appearance:'none',cursor:'pointer',font:'600 12px Inter,system-ui,sans-serif',padding:'8px 14px',borderRadius:'999px',minHeight:'34px',border:'1px solid '+(on?onColor:'var(--border-strong)'),background:on?'color-mix(in srgb,'+onColor+' 14%,transparent)':'var(--surface-base)',color:on?onColor:'var(--text-primary)' });
+
+    return {
+      theme:st.theme, rmFlag: rm?'1':'', rmOn:rm,
+      segScreen, segTier, segFilter, segData, segTheme,
+      onToggleRm:()=>this.set('rm',!rm), rmBtnStyle:pillBtn(rm,'var(--info)'), rmBtnLabel: rm?'On':'Off',
+      onToggleUnread:()=>this.setState({ unreadMaster:!this.state.unreadMaster, readIds:{}, markedAll:false }), unreadOn:st.unreadMaster, unreadBtnStyle:pillBtn(st.unreadMaster,'var(--accent)'), unreadBtnLabel: st.unreadMaster?'Demo: some unread':'Demo: all read',
+
+      isH1, isH2,
+      navInactiveStyle:this.navStyle(),
+      acctOpen:st.acctOpen, onAvatar:()=>this.setState(s=>({ acctOpen:!s.acctOpen, fanOpen:false })),
+      onPlugOut:()=>{ this.setState({ acctOpen:false }); try{ window.location.href='PIF-Auth-Batch1.dc.html'; }catch(e){} },
+      onBackHistory:()=>{ try{ window.history.back(); }catch(e){} },
+      backBtnStyle:'appearance:none;border:none;background:transparent;cursor:pointer;color:var(--text-secondary);font:600 13px Inter,system-ui,sans-serif;padding:8px 0;min-height:24px;display:inline-flex;align-items:center;gap:6px;margin-bottom:8px',
+
+      filterTabs, lockIcon:this.ico('lock',14), lockIconLg:this.ico('lock',26),
+      unreadSeg:[{k:false,label:'All'},{k:true,label:'Unread'}].map(o=>({ label:o.label, active: st.unreadOnly===o.k, onSelect:()=>this.set('unreadOnly',o.k), style:this.segStyle(st.unreadOnly===o.k) })),
+      stLoading, stEmpty, stTipsLocked, stFeed,
+      emptyTitle, emptyBody, emptyShowIona, showEmptyIcon: !emptyShowIona,
+      skeletons:[1,2,3,4],
+      groups, showMarkAll: stFeed && anyUnread,
+      showRetention: stFeed,
+      onMarkAll:()=>{ this.setState({ markedAll:true }); this.toastMsg('All messages marked read.'); },
+      ionaWelcome:this.ionaFace(96), ionaSmall:this.ionaFace(42), icoBellMuted:this.ico('bell',26),
+
+      icoCheck:this.ico('check',16), icoGear:this.ico('gear',16), icoLogout:this.ico('logout',16),
+      icoHelp:this.ico('help',20), icoMail:this.ico('mail',20), icoChevron:this.ico('chevron',18),
+      onAskIona:()=>this.setState({ fanOpen:true }),
+
+      fanOpen:st.fanOpen, fanTabs:this.fanTabs(), launcherEl:this.launcherEl(),
+      onLauncher:()=>this.setState(s=>({ fanOpen:!s.fanOpen, acctOpen:false })),
+      overlayOpen: st.acctOpen || st.fanOpen,
+      onOverlayClose: ()=>this.setState({ acctOpen:false, fanOpen:false }),
+      toast:st.toast, toastShow:!!st.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

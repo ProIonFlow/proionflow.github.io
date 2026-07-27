@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- PIF-Dashboard-Ledger-Batch3 v32 — 26 Jul, tonight's-plan load chips → brand teal (--secondary) -->
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#FFFFFF;font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--primary);text-decoration:none}
+  a:hover{color:var(--secondary);text-decoration:underline}
+  button,select,input,textarea{font-family:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+  .pif-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  :root,[data-theme="light"],[data-theme="system"]{
+    --surface-base:#FFFFFF; --surface-raised:#F4F7FB; --surface-sunken:#E9EEF6;
+    --text-primary:#16233B; --text-secondary:#586378; --text-onfill:#FFFFFF;
+    --border-subtle:#C9D4E3; --border-strong:#7C8BA3;
+    --primary:#1B3A6B; --secondary:#0E7C7B; --accent:#077A46; --accent-bright:#0FA968;
+    --success:#077A46; --warning:#9A6400; --danger:#C22F2F; --info:#1B5FB8;
+    --tier-banked:#077A46; --tier-measured:#1B5FB8; --tier-modeled:#9A6400; --tier-advisory:#A61E88;
+    --elev-1:0 1px 2px rgba(22,35,59,.06),0 1px 3px rgba(22,35,59,.08);
+    --elev-2:0 2px 6px rgba(22,35,59,.08),0 4px 12px rgba(22,35,59,.10);
+    --elev-3:0 8px 24px rgba(22,35,59,.14);
+    --glow-accent:0 0 0 rgba(0,0,0,0);
+  }
+  [data-theme="dark"]{
+    --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+    --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+    --border-subtle:#2A3852; --border-strong:#62738F;
+    --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+    --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+    --tier-banked:#2FE39A; --tier-measured:#7FB2FF; --tier-modeled:#F5B23D; --tier-advisory:#E08AC8;
+    --elev-1:0 1px 2px rgba(0,0,0,.40);
+    --elev-2:0 4px 14px rgba(0,0,0,.50);
+    --elev-3:0 10px 30px rgba(0,0,0,.60);
+    --glow-accent:0 0 24px rgba(47,227,154,.42);
+  }
+  @media (prefers-color-scheme:dark){
+    [data-theme="system"]{
+      --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+      --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+      --border-subtle:#2A3852; --border-strong:#62738F;
+      --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+      --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+      --tier-banked:#2FE39A; --tier-measured:#7FB2FF; --tier-modeled:#F5B23D; --tier-advisory:#E08AC8;
+      --elev-1:0 1px 2px rgba(0,0,0,.40); --elev-2:0 4px 14px rgba(0,0,0,.50); --elev-3:0 10px 30px rgba(0,0,0,.60);
+      --glow-accent:0 0 24px rgba(47,227,154,.42);
+    }
+  }
+  @keyframes pifShimmer{0%{background-position:-240px 0}100%{background-position:240px 0}}
+  @keyframes pifSheetIn{from{transform:translateY(100%)}to{transform:none}}
+  @keyframes pifFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes pifPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  [data-rm="1"] *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  .pif-page{max-width:1120px;margin:0 auto;padding:24px 24px 72px}
+  .pif-col-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .pif-col-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .pif-nav{display:flex;gap:4px}
+  @media (max-width:768px){
+    .pif-page{padding:16px 14px 56px}
+    .pif-col-2,.pif-col-3{grid-template-columns:1fr}
+    .pif-nav{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+    .pif-btn-full{width:100%}
+  }
+  @media (max-width:480px){ .pif-page{padding:14px 12px 48px} }
+  .pif-drawer{position:fixed;top:0;bottom:0;left:0;width:min(360px,90vw);z-index:65;background:var(--surface-base);border-right:1px solid var(--border-subtle);box-shadow:var(--elev-3);overflow-y:auto;padding:18px 16px;transform:translateX(-100%);transition:transform .2s ease}
+  .pif-drawer.open{transform:translateX(0)}
+  @media (prefers-reduced-motion:reduce){ .pif-drawer{transition:none} }
+  [data-rm="1"] .pif-drawer{transition:none}
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" data-rm="{{ rmFlag }}" style="min-height:100vh;width:100%;background:var(--surface-base);color:var(--text-primary);font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;transition:background .3s cubic-bezier(.2,0,0,1),color .3s cubic-bezier(.2,0,0,1)">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <radialGradient id="b3glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#F5B23D" stop-opacity="0.5"></stop><stop offset="100%" stop-color="#F5B23D" stop-opacity="0"></stop></radialGradient>
+</defs></svg>
+
+<div style="max-width:1160px;margin:0 auto;padding:28px 24px 80px">
+
+  <!-- ============ REVIEW HARNESS ============ -->
+  <!-- ============ DEMO CONTROLS CLIP ============ -->
+  <button onClick="{{ onHarness }}" aria-label="Demo controls" aria-expanded="{{ harnessOpen }}" aria-controls="pif-harness" style="position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:64;display:inline-flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;background:var(--surface-raised);border:1px solid var(--border-subtle);border-left:none;border-radius:0 12px 12px 0;box-shadow:var(--elev-2);padding:12px 8px;color:var(--text-secondary);font:700 10px Inter,system-ui,sans-serif;letter-spacing:.06em" style-hover="color:var(--text-primary)"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 6h9M3 14h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="15" cy="6" r="2.3" stroke="currentColor" stroke-width="1.6"/><circle cx="11" cy="14" r="2.3" stroke="currentColor" stroke-width="1.6"/></svg>Demo</button>
+
+  <!-- ============ REVIEW HARNESS (drawer) ============ -->
+  <div id="pif-harness" role="region" aria-label="Demo controls" class="pif-drawer {{ drawerCls }}">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">Demo controls</span>
+      <span style="font-size:12px;color:var(--text-secondary)">— flip any state · not part of the product</span>
+      <button onClick="{{ onHarness }}" aria-label="Close demo controls" style="margin-left:auto;appearance:none;border:none;background:transparent;cursor:pointer;color:var(--text-secondary);display:inline-flex;padding:4px" style-hover="color:var(--text-primary)"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5.5 5.5l9 9M14.5 5.5l-9 9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+    </div>
+    <sc-if value="{{ rmOn }}" hint-placeholder-val="{{ false }}"><div style="margin-bottom:12px"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--info);background:color-mix(in srgb,var(--info) 14%,transparent);border:1px solid var(--info);border-radius:999px;padding:3px 9px">Reduced motion on</span></div></sc-if>
+    <div style="display:flex;flex-wrap:wrap;gap:18px">
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Screen</div><div role="tablist" aria-label="Screen" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segScreen }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Data state</div><div role="tablist" aria-label="Data state" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segState }}" as="s" hint-placeholder-count="5"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Billing state</div><div role="tablist" aria-label="Billing state" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segBilling }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Time window</div><div role="tablist" aria-label="Time window" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap;max-width:100%"><sc-for list="{{ segWinReview }}" as="s" hint-placeholder-count="7"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Bill connection</div><div role="tablist" aria-label="Bill connection" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segBillState }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Bill due</div><div role="tablist" aria-label="Bill due" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segBillDue }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Pending change</div><div role="tablist" aria-label="Pending change" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segPending }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div style="flex-basis:100%;height:1px;background:var(--border-subtle);margin:2px 0"></div>
+      <div style="flex-basis:100%;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:-6px">Tonight's plan (Home)</div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Plan</div><div role="tablist" aria-label="Plan composition" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segPlanComp }}" as="s" hint-placeholder-count="4"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Time position</div><div role="tablist" aria-label="Time position" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segPlanTime }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div style="flex-basis:100%;height:1px;background:var(--border-subtle);margin:2px 0"></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Iona launcher</div><div role="tablist" aria-label="Iona launcher" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segUnread }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">% basis</div><div role="tablist" aria-label="Percentage basis" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segPct }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" aria-disabled="{{ s.disabled }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div><div style="font-size:10.5px;line-height:14px;color:var(--text-secondary);margin-top:5px;max-width:230px">{{ pctDerivedNote }}</div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Period data</div><div role="tablist" aria-label="Period data" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segPeriodData }}" as="s" hint-placeholder-count="4"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Theme</div><div role="tablist" aria-label="Theme" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segTheme }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}"><span aria-hidden="true" style="display:inline-flex">{{ s.icon }}</span>{{ s.label }}</button></sc-for></div></div>
+    </div>
+  </div>
+
+  <!-- ============ WEB APP SHELL ============ -->
+  <div style="position:relative;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:20px;box-shadow:var(--elev-2);overflow:hidden">
+
+    <!-- top bar -->
+    <div style="display:flex;align-items:center;gap:18px;padding:15px 28px;border-bottom:1px solid var(--border-subtle)">
+      <div style="display:flex;align-items:center;gap:9px">
+        <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;border-radius:6px">
+        <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+      </div>
+      <nav aria-label="Primary" class="pif-nav" style="margin-left:6px">
+        <sc-for list="{{ navTabs }}" as="n" hint-placeholder-count="5"><sc-if value="{{ n.isLink }}" hint-placeholder-val="{{ false }}"><a href="{{ n.href }}" style="{{ n.style }}">{{ n.label }}</a></sc-if><sc-if value="{{ n.isBtn }}" hint-placeholder-val="{{ true }}"><button aria-current="{{ n.active }}" onClick="{{ n.onSelect }}" style="{{ n.style }}">{{ n.label }}</button></sc-if></sc-for>
+      </nav>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+        <sc-if value="{{ pendingChip.show }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pendingChip.onOpen }}" style="display:inline-flex;align-items:center;gap:6px;font:600 12px Inter,system-ui,sans-serif;color:var(--warning);background:color-mix(in srgb,var(--warning) 12%,transparent);border:1px solid var(--warning);border-radius:999px;padding:7px 13px;cursor:pointer;min-height:36px" style-hover="filter:brightness(1.05)"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M10 6.4V10l2.5 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>{{ pendingChip.label }}</button></sc-if>
+        <div style="position:relative">
+          <button aria-label="Account settings" aria-haspopup="menu" aria-expanded="{{ acctOpen }}" onClick="{{ onAcct }}" style="{{ avatarStyle }}" style-hover="border-color:var(--border-strong)">AR</button>
+          <sc-if value="{{ acctOpen }}" hint-placeholder-val="{{ false }}">
+            <div role="menu" aria-label="Account" style="position:absolute;right:0;top:46px;min-width:170px;max-width:calc(100vw - 28px);background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:12px;box-shadow:var(--elev-3);padding:6px;z-index:50;animation:pifFadeIn .16s both">
+              <sc-for list="{{ acctMenu }}" as="m" hint-placeholder-count="2"><a href="#" role="menuitem" onClick="{{ m.onSelect }}" style="{{ m.style }}" style-hover="background:var(--surface-sunken)"><span aria-hidden="true" style="display:inline-flex;color:var(--text-secondary)">{{ m.icon }}</span>{{ m.label }}</a></sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+
+    <div class="pif-page" style="position:relative">
+
+    <!-- ==================== SCREEN 1: HOME ==================== -->
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+
+      <!-- loading -->
+      <sc-if value="{{ stLoading }}" hint-placeholder-val="{{ false }}">
+        <div aria-busy="true" aria-label="Loading your dashboard" style="display:flex;flex-direction:column;gap:16px">
+          <div style="height:150px;border-radius:20px;background:linear-gradient(90deg,var(--surface-sunken) 25%,var(--surface-raised) 37%,var(--surface-sunken) 63%);background-size:240px 100%;animation:pifShimmer 1.4s linear infinite"></div>
+          <div style="height:74px;border-radius:14px;background:linear-gradient(90deg,var(--surface-sunken) 25%,var(--surface-raised) 37%,var(--surface-sunken) 63%);background-size:240px 100%;animation:pifShimmer 1.4s linear infinite"></div>
+          <div style="height:64px;border-radius:14px;background:linear-gradient(90deg,var(--surface-sunken) 25%,var(--surface-raised) 37%,var(--surface-sunken) 63%);background-size:240px 100%;animation:pifShimmer 1.4s linear infinite"></div>
+          <div style="height:64px;border-radius:14px;background:linear-gradient(90deg,var(--surface-sunken) 25%,var(--surface-raised) 37%,var(--surface-sunken) 63%);background-size:240px 100%;animation:pifShimmer 1.4s linear infinite"></div>
+          <p style="font-size:12px;color:var(--text-secondary);margin:2px 0 0;text-align:center">Loading… (under reduced motion the shimmer holds still)</p>
+        </div>
+      </sc-if>
+
+      <!-- error / offline -->
+      <sc-if value="{{ stError }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="background:var(--surface-raised);border:1px solid var(--danger);border-radius:18px;padding:26px 22px;text-align:center;animation:pifFadeIn .3s both">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:999px;background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger);margin-bottom:12px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 22 20H2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v4.5M12 16.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+          <div style="font-size:18px;font-weight:700;margin-bottom:6px">Can't reach PIF right now</div>
+          <p style="font-size:14px;line-height:20px;color:var(--text-secondary);margin:0 auto 18px;max-width:300px">You're offline or our service is unreachable. Your savings keep accruing — we'll sync the moment you're back.</p>
+          <button onClick="{{ onRetry }}" class="pif-btn-full" style="appearance:none;border:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px 22px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:44px" style-hover="filter:brightness(1.06)">Try again</button>
+        </div>
+      </sc-if>
+
+      <!-- empty / brand-new -->
+      <sc-if value="{{ stEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;padding:12px 6px;animation:pifFadeIn .3s both">
+          <div style="display:flex;justify-content:center;margin-bottom:10px">{{ ionaFace }}</div>
+          <div style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin-bottom:6px">Welcome to PIF ⚡</div>
+          <p style="font-size:14px;line-height:21px;color:var(--text-secondary);margin:0 auto 20px;max-width:320px">No devices yet and nothing saved — that's about to change. Connect a device and I'll start finding you cheaper hours tonight.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;text-align:left;margin-bottom:20px">
+            <div style="display:flex;gap:11px;align-items:center;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:14px 15px"><span style="width:30px;height:30px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;flex:none"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M8 3v4M12 3v4M6 7h8v2a4 4 0 0 1-8 0zM10 13v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><div style="font-size:14px;font-weight:600">Connect your first device</div><div style="font-size:12px;color:var(--text-secondary)">EV charger, thermostat, battery…</div></div></div>
+            <div style="display:flex;gap:11px;align-items:center;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:14px 15px"><span style="width:30px;height:30px;border-radius:999px;background:var(--surface-sunken);color:var(--text-secondary);display:inline-flex;align-items:center;justify-content:center;flex:none"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 4v12h12M7 12l3-4 2 2 4-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><div style="font-size:14px;font-weight:600">Your first savings land in the ledger</div><div style="font-size:12px;color:var(--text-secondary)">every dollar itemized, once you're set up</div></div></div>
+          </div>
+          <button style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 26px;border-radius:999px;background:var(--accent);color:var(--text-onfill);min-height:48px;box-shadow:var(--glow-accent)" style-hover="filter:brightness(1.05)">Connect a device →</button>
+        </div>
+      </sc-if>
+
+      <!-- content (normal + stale) -->
+      <sc-if value="{{ stContent }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:20px">
+
+          <sc-if value="{{ billingBanner.showFail }}" hint-placeholder-val="{{ false }}">
+            <div role="alert" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:color-mix(in srgb,var(--warning) 9%,var(--surface-raised));border:1px solid var(--warning);border-radius:16px;padding:14px 16px"><span style="color:var(--warning);flex:none"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 6h14v8H3zM3 9h14" stroke="currentColor" stroke-width="1.6"/></svg></span><div style="flex:1;min-width:150px"><div style="font-size:14px;font-weight:700">Your payment didn&rsquo;t go through</div><div style="font-size:13px;line-height:18px;color:var(--text-secondary)">Update your card to keep your plan — we&rsquo;ll keep retrying in the meantime.</div></div><a href="PIF-Billing-Lifecycle-Batch6.dc.html#f5" style="flex:none;text-decoration:none;font:700 12.5px Inter,system-ui,sans-serif;padding:10px 16px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:40px;display:inline-flex;align-items:center">Update card</a></div>
+          </sc-if>
+          <sc-if value="{{ billingBanner.showSuspend }}" hint-placeholder-val="{{ false }}">
+            <div role="alert" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:color-mix(in srgb,var(--danger) 10%,var(--surface-raised));border:1px solid var(--danger);border-radius:16px;padding:16px 18px"><span style="color:var(--danger);flex:none"><svg width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 5v10M12.5 5v10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><div style="flex:1;min-width:150px"><div style="font-size:15px;font-weight:700">Your plan is paused</div><div style="font-size:13px;line-height:18px;color:var(--text-secondary)">A payment couldn&rsquo;t be collected, so PIF is paused. Your devices have handed control back to your own defaults — nothing stranded. Reactivate to resume savings.</div></div><a href="PIF-Billing-Lifecycle-Batch6.dc.html#f6" style="flex:none;text-decoration:none;font:700 13px Inter,system-ui,sans-serif;padding:11px 18px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:44px;display:inline-flex;align-items:center">Reactivate</a></div>
+          </sc-if>
+
+          <div style="{{ homeGateStyle }}">
+
+          <!-- savings hero -->
+          <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:20px;box-shadow:var(--glow-accent),var(--elev-2);overflow:hidden">
+            <button onClick="{{ goLedger }}" aria-label="Open savings ledger" style="appearance:none;border:none;cursor:pointer;background:transparent;color:inherit;width:100%;padding:30px 24px 6px;text-align:center;display:block" style-hover="background:color-mix(in srgb,var(--accent) 4%,transparent)">
+              <div style="font-family:'Space Grotesk',system-ui;line-height:1.02;color:var(--accent)"><span aria-describedby="b3-note" style="font-size:56px;font-weight:700;font-variant-numeric:tabular-nums">{{ heroMoney }}</span><span style="font-size:22px;font-weight:600;color:var(--text-secondary);margin-left:8px">lower</span></div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:10px"><span style="font-size:14px;font-weight:600;color:var(--text-secondary)">{{ heroWindowLabel }}</span><span aria-hidden="true" style="color:var(--border-strong)">·</span><span style="{{ heroTierStyle }}">{{ heroTierIcon }}{{ heroTierLabel }}</span></div>
+              <div style="font-size:15px;font-weight:600;line-height:21px;margin:14px auto 0;max-width:380px">{{ heroEvidence }}</div>
+              <sc-if value="{{ heroInsuffShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;font-weight:600;color:var(--warning);margin-top:8px">{{ heroInsuffNote }}</div></sc-if>
+              <div style="font-size:11px;line-height:15px;color:var(--text-secondary);margin:10px auto 0;max-width:320px">{{ heroCheapNote }}</div>
+              <span style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--primary);margin-top:14px">See the ledger<svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </button>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 24px 22px">
+              <div role="radiogroup" aria-label="Time period" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segPeriod }}" as="s" hint-placeholder-count="3"><button role="radio" aria-checked="{{ s.checked }}" aria-label="{{ s.aria }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div>
+              <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;background:var(--accent);color:var(--text-onfill)"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M8 3 4 7M8 3l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ streakLabel }}</span>
+            </div>
+          </div>
+
+          <!-- Savings trend — its own tile -->
+          <sc-if value="{{ dashTrendShow }}" hint-placeholder-val="{{ true }}">
+            <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 20px 18px;box-shadow:var(--elev-1)">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px"><span style="font-size:10.5px;font-weight:700;color:var(--text-secondary);letter-spacing:.05em;text-transform:uppercase">Savings trend</span><span style="font-size:10.5px;color:var(--text-secondary)">{{ heroWindowLabel }}</span></div>
+              <div role="img" aria-label="{{ dashTrend.sr }}" style="display:flex;align-items:flex-end;justify-content:center;gap:7px;height:140px">
+                <sc-for list="{{ dashTrend.cols }}" as="c" hint-placeholder-count="6">
+                  <div style="width:46px;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end">
+                    <span style="font-size:10px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-secondary);white-space:nowrap">{{ c.amountNode }}</span>
+                    <span style="display:inline-flex;line-height:0">{{ c.tierMark }}</span>
+                    <div title="{{ c.title }}" style="{{ c.barStyle }}"></div>
+                    <span style="font-size:9.5px;color:var(--text-secondary);white-space:nowrap;font-variant-numeric:tabular-nums">{{ c.blabel }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ dashNoHistory }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 20px;box-shadow:var(--elev-1)"><p style="font-size:12px;line-height:18px;color:var(--text-secondary);margin:0;text-wrap:pretty"><b style="color:var(--text-primary)">Savings trend</b> appears after your first full billing cycle. Tonight's plan below shows what PIF does now.</p></div>
+          </sc-if>
+
+          <div class="pif-col-2" style="align-items:start">
+          <div style="display:flex;flex-direction:column;gap:16px">
+          <!-- tonight's plan -->
+          <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;box-shadow:var(--elev-1)">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" style="color:var(--secondary)"><path d="M14 10.5A5.5 5.5 0 1 1 8 5a4.4 4.4 0 0 0 6 5.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span style="font-size:14px;font-weight:700">Tonight's plan</span></div>
+            <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:0 0 13px">A forecast for tonight — it can change if weather, prices or your devices do.</p>
+
+            <sc-if value="{{ mechShow }}" hint-placeholder-val="{{ true }}">
+              <figure style="margin:0 0 14px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:12px 12px 8px">
+                <figcaption style="font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:6px">Tonight's prices &amp; your loads · one day</figcaption>
+                <svg viewBox="0 0 320 118" width="100%" role="img" aria-label="A 24-hour view: electricity price is lowest overnight and midday and peaks in the evening; PIF runs the water heater and EV overnight and pre-cools HVAC in the midday dip — all in the cheapest hours." style="display:block">
+                  <defs><linearGradient id="b3mech" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--primary)" stop-opacity="0.16"></stop><stop offset="1" stop-color="var(--primary)" stop-opacity="0"></stop></linearGradient></defs>
+                  <rect x="8" y="30" width="63" height="86" fill="var(--accent)" opacity="0.08"></rect>
+                  <rect x="147" y="30" width="51" height="86" fill="var(--accent)" opacity="0.08"></rect>
+                  <path d="M8 96 L84 88 L109 70 L160 84 L211 48 L236 40 L274 60 L312 92 L312 116 L8 116 Z" fill="url(#b3mech)"></path>
+                  <path d="M8 96 L84 88 L109 70 L160 84 L211 48 L236 40 L274 60 L312 92" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <text x="236" y="34" text-anchor="middle" font-size="9" fill="var(--text-secondary)" font-family="Inter,system-ui">peak</text>
+                  <g font-family="Inter,system-ui" font-size="9" fill="var(--text-secondary)" text-anchor="middle">
+                    <text x="8" y="113">12a</text><text x="84" y="113">6a</text><text x="160" y="113">12p</text><text x="236" y="113">6p</text><text x="312" y="113">12a</text>
+                  </g>
+                </svg>
+                <div style="position:relative;height:44px;margin-top:2px">
+                  <sc-for list="{{ mechLoads }}" as="L" hint-placeholder-count="4">
+                    <div title="{{ L.title }}" style="{{ L.blockStyle }}">{{ L.iconEl }}</div>
+                    <span style="{{ L.labelStyle }}">{{ L.label }}</span>
+                  </sc-for>
+                </div>
+                <div style="display:flex;gap:8px;align-items:flex-start;margin-top:8px;padding-top:8px;border-top:1px solid var(--border-subtle)"><span style="width:10px;height:10px;border-radius:3px;background:var(--accent);opacity:.5;flex:none;margin-top:2px"></span><p style="font-size:12px;line-height:17px;color:var(--text-secondary);margin:0;text-wrap:pretty">{{ mechCalloutNode }}</p></div>
+              </figure>
+            </sc-if>
+
+            <sc-if value="{{ tonight.empty }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:11px;align-items:flex-start;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:14px 15px">
+                <span style="color:var(--text-secondary);flex:none;margin-top:1px">{{ tnMoonIcon }}</span>
+                <div style="font-size:13px;line-height:19px;color:var(--text-secondary)"><b style="color:var(--text-primary)">Nothing planned tonight.</b> No controllable devices are in an active tier window. Prices tonight are flat, so there's nothing to shift.</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tonight.offline }}" hint-placeholder-val="{{ false }}">
+              <div role="status" style="display:flex;gap:11px;align-items:flex-start;background:color-mix(in srgb,var(--warning) 8%,transparent);border:1px solid var(--warning);border-radius:12px;padding:14px 15px">
+                <span style="color:var(--warning);flex:none;margin-top:1px">{{ tnOfflineIcon }}</span>
+                <div style="font-size:13px;line-height:19px;color:var(--text-secondary)"><b style="color:var(--text-primary)">Can't reach your home right now.</b> Tonight's plan will appear once you're back online. Anything already scheduled still runs on your devices.</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tonight.show }}" hint-placeholder-val="{{ true }}">
+              <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px">
+                <sc-for list="{{ tonight.items }}" as="t" hint-placeholder-count="3">
+                  <li style="{{ t.cardStyle }}">
+                    <div style="display:flex;gap:11px;align-items:flex-start">
+                      <span style="color:var(--accent);flex:none;margin-top:1px;opacity:{{ t.iconOpacity }}">{{ t.icon }}</span>
+                      <div style="min-width:0;flex:1">
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">
+                          <span style="font-size:13.5px;font-weight:700">{{ t.title }}</span>
+                          <span style="{{ t.stateStyle }}">{{ t.stateIcon }}{{ t.stateLabel }}</span>
+                        </div>
+                        <div style="font-size:13px;line-height:18px;color:var(--text-secondary);text-decoration:{{ t.textDecoration }}">{{ t.text }}</div>
+
+                        <!-- DONE result -->
+                        <sc-if value="{{ t.result.show }}" hint-placeholder-val="{{ false }}">
+                          <div style="margin-top:9px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:color-mix(in srgb,var(--success) 8%,transparent);border:1px solid var(--success);border-radius:10px;padding:9px 11px">
+                            <span aria-describedby="b3-note" style="font-family:'Space Grotesk',system-ui;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ t.result.amountColor }}">{{ t.result.amountNode }}</span>
+                            <span style="{{ t.result.tierStyle }}">{{ t.result.tierIcon }}{{ t.result.tierLabel }}</span>
+                            <span style="font-size:12px;color:var(--text-secondary);flex:1;min-width:120px">{{ t.result.text }}</span>
+                          </div>
+                          <div style="font-size:11px;color:var(--text-secondary);margin-top:6px">Done — moving to your ledger shortly.</div>
+                        </sc-if>
+
+                        <!-- MISSED -->
+                        <sc-if value="{{ t.missed.show }}" hint-placeholder-val="{{ false }}">
+                          <div style="margin-top:9px;display:flex;gap:8px;align-items:flex-start;background:color-mix(in srgb,var(--danger) 8%,transparent);border:1px solid var(--danger);border-radius:10px;padding:9px 11px">
+                            <span style="color:var(--danger);flex:none;margin-top:1px">{{ tnAlertMini }}</span>
+                            <span style="font-size:12px;line-height:17px;color:var(--text-secondary)">{{ t.missed.text }}</span>
+                          </div>
+                        </sc-if>
+
+                        <!-- SKIP control -->
+                        <sc-if value="{{ t.isSkip }}" hint-placeholder-val="{{ false }}">
+                          <div style="margin-top:10px">
+                            <button onClick="{{ t.control.onToggle }}" aria-label="{{ t.control.aria }}" style="appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font:700 12.5px Inter,system-ui,sans-serif;padding:8px 14px;border-radius:999px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:38px" style-hover="background:var(--surface-base);border-color:var(--warning)">{{ tnSkipIcon }}Skip tonight</button>
+                            <div style="display:flex;gap:6px;align-items:flex-start;margin-top:8px">
+                              <span style="flex:none;margin-top:1px;color:{{ t.conseqColor }}">{{ t.conseqIcon }}</span>
+                              <span style="font-size:12px;line-height:17px;color:var(--text-secondary)">{{ t.control.conseqText }}</span>
+                            </div>
+                            <sc-if value="{{ t.hasSafety }}" hint-placeholder-val="{{ false }}">
+                              <div style="display:flex;gap:6px;align-items:flex-start;margin-top:6px">
+                                <span style="flex:none;margin-top:1px;color:var(--info)">{{ tnLockMini }}</span>
+                                <span style="font-size:11.5px;line-height:16px;color:var(--text-secondary)">{{ t.control.safetyNote }}</span>
+                              </div>
+                            </sc-if>
+                          </div>
+                        </sc-if>
+
+                        <!-- UNSKIP control -->
+                        <sc-if value="{{ t.isUnskip }}" hint-placeholder-val="{{ false }}">
+                          <div style="margin-top:10px">
+                            <button onClick="{{ t.control.onToggle }}" aria-label="{{ t.control.aria }}" style="appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font:700 12.5px Inter,system-ui,sans-serif;padding:8px 14px;border-radius:999px;background:var(--accent);color:var(--text-onfill);border:none;min-height:38px" style-hover="filter:brightness(1.06)">{{ tnUndoIcon }}Un-skip</button>
+                            <div style="font-size:12px;line-height:17px;color:var(--text-secondary);margin-top:8px">{{ t.control.conseqText }}</div>
+                          </div>
+                        </sc-if>
+
+                        <!-- LOCKED control -->
+                        <sc-if value="{{ t.isLocked }}" hint-placeholder-val="{{ false }}">
+                          <div aria-disabled="true" style="margin-top:10px;display:inline-flex;gap:7px;align-items:center;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;padding:7px 13px">
+                            <span style="color:var(--text-secondary);flex:none">{{ tnLockMini }}</span>
+                            <span style="font-size:12px;font-weight:600;color:var(--text-secondary)">{{ t.control.reason }}</span>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </div>
+                  </li>
+                </sc-for>
+              </ul>
+            </sc-if>
+          </div>
+
+          <!-- advisory nudge -->
+          <sc-if value="{{ nudge.show }}" hint-placeholder-val="{{ true }}">
+            <div style="background:color-mix(in srgb,var(--info) 8%,var(--surface-raised));border:1px solid var(--info);border-radius:16px;padding:15px 16px;display:flex;gap:12px;align-items:flex-start;animation:pifFadeIn .3s both">
+              <span style="color:var(--info);flex:none;margin-top:1px"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v4M10 6.5h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+              <div style="min-width:0;flex:1"><div style="font-size:14px;font-weight:700;margin-bottom:3px">{{ nudge.title }}</div><div style="font-size:13px;line-height:18px;color:var(--text-secondary)">{{ nudge.body }}</div><div style="margin-top:10px;display:flex;gap:8px"><button style="appearance:none;border:none;cursor:pointer;font:600 13px Inter,system-ui,sans-serif;padding:8px 14px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:38px" style-hover="filter:brightness(1.06)">{{ nudge.cta }}</button></div></div>
+              <button onClick="{{ nudge.onDismiss }}" aria-label="Dismiss suggestion" style="appearance:none;border:none;cursor:pointer;background:transparent;color:var(--text-secondary);flex:none;padding:4px;border-radius:8px" style-hover="color:var(--text-primary)"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+            </div>
+          </sc-if>
+
+          <!-- stale banner -->
+          <sc-if value="{{ isStale }}" hint-placeholder-val="{{ false }}">
+            <div role="status" style="background:color-mix(in srgb,var(--warning) 10%,var(--surface-raised));border:1px solid var(--warning);border-radius:16px;padding:14px 16px;display:flex;gap:11px;align-items:flex-start">
+              <span style="color:var(--warning);flex:none;margin-top:1px"><svg width="19" height="19" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3 18 17H2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 8v3.4M10 13.8h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+              <div style="font-size:13px;line-height:18px"><b>Heat pump unreachable for 8 days.</b> <span style="color:var(--text-secondary)">It's stopped accruing and we've paused its Modeled figures — we don't model what we can't see. Reconnect it to resume.</span></div>
+            </div>
+          </sc-if>
+
+          <!-- bill-due nudge -->
+          <sc-if value="{{ billNudge.show }}" hint-placeholder-val="{{ false }}">
+            <div style="background:color-mix(in srgb,var(--secondary) 8%,var(--surface-raised));border:1px solid var(--secondary);border-radius:16px;padding:15px 16px;display:flex;gap:12px;align-items:flex-start;animation:pifFadeIn .3s both">
+              <span style="color:var(--secondary);flex:none;margin-top:1px"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 4h8l2 2v10H5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 9h4M8 12h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+              <div style="min-width:0;flex:1"><div style="font-size:14px;font-weight:700;margin-bottom:3px">Your July bill is ready</div><div style="font-size:13px;line-height:18px;color:var(--text-secondary)">Add three numbers and we'll check our math against it — it catches a wrong rate assumption. Optional; skipping just leaves the month un-bill-checked.</div><div style="margin-top:10px;display:flex;gap:8px"><button onClick="{{ billNudge.onAdd }}" style="appearance:none;border:none;cursor:pointer;font:600 13px Inter,system-ui,sans-serif;padding:8px 14px;border-radius:999px;background:var(--secondary);color:var(--text-onfill);min-height:38px" style-hover="filter:brightness(1.06)">Add bill</button><button onClick="{{ billNudge.onDismiss }}" style="appearance:none;cursor:pointer;font:600 13px Inter,system-ui,sans-serif;padding:8px 14px;border-radius:999px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:38px" style-hover="background:var(--surface-sunken)">Not now</button></div></div>
+              <button onClick="{{ billNudge.onDismiss }}" aria-label="Dismiss bill reminder" style="appearance:none;border:none;cursor:pointer;background:transparent;color:var(--text-secondary);flex:none;padding:4px;border-radius:8px" style-hover="color:var(--text-primary)"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+            </div>
+          </sc-if>
+
+          </div>
+          <!-- device status -->
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;font-weight:700">Your devices <span style="color:var(--text-secondary);font-weight:600">· {{ deviceHeading }}</span></span><a href="#" onClick="{{ onViewAll }}" style="font-size:12px;font-weight:600">View all</a></div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ devices }}" as="d" hint-placeholder-count="4">
+                <button onClick="{{ onDeviceOpen }}" aria-label="Open {{ d.name }}" style="appearance:none;text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:13px 14px;width:100%;color:inherit" style-hover="border-color:var(--border-strong)">
+                  <span style="width:36px;height:36px;border-radius:10px;background:var(--surface-sunken);color:var(--text-primary);display:inline-flex;align-items:center;justify-content:center;flex:none">{{ d.icon }}</span>
+                  <div style="min-width:0;flex:1"><div style="font-size:14px;font-weight:600">{{ d.name }}</div><div style="margin-top:4px"><span style="{{ d.badgeStyle }}">{{ d.badgeIcon }}{{ d.badgeLabel }}</span></div></div>
+                  <div style="text-align:right;flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px"><div aria-describedby="b3-note" style="{{ d.amountStyle }}">{{ d.amountNode }}</div><sc-if value="{{ d.hasTier }}" hint-placeholder-val="{{ true }}"><span style="{{ d.tierStyle }}">{{ d.tierIcon }}{{ d.tierLabel }}</span></sc-if><div style="font-size:11px;color:var(--text-secondary)">{{ d.contribLabel }}</div></div>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          </div>
+          <p id="b3-note" style="font-size:11px;line-height:16px;color:var(--text-secondary);margin:4px 0 0;padding-top:12px;border-top:1px solid var(--border-subtle)"><b style="color:var(--text-primary)">* Modeled figures are estimates.</b> Every figure carries its evidence tier — Banked (real money), Measured (metered), Modeled (estimated, carries the *), Advisory (you acted on a nudge). We never call a single row “verified”; only your bill's totals confirm the mechanism in aggregate. <b style="color:var(--text-primary)">“≈” means approximate</b> — the figure is calculated, not measured.</p>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <!-- ==================== SCREEN 2: LEDGER ==================== -->
+    <sc-if value="{{ isLedger }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ stLoading }}" hint-placeholder-val="{{ false }}">
+        <div aria-busy="true" aria-label="Loading ledger" style="display:flex;flex-direction:column;gap:10px">
+          <div style="height:44px;border-radius:12px;background:linear-gradient(90deg,var(--surface-sunken) 25%,var(--surface-raised) 37%,var(--surface-sunken) 63%);background-size:240px 100%;animation:pifShimmer 1.4s linear infinite"></div>
+          <sc-for list="{{ skeletonRows }}" as="s" hint-placeholder-count="6"><div style="height:56px;border-radius:12px;background:linear-gradient(90deg,var(--surface-sunken) 25%,var(--surface-raised) 37%,var(--surface-sunken) 63%);background-size:240px 100%;animation:pifShimmer 1.4s linear infinite"></div></sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ stError }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="background:var(--surface-raised);border:1px solid var(--danger);border-radius:16px;padding:22px;text-align:center"><div style="font-size:16px;font-weight:700;margin-bottom:6px;color:var(--danger)">Ledger unavailable</div><p style="font-size:13px;color:var(--text-secondary);margin:0 auto 16px;max-width:280px">We couldn't load your statement. Nothing is lost — try again in a moment.</p><button onClick="{{ onRetry }}" style="appearance:none;border:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:10px 20px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:44px">Try again</button></div>
+      </sc-if>
+      <sc-if value="{{ stEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;padding:36px 14px"><span style="display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:999px;background:var(--surface-sunken);color:var(--text-secondary);margin-bottom:12px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h11l3 3v13H5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 11h8M8 15h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div style="font-size:17px;font-weight:700;margin-bottom:6px">No entries yet</div><p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0 auto;max-width:280px">Once PIF makes its first move tonight, every dollar it saves shows up here — itemized like a receipt.</p></div>
+      </sc-if>
+
+      <sc-if value="{{ stContent }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px;max-width:860px;margin:0 auto">
+          <sc-if value="{{ billNudge.show }}" hint-placeholder-val="{{ false }}">
+            <div style="background:color-mix(in srgb,var(--secondary) 8%,var(--surface-raised));border:1px solid var(--secondary);border-radius:16px;padding:15px 16px;display:flex;gap:12px;align-items:flex-start;animation:pifFadeIn .3s both">
+              <span style="color:var(--secondary);flex:none;margin-top:1px"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 4h8l2 2v10H5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 9h4M8 12h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+              <div style="min-width:0;flex:1"><div style="font-size:14px;font-weight:700;margin-bottom:3px">Your July bill is ready</div><div style="font-size:13px;line-height:18px;color:var(--text-secondary)">You're looking at figures we can bill-check. Add three numbers and we'll confirm our math against your statement \u2014 it catches a wrong rate assumption. Optional.</div><div style="margin-top:10px;display:flex;gap:8px"><button onClick="{{ billNudge.onAdd }}" style="appearance:none;border:none;cursor:pointer;font:600 13px Inter,system-ui,sans-serif;padding:8px 14px;border-radius:999px;background:var(--secondary);color:var(--text-onfill);min-height:38px" style-hover="filter:brightness(1.06)">Add bill</button><button onClick="{{ billNudge.onDismiss }}" style="appearance:none;cursor:pointer;font:600 13px Inter,system-ui,sans-serif;padding:8px 14px;border-radius:999px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:38px" style-hover="background:var(--surface-sunken)">Not now</button></div></div>
+              <button onClick="{{ billNudge.onDismiss }}" aria-label="Dismiss bill reminder" style="appearance:none;border:none;cursor:pointer;background:transparent;color:var(--text-secondary);flex:none;padding:4px;border-radius:8px" style-hover="color:var(--text-primary)"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+            </div>
+          </sc-if>
+          <!-- monthly bill-check summary (aggregate only) -->
+          <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1)">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap"><span style="{{ summary.badgeStyle }}">{{ summary.badgeIcon }}{{ summary.tierLabel }}</span><sc-if value="{{ summary.showPeriod }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;padding:2px 9px">{{ summary.periodChip }}</span></sc-if></div>
+            <div aria-describedby="b3-note" style="font-family:'Space Grotesk',system-ui;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;margin-bottom:8px">{{ summary.totalNode }} <span style="font-family:Inter,system-ui;font-size:13px;font-weight:600;color:var(--text-secondary)">{{ summary.totalSuffix }}</span></div>
+            <div style="font-size:15px;line-height:22px;font-weight:600">{{ summary.shift }}</div>
+            <sc-if value="{{ summary.billChecked }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;line-height:17px;color:var(--text-secondary);margin-top:10px">This confirms the mechanism in aggregate — that load moved off-peak and total cost fell. It is never proof of any single row.</div></sc-if>
+            <sc-if value="{{ summary.linked }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;line-height:19px;color:var(--text-secondary);margin-top:10px">Your utility is connected — we'll check these figures against your bill automatically when your next statement arrives. Nothing to do.</div></sc-if>
+            <sc-if value="{{ summary.unlinkedBills }}" hint-placeholder-val="{{ false }}"><div style="margin-top:12px;border-top:1px solid var(--border-subtle);padding-top:12px"><div style="font-size:13px;line-height:19px;color:var(--text-primary);margin-bottom:9px">You've added your July bill — these figures are checked against it. Add each new bill to keep checking, or connect your utility to do it automatically.</div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:12px;font-weight:700;color:var(--text-secondary)">Bills added: {{ summary.billsList }}</span><button onClick="{{ onAddBill }}" style="appearance:none;border:none;cursor:pointer;font:600 12px Inter,system-ui,sans-serif;color:var(--primary);background:transparent;padding:6px 4px;min-height:34px" style-hover="text-decoration:underline">Add another</button></div><button onClick="{{ onConnectUtility }}" style="appearance:none;cursor:pointer;font:600 12px Inter,system-ui,sans-serif;color:var(--text-secondary);background:transparent;border:1px solid var(--border-subtle);border-radius:999px;padding:7px 13px;min-height:34px;margin-top:10px" style-hover="color:var(--text-primary);border-color:var(--border-strong)">Connect your utility to check every bill automatically →</button></div></sc-if>
+            <sc-if value="{{ summary.unlinkedNone }}" hint-placeholder-val="{{ false }}"><div style="margin-top:13px;border-top:1px solid var(--border-subtle);padding-top:13px"><div style="font-size:13px;line-height:19px;color:var(--text-secondary);margin-bottom:11px">Want these bill-checked? Two ways — pick whichever suits you:</div><div style="display:flex;gap:10px;flex-wrap:wrap"><button onClick="{{ onConnectUtility }}" style="appearance:none;border:none;cursor:pointer;text-align:left;padding:11px 15px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:44px" style-hover="filter:brightness(1.06)"><div style="font:700 13px Inter,system-ui,sans-serif">Connect your utility</div><div style="font:600 11px Inter,system-ui,sans-serif;opacity:.85;margin-top:2px">Ongoing — checks every bill automatically</div></button><button onClick="{{ onAddBill }}" style="appearance:none;cursor:pointer;text-align:left;padding:11px 15px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:44px" style-hover="background:var(--surface-raised)"><div style="font:700 13px Inter,system-ui,sans-serif">Add a bill</div><div style="font:600 11px Inter,system-ui,sans-serif;color:var(--text-secondary);margin-top:2px">One-off — takes about 30 seconds</div></button></div></div></sc-if>
+          </div>
+          <!-- (1) period header -->
+          <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;box-shadow:var(--elev-1);display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <div style="min-width:0"><div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.04em">{{ periodHeader.head }}</div><div aria-describedby="b3-note" style="font-family:'Space Grotesk',system-ui;font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:2px">{{ periodHeader.totalNode }}</div></div>
+            <div style="margin-left:auto;font-size:13px;color:var(--text-secondary);text-align:right">{{ periodHeader.meta }}</div>
+          </div>
+
+          <!-- window selector + CSV export -->
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <div role="radiogroup" aria-label="Time period" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;align-self:flex-start"><sc-for list="{{ winTabs }}" as="t" hint-placeholder-count="6"><button role="radio" aria-checked="{{ t.checked }}" aria-label="{{ t.aria }}" onClick="{{ t.onSelect }}" style="{{ t.style }}">{{ t.label }}</button></sc-for></div>
+            <button onClick="{{ csvExport.onExport }}" aria-label="Export the selected window as CSV" style="appearance:none;cursor:pointer;margin-left:auto;font:600 12px Inter,system-ui,sans-serif;color:var(--text-primary);background:var(--surface-raised);border:1px solid var(--border-strong);border-radius:999px;padding:8px 14px;min-height:36px;display:inline-flex;align-items:center;gap:6px" style-hover="background:var(--surface-sunken)"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v9m0 0 3-3m-3 3-3-3M4 15h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ csvExport.label }}</button>
+          </div>
+
+          <sc-if value="{{ staleNote.show }}" hint-placeholder-val="{{ false }}">
+            <div role="status" style="display:flex;gap:9px;align-items:flex-start;background:color-mix(in srgb,var(--warning) 9%,var(--surface-raised));border:1px solid var(--warning);border-radius:12px;padding:11px 13px;font-size:12px;line-height:17px"><span style="color:var(--warning);flex:none;margin-top:1px"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3 18 17H2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 8v3.4M10 13.8h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span><span>{{ staleNote.text }}</span></div>
+          </sc-if>
+
+          <!-- ===== one stacked-by-tier savings chart (trend + evidence mix) ===== -->
+          <sc-if value="{{ ledgerStackShow }}" hint-placeholder-val="{{ true }}">
+            <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:14px 16px;box-shadow:var(--elev-1)">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px"><span style="font-size:13px;font-weight:700">Savings by period</span><span style="font-size:11px;color:var(--text-secondary)">stacked by evidence tier</span></div>
+              <div role="img" aria-label="{{ ledgerStack.sr }}" style="display:flex;align-items:flex-end;justify-content:center;gap:14px;height:132px">
+                <sc-for list="{{ ledgerStack.cols }}" as="c" hint-placeholder-count="6">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end">
+                    <span style="font-size:10px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-secondary);white-space:nowrap">{{ c.amountNode }}</span>
+                    <div style="{{ c.stackStyle }}">
+                      <sc-for list="{{ c.segs }}" as="s" hint-placeholder-count="3"><div title="{{ s.title }}" style="{{ s.style }}"></div></sc-for>
+                    </div>
+                    <span style="font-size:9.5px;color:var(--text-secondary);white-space:nowrap;font-variant-numeric:tabular-nums">{{ c.blabel }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:12px">
+                <sc-for list="{{ ledgerStack.legend }}" as="l" hint-placeholder-count="4">
+                  <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-secondary)"><span style="display:inline-flex;line-height:0">{{ l.iconEl }}</span><span style="width:10px;height:10px;border-radius:3px;flex:none;background:{{ l.color }}"></span><span style="font-weight:700;color:var(--text-primary)">{{ l.label }}</span> {{ l.amt }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- device list (a handful of rows at any window) -->
+          <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:6px 8px;box-shadow:var(--elev-1)">
+            <div style="font-size:13px;font-weight:700;padding:10px 10px 4px">{{ deviceListTitle }}</div>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ deviceRows }}" as="d" hint-placeholder-count="4">
+                <button onClick="{{ d.onOpen }}" style="appearance:none;text-align:left;cursor:pointer;display:flex;gap:12px;align-items:center;width:100%;background:transparent;color:var(--text-primary);border:none;border-top:1px solid var(--border-subtle);padding:12px 10px" style-hover="background:var(--surface-sunken)">
+                  <span style="width:32px;height:32px;border-radius:9px;background:var(--surface-sunken);display:inline-flex;align-items:center;justify-content:center;flex:none">{{ d.icon }}</span>
+                  <span style="min-width:0;flex:1"><span style="display:block;font-size:14px;font-weight:700">{{ d.label }}</span><span style="display:block;font-size:12px;color:var(--text-secondary);margin-top:2px">{{ d.meta }}</span></span>
+                  <span aria-describedby="b3-note" style="font-family:'Space Grotesk',system-ui;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap">{{ d.amountNode }}</span>
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true" style="color:var(--text-secondary);flex:none"><path d="M8 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <p id="b3-note" style="font-size:11px;line-height:16px;color:var(--text-secondary);margin:6px 0 0"><b style="color:var(--text-primary)">* Modeled figures are estimates.</b> Each row shows the action and the arithmetic; the dollar is derived (kWh × rate delta), never asserted, and states its assumption. A single row is never “verified” — only your bill's peak/off-peak totals confirm the mechanism in aggregate. <b style="color:var(--text-primary)">“≈” means approximate</b> — the figure is calculated, not measured.</p>
+
+          <!-- tier + symbol legend (persistent, below the fold) -->
+          <div role="note" aria-label="Evidence tier legend" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:11px;color:var(--text-secondary);background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:12px;padding:10px 13px">
+            <span style="font-weight:700;color:var(--text-primary)">Tiers:</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-weight:700;color:var(--success);border:1px solid var(--success);border-radius:999px;padding:2px 8px">Banked · real money</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-weight:700;color:var(--info);border:1px solid var(--info);border-radius:999px;padding:2px 8px">Measured · metered</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-weight:700;color:var(--warning);border:1px solid var(--warning);border-radius:999px;padding:2px 8px">Modeled · estimated *</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-weight:700;color:var(--secondary);border:1px solid var(--secondary);border-radius:999px;padding:2px 8px">Advisory · you acted</span>
+          </div>
+
+          <sc-if value="{{ ledgerIntro.show }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:12px;align-items:flex-start;background:color-mix(in srgb,var(--secondary) 8%,var(--surface-raised));border:1px solid var(--secondary);border-radius:16px;padding:14px 16px;animation:pifFadeIn .3s both">
+              <span style="flex:none">{{ ledgerIntro.face }}</span>
+              <div style="min-width:0;flex:1"><div style="font-size:14px;font-weight:700;margin-bottom:3px">How to read your savings</div><div style="font-size:13px;line-height:19px;color:var(--text-secondary)">Each row shows what I did and the maths behind it. The badge is the <b style="color:var(--text-primary)">evidence tier</b> — Banked is real money, Measured is metered, Modeled is estimated. A “≈” means the figure is <b style="color:var(--text-primary)">approximate</b> — calculated, not measured.</div></div>
+              <button onClick="{{ ledgerIntro.onDismiss }}" aria-label="Dismiss explainer" style="appearance:none;border:none;cursor:pointer;background:transparent;color:var(--text-secondary);flex:none;padding:4px;border-radius:8px" style-hover="color:var(--text-primary)"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ ledgerIntro.dismissed }}" hint-placeholder-val="{{ false }}">
+            <a href="#" onClick="{{ ledgerIntro.onReopen }}" style="font-size:12px;font-weight:600;color:var(--text-secondary);align-self:flex-start;display:inline-flex;align-items:center;gap:5px" style-hover="color:var(--text-primary)"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.5"/><path d="M8 8a2 2 0 1 1 2.7 1.9c-.5.2-.7.5-.7 1v.3M10 14h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>How to read your savings</a>
+          </sc-if>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <!-- ==================== SCREEN 3b: DEVICE DETAIL — the one drill target ==================== -->
+    <sc-if value="{{ isDevDetail }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:14px;max-width:760px;margin:0 auto">
+        <button onClick="{{ devDetail.onBack }}" style="appearance:none;cursor:pointer;background:transparent;border:none;color:var(--text-secondary);font:600 13px Inter,system-ui,sans-serif;display:inline-flex;align-items:center;gap:6px;padding:8px 0;min-height:24px;align-self:flex-start" style-hover="color:var(--text-primary)"><span aria-hidden="true">←</span> Back</button>
+
+        <!-- header: device + window (changeable) + totals -->
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:20px;box-shadow:var(--elev-1)">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><span style="width:40px;height:40px;border-radius:11px;background:var(--surface-sunken);color:var(--text-primary);display:inline-flex;align-items:center;justify-content:center;flex:none">{{ devDetail.icon }}</span><div style="min-width:0"><div style="font-size:17px;font-weight:700;line-height:20px">{{ devDetail.name }}</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px">{{ devDetail.meta }}</div></div></div>
+          <div role="radiogroup" aria-label="Time period" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;margin-bottom:14px;flex-wrap:wrap"><sc-for list="{{ devDetail.winTabs }}" as="t" hint-placeholder-count="6"><button role="radio" aria-checked="{{ t.checked }}" aria-label="{{ t.aria }}" onClick="{{ t.onSelect }}" style="{{ t.style }}">{{ t.label }}</button></sc-for></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:14px;background:var(--surface-sunken);border-radius:12px"><span aria-describedby="b3-note" style="font-family:'Space Grotesk',system-ui;font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-primary)">{{ devDetail.totalNode }}</span><span style="font-size:13px;color:var(--text-secondary)">saved · {{ devDetail.head }}</span></div>
+        </div>
+
+        <!-- prove it -->
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:20px;box-shadow:var(--elev-1);display:flex;flex-direction:column;gap:18px">
+          <div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:8px">The arithmetic</div>
+            <div aria-describedby="b3-note" style="font-family:'Space Grotesk',system-ui;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.4">{{ devDetail.mathText }}</div>
+          </div>
+
+          <!-- when the load ran vs where it usually sits, over the tariff periods -->
+          <div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:4px">When it ran vs your usual time</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">{{ devDetail.usual }}</div>
+            <div style="position:relative;height:52px;border-radius:10px;overflow:hidden;border:1px solid var(--border-subtle)">
+              <sc-for list="{{ devDetail.tariffBands }}" as="b" hint-placeholder-count="5"><div style="{{ b.style }}"></div></sc-for>
+              <sc-for list="{{ devDetail.usualSegs }}" as="u" hint-placeholder-count="1"><div style="{{ u.style }}"></div></sc-for>
+              <sc-for list="{{ devDetail.ranSegs }}" as="r" hint-placeholder-count="1"><div style="{{ r.style }}"></div></sc-for>
+            </div>
+            <div style="position:relative;height:14px;margin-top:2px"><sc-for list="{{ devDetail.axisTicks }}" as="a" hint-placeholder-count="5"><span style="{{ a.style }}"><span style="font-size:10px;color:var(--text-secondary)">{{ a.label }}</span></span></sc-for></div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--text-secondary);margin-top:8px">
+              <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:14px;height:9px;border-radius:2px;background:var(--accent)"></span>When it actually ran</span>
+              <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:14px;height:9px;border-radius:2px;border:1.5px dashed var(--text-secondary)"></span>Your usual time</span>
+              <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:12px;height:9px;border-radius:2px;background:color-mix(in srgb,var(--danger) 24%,transparent)"></span>Peak</span>
+              <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:12px;height:9px;border-radius:2px;background:color-mix(in srgb,var(--success) 24%,transparent)"></span>Off-peak</span>
+            </div>
+          </div>
+
+          <!-- provenance + evidence tier -->
+          <div class="pif-col-2" style="gap:14px;align-items:start">
+            <div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:8px">Where the numbers came from</div>
+              <span style="{{ devDetail.meterBadge.style }}">{{ devDetail.meterBadge.icon }}{{ devDetail.meterBadge.label }}</span>
+              <p style="font-size:12px;line-height:18px;color:var(--text-secondary);margin:9px 0 0">{{ devDetail.meter }}</p>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:8px">Constraints PIF respected</div>
+              <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px">
+                <sc-for list="{{ devDetail.constraints }}" as="c" hint-placeholder-count="2"><li style="display:flex;gap:7px;align-items:flex-start;font-size:12px;line-height:17px;color:var(--text-secondary)"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true" style="color:var(--success);flex:none;margin-top:1px"><path d="M4 10.5 8 14.5 16 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ c }}</li></sc-for>
+              </ul>
+            </div>
+          </div>
+
+          <!-- tariff & rates -->
+          <div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:8px">Tariff &amp; rate periods that applied</div>
+            <div style="display:flex;flex-direction:column;gap:0;border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden">
+              <sc-for list="{{ devDetail.tariff }}" as="t" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:9px 12px;border-top:1px solid var(--border-subtle);font-size:13px"><span style="font-weight:600">{{ t.label }}<span style="color:var(--text-secondary);font-weight:400"> · {{ t.when }}</span></span><span style="font-variant-numeric:tabular-nums;font-weight:700">{{ t.rate }}</span></div></sc-for>
+            </div>
+            <p style="font-size:11px;color:var(--text-secondary);margin:7px 0 0">{{ devDetail.effective }}</p>
+          </div>
+
+          <!-- methodology + revision history -->
+          <div style="display:flex;flex-direction:column;gap:9px;padding-top:4px;border-top:1px solid var(--border-subtle)">
+            <a href="#" onClick="{{ onMethodology }}" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600">{{ devDetail.methodology }} — the version that computed these figures<svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <sc-if value="{{ devDetail.hasRevisions }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:5px">Revision history</div>
+                <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px">
+                  <sc-for list="{{ devDetail.revisions }}" as="r" hint-placeholder-count="1"><li style="font-size:12px;line-height:17px;color:var(--text-secondary)"><b style="color:var(--text-primary)">{{ r.when }}</b> — {{ r.what }}</li></sc-for>
+                </ul>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <!-- timeline of individual actions -->
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13px;font-weight:700">Actions</span><span style="font-size:11px;color:var(--text-secondary)">newest first · {{ devDetail.head }}</span></div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap"><sc-for list="{{ devDetail.filters }}" as="f" hint-placeholder-count="3"><button aria-pressed="{{ f.active }}" onClick="{{ f.onSelect }}" style="{{ f.style }}">{{ f.label }}</button></sc-for></div>
+
+          <sc-if value="{{ devDetail.empty }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;padding:26px 14px;color:var(--text-secondary);font-size:13px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px">No actions for this device in the selected window.</div>
+          </sc-if>
+
+          <div style="display:flex;flex-direction:column;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;overflow:hidden">
+            <sc-for list="{{ devDetail.actions }}" as="e" hint-placeholder-count="4">
+              <div style="border-top:1px solid var(--border-subtle)">
+                <button onClick="{{ e.onToggle }}" aria-expanded="{{ e.expanded }}" style="appearance:none;text-align:left;cursor:pointer;display:flex;gap:12px;align-items:center;width:100%;background:transparent;color:var(--text-primary);border:none;padding:14px 12px" style-hover="background:var(--surface-sunken)">
+                  <span style="min-width:0;flex:1">
+                    <span style="display:block;font-size:14px;line-height:19px"><b>{{ e.action }}</b><span style="color:var(--text-secondary)"> · {{ e.detail }}</span></span>
+                    <span style="display:block;font-size:12px;color:var(--text-secondary);margin-top:2px">{{ e.time }}</span>
+                  </span>
+                  <span aria-describedby="b3-note" style="{{ e.amountStyle }}">{{ e.amountNode }}</span>
+                  <span style="{{ e.tierStyle }}">{{ e.tierIcon }}{{ e.tierLabel }}</span>
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" style="color:var(--text-secondary);flex:none"><path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <sc-if value="{{ e.expanded }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:0 12px 15px 12px;display:flex;flex-direction:column;gap:7px">
+                    <div style="font-family:'Space Grotesk',system-ui;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;background:var(--surface-sunken);border-radius:10px;padding:11px 13px">{{ e.mathText }}</div>
+                    <div style="font-size:12px;color:var(--text-secondary)">{{ e.meter }}</div>
+                    <div style="font-size:12px;font-style:italic;color:var(--text-secondary)">{{ e.assume }}</div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ devDetail.pager.show }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px 6px 4px">
+              <button onClick="{{ devDetail.pager.onMore }}" style="appearance:none;cursor:pointer;font:600 13px Inter,system-ui,sans-serif;color:var(--text-primary);background:var(--surface-raised);border:1px solid var(--border-strong);border-radius:999px;padding:10px 20px;min-height:44px" style-hover="background:var(--surface-sunken)">{{ devDetail.pager.moreLabel }}</button>
+              <span aria-live="polite" style="font-size:11px;color:var(--text-secondary)">{{ devDetail.pager.showingText }}</span>
+            </div>
+          </sc-if>
+        </div>
+
+        <p id="b3-note" style="font-size:11px;line-height:16px;color:var(--text-secondary);margin:2px 0 0"><b style="color:var(--text-primary)">* Modeled figures are estimates.</b> Each figure is derived (kWh × rate delta), never asserted, and states its assumption. A single action is never “verified” — only your bill's peak/off-peak totals confirm the mechanism in aggregate. <b style="color:var(--text-primary)">“≈” means approximate</b> — calculated, not measured.</p>
+      </div>
+    </sc-if>
+
+    <!-- ==================== SCREEN 4: ADD / CONFIRM BILL ==================== -->
+    <sc-if value="{{ isBill }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:16px;max-width:600px;margin:0 auto">
+        <button onClick="{{ onSkipBill }}" style="appearance:none;cursor:pointer;background:transparent;border:none;color:var(--text-secondary);font:600 13px Inter,system-ui,sans-serif;display:inline-flex;align-items:center;gap:6px;padding:8px 0;min-height:24px;align-self:flex-start" style-hover="color:var(--text-primary)"><span aria-hidden="true">←</span> Back</button>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:24px;box-shadow:var(--elev-1)">
+          <h2 style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin:0 0 6px">Add or confirm your bill</h2>
+          <p style="font-size:14px;line-height:21px;color:var(--text-secondary);margin:0 0 4px"><b style="color:var(--text-primary)">Optional — it checks our math.</b> We compare your bill's totals to what we expected. It catches a wrong rate assumption and confirms how much of your usage moved off-peak. Skipping is fine — your figures just stay un-bill-checked.</p>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-top:18px">
+            <div><label for="bill-amt" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Total amount ($)</label><input id="bill-amt" inputmode="decimal" placeholder="142.80" style="width:100%;font:400 15px Inter,system-ui,sans-serif;padding:12px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></div>
+            <div><label for="bill-kwh" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Total energy (kWh)</label><input id="bill-kwh" inputmode="decimal" placeholder="910" style="width:100%;font:400 15px Inter,system-ui,sans-serif;padding:12px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></div>
+            <div><label for="bill-period" style="display:block;font-size:13px;font-weight:600;margin-bottom:7px">Billing period</label><input id="bill-period" type="text" placeholder="Jun 15 – Jul 14" style="width:100%;font:400 15px Inter,system-ui,sans-serif;padding:12px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;margin:18px 0"><span style="flex:1;height:1px;background:var(--border-subtle)"></span><span style="font-size:12px;color:var(--text-secondary)">or</span><span style="flex:1;height:1px;background:var(--border-subtle)"></span></div>
+          <button style="appearance:none;cursor:pointer;width:100%;border:1.5px dashed var(--border-strong);background:var(--surface-sunken);border-radius:14px;padding:22px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text-secondary)" style-hover="border-color:var(--primary);color:var(--text-primary)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9h3l1.4-2.4h7.2L17 9h3v11H4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13.5" r="3.2" stroke="currentColor" stroke-width="1.6"/></svg><span style="font-size:14px;font-weight:600">Snap a photo of your bill</span><span style="font-size:12px;line-height:16px;text-align:center;max-width:300px">We read the three numbers off it, then discard the image — the photo is never stored.</span></button>
+          <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+            <button onClick="{{ onSaveBill }}" class="pif-btn-full" style="appearance:none;border:none;cursor:pointer;flex:1;font:600 15px Inter,system-ui,sans-serif;padding:13px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:48px" style-hover="filter:brightness(1.06)">Save &amp; check</button>
+            <button onClick="{{ onSkipBill }}" style="appearance:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:13px 20px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px" style-hover="background:var(--surface-sunken)">Skip for now</button>
+          </div>
+          <p style="font-size:11px;line-height:16px;color:var(--text-secondary);margin:14px 0 0">We keep only the three numbers. Any photo is processed on-device and discarded — never uploaded or stored. We'll stop asking after a few declines.</p>
+        </div>
+      </div>
+    </sc-if>
+
+    </div>
+
+    <!-- Iona global launcher — fan-out -->
+    <sc-if value="{{ overlayOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ onOverlayClose }}" aria-hidden="true" style="position:fixed;inset:0;z-index:40;background:transparent"></div>
+    </sc-if>
+    <div style="position:fixed;right:24px;bottom:24px;z-index:70;max-width:calc(100vw - 28px);display:flex;flex-direction:column;align-items:flex-end;gap:9px">
+      <sc-if value="{{ fanOpen }}" hint-placeholder-val="{{ false }}">
+        <div role="menu" aria-label="Iona menu" style="display:flex;flex-direction:column;align-items:flex-end;gap:9px">
+          <sc-for list="{{ fanTabs }}" as="t" hint-placeholder-count="6">
+            <a href="#" role="menuitem" onClick="{{ t.onSelect }}" style="{{ t.style }}" style-hover="filter:brightness(1.02);transform:translateY(-1px)"><span aria-hidden="true" style="display:inline-flex;color:var(--text-secondary)">{{ t.icon }}</span>{{ t.label }}<sc-if value="{{ t.hi }}" hint-placeholder-val="{{ false }}"><span style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--surface-sunken);border:1px solid var(--accent);border-radius:999px;padding:2px 7px">New</span></sc-if></a>
+          </sc-for>
+        </div>
+      </sc-if>
+      <button onClick="{{ onLauncher }}" aria-label="{{ launcherAria }}" aria-expanded="{{ fanOpen }}" aria-haspopup="menu" style="appearance:none;border:none;cursor:pointer;background:transparent;padding:0;display:inline-flex;border-radius:999px" style-active="transform:scale(.95)">{{ launcherAvatar }}</button>
+    </div>
+
+    <!-- cancel sheet -->
+    <sc-if value="{{ cancelOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:fixed;inset:0;background:rgba(4,8,16,.5);z-index:40;display:flex;align-items:center;justify-content:center;padding:24px" onClick="{{ onCloseSheet }}">
+        <div role="dialog" aria-modal="true" aria-label="Scheduled plan change" onClick="{{ stop }}" style="width:100%;max-width:420px;background:var(--surface-base);border-radius:20px;border:1px solid var(--border-subtle);padding:24px;box-shadow:var(--elev-3);animation:pifFadeIn .24s cubic-bezier(.2,0,0,1) both">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:6px"><span style="color:var(--warning)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.6"/><path d="M10 6.4V10l2.5 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span style="font-size:17px;font-weight:700">Downgrade scheduled</span></div>
+          <p style="font-size:14px;line-height:20px;color:var(--text-secondary);margin:0 0 18px">You're moving to <b style="color:var(--text-primary)">Basic</b> in <b style="color:var(--text-primary)">12 days</b> (on Jul 30). Until then you keep every Premium lever. Your plan runs to the end of the paid month — no refund for the remainder.</p>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <button onClick="{{ onKeepPlan }}" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px;border-radius:12px;background:var(--accent);color:var(--text-onfill);min-height:48px;box-shadow:var(--glow-accent)" style-hover="filter:brightness(1.05)">Keep my Premium plan</button>
+            <button onClick="{{ onCloseSheet }}" style="appearance:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px" style-hover="background:var(--surface-sunken)">Keep the downgrade</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1160,&quot;height&quot;:1180},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;system&quot;,&quot;tsType&quot;:&quot;'light'|'dark'|'system'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;ledger&quot;,&quot;detail&quot;,&quot;bill&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;'home'|'ledger'|'detail'|'bill'&quot;,&quot;section&quot;:&quot;Demo: screen&quot;},&quot;billing&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;payfail&quot;,&quot;suspended&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Billing&quot;},&quot;dataState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;empty&quot;,&quot;loading&quot;,&quot;error&quot;,&quot;stale&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;'normal'|'empty'|'loading'|'error'|'stale'&quot;,&quot;section&quot;:&quot;Demo: data state&quot;},&quot;window&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;1d&quot;,&quot;7d&quot;,&quot;30d&quot;,&quot;90d&quot;,&quot;1y&quot;,&quot;bill&quot;,&quot;all&quot;],&quot;default&quot;:&quot;30d&quot;,&quot;tsType&quot;:&quot;'1d'|'7d'|'30d'|'90d'|'1y'|'bill'|'all'&quot;,&quot;section&quot;:&quot;Demo: savings&quot;},&quot;pctMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;whole&quot;,&quot;managed&quot;],&quot;default&quot;:&quot;whole&quot;,&quot;tsType&quot;:&quot;'whole'|'managed'&quot;,&quot;section&quot;:&quot;Demo: savings&quot;},&quot;periodData&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;rolling30&quot;,&quot;inprogress&quot;,&quot;insufficient&quot;,&quot;firstcycle&quot;],&quot;default&quot;:&quot;rolling30&quot;,&quot;tsType&quot;:&quot;'rolling30'|'inprogress'|'insufficient'|'firstcycle'&quot;,&quot;section&quot;:&quot;Demo: savings&quot;},&quot;billState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;unchecked&quot;,&quot;nudge&quot;,&quot;checked&quot;],&quot;default&quot;:&quot;unchecked&quot;,&quot;tsType&quot;:&quot;'unchecked'|'nudge'|'checked'&quot;,&quot;section&quot;:&quot;Demo: savings&quot;},&quot;pending&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;scheduled&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;'none'|'scheduled'&quot;,&quot;section&quot;:&quot;Demo: account&quot;},&quot;launcherUnread&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: account&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = {
+      theme: props.initialTheme || 'system',
+      screen: props.screen || 'home',
+      dataState: props.dataState || 'normal',
+      billing: props.billing || 'none',
+      scope: props.scope || 'month',
+      pending: props.pending || 'none',
+      unread: !!props.launcherUnread,
+      savings: (props.scope||'month')==='lifetime' ? 512.40 : 42.18,
+      nudgeDismissed: false,
+      planComp: props.planComp || 'full', planTime: props.planTime || 'before',
+      itemState: { ev:'planned', hp:'planned', battery:'planned' },
+      cancelOpen: false,
+      fanOpen: false, acctOpen: false,
+      billConn: props.billConn || 'unlinked', billBills: props.billBills || 'none', billDue: !!props.billDue, billNudgeDismissed: false, billDeclines: 0, ledgerIntroDismissed: (function(){ try{ return localStorage.getItem('pif_b3_introDismissed')==='1'; }catch(e){ return false; } })(),
+      pctMode: props.pctMode || 'whole', periodData: props.periodData || 'rolling30',
+      win: (function(){ try{ return localStorage.getItem('pif_b3_win') || props.window || '30d'; }catch(e){ return props.window || '30d'; } })(),
+      winHome: (function(){ try{ var v=localStorage.getItem('pif_b3_winHome')||'30d'; return ['30d','1y','all'].indexOf(v)>=0?v:'30d'; }catch(e){ return '30d'; } })(),
+      fltDevice: 'all', fltLever: 'all', fltRange: 'month', devSel: 'ev', devShown: 20, devActionFilter: 'all', devExpanded: {},
+    };
+  }
+  componentDidMount(){
+    try { const h=(window.location.hash||'').replace('#','').toLowerCase();
+      if(h==='ledger') this.setState({ screen:'ledger' });
+      else if(h==='dashboard') this.setState({ screen:'home' });
+    } catch(e){}
+    this._esc=(e)=>{ if(e.key==='Escape') this.setState({acctOpen:false,fanOpen:false,harnessOpen:false}); };
+    try{ window.addEventListener('keydown', this._esc); }catch(e){}
+    this.animate();
+    try { this._mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this._mqh = ()=>{ if(this.state.theme==='system') this.forceUpdate(); };
+      this._mq.addEventListener('change', this._mqh);
+    } catch(e){}
+  }
+  componentWillUnmount(){ try{ window.removeEventListener('keydown', this._esc); }catch(e){} if(this._mq&&this._mqh) this._mq.removeEventListener('change',this._mqh); if(this._raf) cancelAnimationFrame(this._raf); if(this._snap) clearTimeout(this._snap); }
+  reduceMotion(){ if(this.props.previewReducedMotion) return true; try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){ return false; } }
+  resolvedDark(){ const t=this.state.theme; if(t==='dark') return true; if(t==='light') return false; try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch(e){ return false; } }
+  target(){ const m=this.winMeta()[this.state.win]; return m ? m.money : 42; }
+  winMeta(){
+    return {
+      '1d':  { label:'1D',  aria:'1D, 1 day',    head:'Last 24 hours',  lower:'in the last 24 hours',  days:1,     money:2,    pct:44 },
+      '7d':  { label:'7D',  aria:'7D, 7 days',   head:'Last 7 days',    lower:'in the last 7 days',    days:7,     money:11,   pct:41 },
+      '30d': { label:'30D', aria:'30D, 30 days', head:'Last 30 days',   lower:'in the last 30 days',   days:30,    money:42,   pct:38 },
+      '90d': { label:'90D', aria:'90D, 90 days', head:'Last 90 days',   lower:'in the last 90 days',   days:90,    money:128,  pct:36 },
+      '1y':  { label:'1Y',  aria:'1Y, 1 year',   head:'Last 12 months', lower:'in the last 12 months', days:365,   money:503,  pct:34 },
+      'all': { label:'All time', aria:'All time, since you joined', head:'All time', lower:'all-time', days:99999, money:1285, pct:33 },
+    };
+  }
+  win(field){ field=field||'win'; const m=this.winMeta(); let k=this.state[field]; return m[k] || m['30d']; }
+  setWin(k, field){ field=field||'win'; const patch={}; patch[field]=k; if(field==='win'){ patch.devShown=20; } this.setState(patch, ()=>{ try{ localStorage.setItem('pif_b3_'+field, k); }catch(e){}; this.animate(); }); }
+  exportCsv(rows, W){
+    const esc=(v)=>{ const s=String(v==null?'':v); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
+    const head=['Date','Time','Device','Action','kWh','Evidence tier','Calculation','Amount (USD)','Source'];
+    const line=(a)=>a.map(esc).join(',');
+    const body=rows.map(r=>line([r.date, r.time||'', this.deviceProfile(r.dev)&&(r.dev), r.action, r.kwh, r.tier, r.mathText||'', r.val.toFixed(2), r.meter||'']));
+    const csv=[ '# PIF savings ledger \u2014 '+W.head, line(head) ].concat(body).join('\n');
+    try{
+      const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='pif-ledger-'+String(W.label).toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.csv';
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }catch(e){}
+  }
+  winSeg(keys, opts){
+    opts = opts || {};
+    const field = opts.field || 'win';
+    const M=this.winMeta(), cur=this.state[field];
+    return keys.map(k=>{ const w=M[k];
+      return { label:w.label, aria:w.aria, active: cur===k, checked: cur===k ? 'true':'false', locked:false, onSelect:()=>this.setWin(k, field), style:this.segStyle(cur===k) }; });
+  }
+  animate(){
+    if(this._raf) cancelAnimationFrame(this._raf);
+    if(this._snap) clearTimeout(this._snap);
+    const target=this.target();
+    const go = (this.state.dataState==='normal'||this.state.dataState==='stale') && this.state.screen==='home';
+    if(!go || this.reduceMotion()){ this.setState({ savings: target }); return; }
+    const dur=1100, start=performance.now();
+    const tick=(now)=>{ const t=Math.min(1,(now-start)/dur); const e=1-Math.pow(1-t,3); this.setState({ savings: target*e }); if(t<1) this._raf=requestAnimationFrame(tick); };
+    this.setState({ savings: 0 }); this._raf=requestAnimationFrame(tick);
+    this._snap=setTimeout(()=>this.setState({ savings: target }), dur+140);
+  }
+  resetTransient(){ return { fltDevice:'all', fltLever:'all', fltRange:'month', devActionFilter:'all', devExpanded:{}, devShown:20, cancelOpen:false, acctOpen:false, fanOpen:false }; }
+  set(k,v){ this.setState(k==='screen' ? Object.assign(this.resetTransient(), { screen:v }) : { [k]: v }, ()=>{ if(k==='scope'||k==='screen'||k==='dataState') this.animate(); }); }
+  fmt(n){ return '$'+Number(n).toFixed(2); }
+  amt(text){
+    const s=String(text);
+    const SR={ position:'absolute', width:'1px', height:'1px', padding:0, margin:'-1px', overflow:'hidden', clip:'rect(0 0 0 0)', clipPath:'inset(50%)', whiteSpace:'nowrap', border:0 };
+    if(s.indexOf('\u2248 ')===0){
+      return React.createElement(React.Fragment, null,
+        React.createElement('span', { 'aria-hidden':'true' }, '\u2248\u00a0'),
+        React.createElement('span', { style:SR }, 'approximately '),
+        s.slice(2));
+    }
+    return s;
+  }
+  verifiedTarget(){ return this.target()*0.85; }
+  pendingAmount(){ return this.target()*0.15; }
+
+  gi(name){
+    const c={ width:18, height:18, viewBox:'0 0 20 20', fill:'none', style:{flex:'none'} };
+    const P=(d,ex)=>React.createElement('path',Object.assign({ d, stroke:'currentColor', strokeWidth:1.6, strokeLinecap:'round', strokeLinejoin:'round' },ex||{}));
+    const C=(cx,cy,r,ex)=>React.createElement('circle',Object.assign({ cx,cy,r, stroke:'currentColor', strokeWidth:1.6 },ex||{}));
+    const D=(cx,cy,r)=>React.createElement('circle',{ cx,cy,r, fill:'currentColor' });
+    const m={
+      // device / tier glyphs mirror Foundations §15 verbatim; tier keys use canonical names
+      ev:()=>[P('M3 13l1.3-3.3a1 1 0 0 1 .93-.62h4.54a1 1 0 0 1 .93.62L12 13M3 13v2.3M12 13v2.3M3.5 13h8.5'),D(5,15.3,1),D(10.5,15.3,1),P('M15.5 5.5l-1.6 2.6h1.8L14.3 11')],
+      skip:()=>[P('M6 5l6 5-6 5zM14 5v10')],
+      play:()=>[P('M6.8 5l7.6 5-7.6 5z')],
+      lock:()=>[P('M6.4 9.2V7a3.6 3.6 0 0 1 7.2 0v2.2'),P('M5.4 9.2h9.2v6.6H5.4z'),D(10,12.2,0.8)],
+      hp:()=>[P('M10 4v7'),C(10,13,2.4),P('M8 4h4')],
+      water:()=>[P('M6 3.5h8v13H6z'),P('M10 8s1.9 2.1 1.9 3.3a1.9 1.9 0 0 1-3.8 0C8.1 10.1 10 8 10 8z')],
+      battery:()=>[P('M3 7h11v6H3zM14 9h2v2h-2'),P('M8.4 8l-1.2 2.3h1.5L8 12.4')],
+      solar:()=>[C(10,9.6,3),P('M10 3.2V4.8M10 14.4V16M3.4 9.6H5M15 9.6h1.6M5.4 5l1.1 1.1M13.5 13.1l1.1 1.1M14.6 5l-1.1 1.1M6.5 13.1l-1.1 1.1')],
+      check:()=>[P('M4 10.5 8 14.5 16 5.5')],
+      pause:()=>[P('M7.6 5v10M12.4 5v10')],
+      alert:()=>[P('M7 3.2h6L16.8 7v6L13 16.8H7L3.2 13V7z'),P('M10 6.6v4.2'),D(10,13.2,0.6)],
+      clock:()=>[C(10,10,7),P('M10 6.4V10l2.4 1.6')],
+      bolt:()=>[P('M11 3 5 11h4l-1 6 6-8h-4z')],
+      shift:()=>[P('M4 8h9l-2.4-2.4M16 12H7l2.4 2.4')],
+      banked:()=>[P('M4 7c0-1.3 2.7-2.3 6-2.3s6 1 6 2.3-2.7 2.3-6 2.3-6-1-6-2.3zM4 7v5c0 1.3 2.7 2.3 6 2.3s6-1 6-2.3V7')],
+      measured:()=>[P('M4 13a6 6 0 0 1 12 0'),P('M10 13l3.2-3')],
+      modeled:()=>[P('M4 14c3.5 0 4.5-8 12-8'),P('M13 6h3v3')],
+      advisory:()=>[P('M7 11V6.4a1.2 1.2 0 0 1 2.4 0V10M9.4 9.6V4.8a1.2 1.2 0 0 1 2.4 0V10M11.8 6.2a1.2 1.2 0 0 1 2.4 0V12a4 4 0 0 1-4 4H9a3 3 0 0 1-2.3-1.1L4.2 12.2s.8-1 2-.5l.8.4')],
+      camera:()=>[P('M3 7.5h3l1.2-2h5.6l1.2 2H17v8.5H3z'),C(10,11.2,2.6)],
+    };
+    const f=m[name]||(()=>[C(10,10,2,{fill:'currentColor',stroke:'none'})]);
+    return React.createElement('svg', c, ...f());
+  }
+  tierMeta(tier){
+    const map={
+      banked:{ label:'Banked', color:'var(--tier-banked)', icon:'banked', note:'Real money received — no caveat.' },
+      measured:{ label:'Measured', color:'var(--tier-measured)', icon:'measured', note:'Metered kWh × published tariff.' },
+      modeled:{ label:'Modeled', color:'var(--tier-modeled)', icon:'modeled', note:'Estimated from runtime × class-typical load.' },
+      advisory:{ label:'Advisory', color:'var(--tier-advisory)', icon:'advisory', note:'You acted on a nudge — the credit is yours.' },
+      billchecked:{ label:'Bill-checked', color:'var(--success)', icon:'check', note:'Confirmed in aggregate against your utility bill.' },
+    };
+    return map[tier]||map.measured;
+  }
+  tierBadge(tier){
+    const t=this.tierMeta(tier);
+    return { label:t.label, color:t.color, icon:this.gi(t.icon), style:{ display:'inline-flex', alignItems:'center', gap:'4px', fontSize:'11px', fontWeight:700, color:t.color, background:'color-mix(in srgb,'+t.color+' 13%,transparent)', border:'1px solid '+t.color, borderRadius:'999px', padding:'2px 8px', whiteSpace:'nowrap' } };
+  }
+  lIcon(name){
+    const c={ width:17, height:17, viewBox:'0 0 20 20', fill:'none' };
+    const P=(d,ex)=>React.createElement('path',Object.assign({ d, stroke:'currentColor', strokeWidth:1.6, strokeLinecap:'round', strokeLinejoin:'round' },ex||{}));
+    const C=(cx,cy,r,ex)=>React.createElement('circle',Object.assign({cx,cy,r,stroke:'currentColor',strokeWidth:1.6},ex||{}));
+    const m={
+      help:()=>[C(10,10,7.2),C(10,10,2.6),P('M12 5l-1.4 2.6M8 15l1.4-2.6M15 12l-2.6-1.4M5 8l2.6 1.4')],
+      bell:()=>[P('M6 8a4 4 0 0 1 8 0c0 4 1.5 5 1.5 5h-11S6 12 6 8z'),P('M8.5 16a1.6 1.6 0 0 0 3 0')],
+      sparkles:()=>[P('M10 3l1.6 3.6L15 8l-3.4 1.4L10 13l-1.6-3.6L5 8l3.4-1.4z'),P('M15.5 13l.7 1.6 1.8.7-1.8.7-.7 1.6-.7-1.6-1.8-.7 1.8-.7z')],
+      bulb:()=>[P('M7 12.5A4.5 4.5 0 1 1 13 12.5c-.8.7-1 1.2-1 2.2H8c0-1-.2-1.5-1-2.2z'),P('M8.2 17h3.6M9 15.5h2')],
+      up:()=>[C(10,10,7.2),P('M10 13.5V7M7 9.5 10 6.5l3 3')],
+      gear:()=>[C(10,10,2.4),P('M10 3.2v1.8M10 15v1.8M16.8 10H15M5 10H3.2M14.8 5.2 13.5 6.5M6.5 13.5 5.2 14.8M14.8 14.8 13.5 13.5M6.5 6.5 5.2 5.2')],
+      user:()=>[C(10,7,3),P('M4.5 16a5.5 5.5 0 0 1 11 0')],
+      card:()=>[P('M3 6h14v8H3zM3 9h14')],
+      logout:()=>[P('M8 6V4h9v12H8v-2M11 10H3M5.5 7.5 3 10l2.5 2.5')],
+      x:()=>[P('M5.5 5.5l9 9M14.5 5.5l-9 9')],
+    };
+    const f=m[name]||m.x; return React.createElement('svg',c,...f());
+  }
+  tabBtnStyle(hi,i,rm){
+    return { display:'inline-flex', alignItems:'center', gap:'9px', padding:'9px 15px', borderRadius:'999px',
+      border:'1px solid '+(hi?'var(--accent)':'var(--border-subtle)'),
+      background: hi?'color-mix(in srgb,var(--accent) 12%,var(--surface-raised))':'var(--surface-raised)',
+      color:'var(--text-primary)', font:'600 13px Inter,system-ui,sans-serif', cursor:'pointer',
+      minHeight:'40px', boxShadow:'var(--elev-2)', textDecoration:'none',
+      transition:'transform .15s cubic-bezier(.2,0,0,1),filter .15s',
+      animation: rm?'none':('pifFanIn .28s cubic-bezier(.2,0,0,1.2) both '+(i*45)+'ms') };
+  }
+  fanTabs(tier,rm){
+    const u=this.state.unread;
+    const nop=(e)=>{ if(e&&e.preventDefault) e.preventDefault(); };
+    const nav=(hash)=>(e)=>{ if(e&&e.preventDefault) e.preventDefault(); try{ window.location.href='PIF-Settings-Help-Batch5.dc.html'+hash; }catch(err){} };
+    const goMsg=(e)=>{ if(e&&e.preventDefault) e.preventDefault(); try{ window.location.href='PIF-Messages-Batch8.dc.html#h1'; }catch(err){} };
+    const list=[
+      { label:'Help', icon:this.lIcon('help'), onSelect:nav('#s12') },
+      { label:'Messages', icon:this.lIcon('bell'), hi:u, onSelect:goMsg },
+    ];
+    if(tier!=='premium') list.push({ label:'Upgrade', icon:this.lIcon('up'), onSelect:nav('#s1') });
+    list.push({ label:'Settings', icon:this.lIcon('gear'), onSelect:nav('#s1') });
+    list.push({ label:'Close', icon:this.lIcon('x'), onSelect:(e)=>{ nop(e); this.setState({fanOpen:false}); } });
+    return list.map((t,i)=>({ label:t.label, icon:t.icon, hi:!!t.hi, onSelect:t.onSelect, style:this.tabBtnStyle(!!t.hi,i,rm) }));
+  }
+  acctItems(){
+    const nop=(e)=>{ if(e&&e.preventDefault) e.preventDefault(); this.setState({acctOpen:false}); };
+    const navSettings=(e)=>{ if(e&&e.preventDefault) e.preventDefault(); this.setState({acctOpen:false}); try{ window.location.href='PIF-Settings-Help-Batch5.dc.html#s1'; }catch(err){} };
+    const plugOut=(e)=>{ if(e&&e.preventDefault) e.preventDefault(); this.setState({acctOpen:false}); try{ window.location.href='PIF-Auth-Batch1.dc.html'; }catch(err){} };
+    return [ { key:'settings', label:'Settings', icon:'gear', onSelect:navSettings }, { key:'signout', label:'Plug out', icon:'logout', onSelect:plugOut } ];
+  }
+  acctMenu(){
+    const s={ display:'flex', alignItems:'center', gap:'10px', padding:'9px 11px', borderRadius:'9px', fontSize:'13px', fontWeight:600, color:'var(--text-primary)', textDecoration:'none', cursor:'pointer' };
+    return this.acctItems().map(it=>({ label:it.label, icon:this.lIcon(it.icon), onSelect:it.onSelect, style: it.key==='signout' ? Object.assign({}, s, { color:'var(--danger)' }) : s }));
+  }
+  launcherAvatarSvg(unread,size){
+    const sz=size||60;
+    const head='<svg viewBox="-120 -120 240 240" width="'+sz+'" height="'+sz+'"><defs><radialGradient id="b3la1" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient><radialGradient id="b3la2" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#2FE39A" stop-opacity="0.55"/><stop offset="1" stop-color="#2FE39A" stop-opacity="0"/></radialGradient></defs>';
+    const glow='<ellipse cx="0" cy="0" rx="118" ry="118" fill="url(#b3la2)"/>';
+    const q='<text x="0" y="-76" fill="#F5B23D" font-size="58" font-weight="700" text-anchor="middle" font-family="Inter,system-ui">?</text>';
+    const body='<circle cx="0" cy="0" r="72" fill="url(#b3la1)"/><circle cx="-24" cy="-8" r="11" fill="#0B1220"/><circle cx="24" cy="-8" r="11" fill="#0B1220"/><circle cx="-20" cy="-12" r="4" fill="#fff"/><circle cx="28" cy="-12" r="4" fill="#fff"/><path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/>';
+    const letter='<circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><path d="M60,-2 Q80,-24 82,-46" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/><g transform="translate(84,-70)"><rect x="-20" y="-14" width="40" height="28" rx="4" fill="#F4F7FB" stroke="#0B1220" stroke-width="2.5"/><path d="M-20,-13 L0,3 L20,-13" fill="none" stroke="#0B1220" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></g>';
+    const cheeks='<circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/>';
+    return head+glow+q+body+(unread?letter:cheeks)+'</svg>';
+  }
+  launcherAvatarEl(unread){ return React.createElement('span',{ style:{ display:'inline-flex', filter:'drop-shadow(0 6px 16px rgba(0,0,0,.3)) drop-shadow(0 0 10px rgba(47,227,154,.4))' }, dangerouslySetInnerHTML:{ __html: this.launcherAvatarSvg(unread,60) } }); }
+  ionaEl(size){
+    const svg='<svg viewBox="0 0 84 84" width="'+size+'" height="'+size+'"><defs><radialGradient id="b3ib" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient></defs><g transform="translate(42,48) scale(0.30)"><path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" fill="#F5B23D"/><circle cx="0" cy="0" r="72" fill="url(#b3ib)"/><circle cx="-24" cy="-8" r="11" fill="#0B1220"/><circle cx="24" cy="-8" r="11" fill="#0B1220"/><circle cx="-20" cy="-12" r="4" fill="#fff"/><circle cx="28" cy="-12" r="4" fill="#fff"/><path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/><circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/></g></svg>';
+    return React.createElement('span',{ style:{ display:'inline-flex', filter:'drop-shadow(0 0 6px rgba(47,227,154,.5))' }, dangerouslySetInnerHTML:{ __html: svg } });
+  }
+  segStyle(active){
+    const base={ appearance:'none', border:'none', background:'transparent', color:'var(--text-secondary)', font:'600 12px Inter,system-ui,sans-serif', padding:'7px 13px', borderRadius:'999px', cursor:'pointer', display:'inline-flex', alignItems:'center', gap:'5px', minHeight:'34px', transition:'background .2s cubic-bezier(.2,0,0,1),color .2s' };
+    return active ? Object.assign({}, base, { background:'var(--surface-base)', color:'var(--text-primary)', boxShadow:'var(--elev-1)' }) : base;
+  }
+  pillStyle(active){
+    const base={ appearance:'none', cursor:'pointer', font:'600 12px Inter,system-ui,sans-serif', padding:'6px 12px', borderRadius:'999px', minHeight:'34px', border:'1px solid var(--border-strong)', background:'transparent', color:'var(--text-secondary)', transition:'all .18s', whiteSpace:'nowrap' };
+    return active ? Object.assign({}, base, { background:'color-mix(in srgb,var(--accent) 14%,transparent)', color:'var(--accent)', border:'1px solid var(--accent)', fontWeight:700 }) : base;
+  }
+  seg(list,current,key){ return list.map(o=>({ label:o.label, active:current===o.k, onSelect:()=>this.set(key,o.k), style:this.segStyle(current===o.k) })); }
+  navStyle(active){ const base={ appearance:'none', border:'none', cursor:'pointer', background:'transparent', color:'var(--text-secondary)', font:'600 14px Inter,system-ui,sans-serif', padding:'8px 15px', borderRadius:'10px', minHeight:'38px', display:'inline-flex', alignItems:'center', textDecoration:'none', transition:'background .18s,color .18s' }; return active ? Object.assign({}, base, { background:'var(--surface-sunken)', color:'var(--text-primary)' }) : base; }
+  themeIcon(mode){
+    const c={ width:13, height:13, viewBox:'0 0 16 16', fill:'none' };
+    if(mode==='light') return React.createElement('svg',c,React.createElement('circle',{cx:8,cy:8,r:3.1,fill:'currentColor'}),React.createElement('path',{d:'M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M13 3l-1 1M4 12l-1 1',stroke:'currentColor',strokeWidth:1.3,strokeLinecap:'round'}));
+    if(mode==='dark') return React.createElement('svg',c,React.createElement('path',{d:'M13 9.5A6 6 0 0 1 6.5 3 5.6 5.6 0 1 0 13 9.5z',fill:'currentColor'}));
+    return React.createElement('svg',c,React.createElement('circle',{cx:8,cy:8,r:6,stroke:'currentColor',strokeWidth:1.4}),React.createElement('path',{d:'M8 2a6 6 0 0 1 0 12z',fill:'currentColor'}));
+  }
+
+  markChip(mark){
+    const map={
+      verified:{ label:'Verified', color:'var(--accent)', icon:'check' },
+      estimated:{ label:'Estimate', color:'var(--info)', icon:'clock' },
+      pending:{ label:'Pending', color:'var(--info)', icon:'clock' },
+      stale:{ label:'Stale', color:'var(--warning)', icon:'alert' },
+      idle:{ label:'Idle', color:'var(--text-secondary)', icon:'pause' },
+    };
+    const c=map[mark]||map.idle;
+    return { label:c.label, icon:this.gi(c.icon),
+      style:{ display:'inline-flex', alignItems:'center', gap:'4px', fontSize:'11px', fontWeight:700, color:c.color, background:'color-mix(in srgb,'+c.color+' 13%,transparent)', border:'1px solid '+c.color, borderRadius:'999px', padding:'2px 7px', whiteSpace:'nowrap' } };
+  }
+  statusBadge(state){
+    const map={ active:{label:'Active',color:'var(--success)',icon:'check'}, dormant:{label:'Dormant',color:'var(--text-secondary)',icon:'pause'}, stale:{label:'Stale',color:'var(--warning)',icon:'alert'} };
+    const c=map[state]||map.dormant;
+    return { label:c.label, icon:this.gi(c.icon),
+      style:{ display:'inline-flex', alignItems:'center', gap:'4px', fontSize:'11px', fontWeight:700, color:c.color, background:'color-mix(in srgb,'+c.color+' 13%,transparent)', border:'1px solid '+c.color, borderRadius:'999px', padding:'2px 8px' } };
+  }
+
+  ledgerData(){
+    return [
+      { date:'Jul 18', time:'11:04pm\u20134:52am', ago:1, val:5.44, kwh:34, action:'Shifted EV charge', detail:'ran 11pm\u20135am instead of your usual 6pm', inputs:'34 kWh moved off-peak \u00b7 off-peak 8\u00a2 vs peak 24\u00a2', mathText:'34 kWh \u00d7 ($0.24 \u2212 $0.08) = $5.44', meter:'Emporia CT \u2014 metered', amount:'\u2248 $5.44 lower cost', tier:'measured', assume:'Assumes your usual 6pm start.', dev:'ev', kind:'ev', lever:'charging' },
+      { date:'Jul 17', time:'6:12pm\u20138:40pm', ago:2, val:0.98, kwh:6.1, action:'Battery arbitrage', detail:'discharged into the 6\u20139pm peak', inputs:'6.1 kWh from storage \u00b7 peak 24\u00a2 vs charge 8\u00a2', mathText:'6.1 kWh \u00d7 ($0.24 \u2212 $0.08) = $0.98', meter:'Inverter telemetry \u2014 metered', amount:'\u2248 $0.98 lower cost', tier:'measured', assume:'From battery telemetry; assumes peak-hour use.', dev:'battery', kind:'battery', lever:'arbitrage' },
+      { date:'Jul 16', time:'5:30pm\u20136:00pm', ago:3, val:3.60, kwh:2.0, action:'VPP grid event', detail:'you let PIF dispatch your battery', inputs:'2.0 kWh dispatched \u00b7 program pays $1.80/kWh', mathText:'2.0 kWh \u00d7 $1.80/kWh = $3.60', meter:'Program settlement \u2014 banked', amount:'$3.60 earned', tier:'banked', assume:'Credited on your next bill.', dev:'battery', kind:'battery', lever:'vpp' },
+      { date:'Jul 15', time:'2:40pm\u20133:55pm', ago:4, val:0.86, kwh:1.9, action:'Pre-cooled before peak', detail:'cooled to 71\u00b0 before the 4pm block', inputs:'~1.9 kWh shifted \u00b7 class-typical HVAC load', mathText:'1.9 kWh \u00d7 ($0.24 \u2212 $0.08) = $0.86 (modeled)', meter:'Runtime \u00d7 class-typical load \u2014 modeled', amount:'\u2248 $0.86 lower cost', tier:'modeled', assume:'Modeled from runtime; HVAC is not sub-metered.', dev:'hp', kind:'hp', lever:'precool' },
+      { date:'Jul 02', time:'9:10pm\u201310:20pm', ago:17, val:0.54, kwh:3.4, action:'Delayed water heating', detail:'reheated after 9pm off-peak', inputs:'3.4 kWh moved \u00b7 off-peak 8\u00a2 vs peak 24\u00a2', mathText:'3.4 kWh \u00d7 ($0.24 \u2212 $0.08) = $0.54', meter:'Circuit meter \u2014 metered', amount:'\u2248 $0.54 lower cost', tier:'measured', assume:'Metered circuit; assumes an evening draw.', dev:'water', kind:'water', lever:'shift' },
+      { date:'Jun 08', time:'10:02pm\u201310:58pm', ago:41, val:0.18, kwh:1.1, action:'You ran the dishwasher late', detail:'started it at 10pm after our nudge', inputs:'1.1 kWh off-peak \u00b7 off-peak 8\u00a2 vs peak 24\u00a2', mathText:'1.1 kWh \u00d7 ($0.24 \u2212 $0.08) = $0.18', meter:'Whole-home model \u2014 advisory', amount:'\u2248 $0.18 lower cost', tier:'advisory', assume:'You did this \u2014 nice.', dev:'other', kind:'clock', lever:'shift' },
+    ].concat(this.waterFill());
+  }
+  waterFill(){
+    // 25 more metered water-heater reheats (+ the one above = 26) \u2014 all within 30 days, to demonstrate 20-per-page pagination
+    const months=['Jul','Jul','Jun'];
+    const out=[];
+    for(let i=0;i<25;i++){
+      const kwh=+(2.6 + (i%7)*0.35).toFixed(1);
+      const val=+(kwh*0.16).toFixed(2);
+      const ago=5+i;                       // 5 .. 29
+      const mon=months[Math.floor(i/10)]||'Jun';
+      const dd=String(27-(i%20)).padStart(2,'0');
+      const hh=9+(i%2);
+      out.push({ date:mon+' '+dd, time:hh+':'+String(5+(i%50)).padStart(2,'0')+'pm\u2013'+(hh+1)+':'+String(10+(i%45)).padStart(2,'0')+'pm', ago, val, kwh,
+        action:'Delayed water heating', detail:'reheated after 9pm off-peak', inputs:kwh+' kWh moved \u00b7 off-peak 8\u00a2 vs peak 24\u00a2',
+        mathText:kwh+' kWh \u00d7 ($0.24 \u2212 $0.08) = $'+val.toFixed(2), meter:'Circuit meter \u2014 metered', amount:'\u2248 $'+val.toFixed(2)+' lower cost',
+        tier:'measured', assume:'Metered circuit; assumes an evening draw.', dev:'water', kind:'water', lever:'shift' });
+    }
+    return out;
+  }
+  deviceProfile(key){
+    const P={
+      ev:{ meter:'Emporia CT \u2014 metered', tier:'measured', usual:'You normally start around 6pm, across 23 previous runs.', usualFrom:18, usualTo:23, ranFrom:23, ranTo:5,
+        constraints:['Met your 8am departure deadline','Charged to your 80% limit'],
+        tariff:[{label:'Off-peak',rate:'8\u00a2/kWh',when:'11pm\u20137am'},{label:'Shoulder',rate:'14\u00a2/kWh',when:'7am\u20134pm, 9\u201311pm'},{label:'Peak',rate:'24\u00a2/kWh',when:'4pm\u20139pm'}],
+        effective:'Rates effective Jan 1, 2026 \u00b7 plan TOU-D-PRIME.', methodology:'Methodology v2.3',
+        revisions:[{when:'Jul 14, 2026',what:'Restated after a utility tariff correction (peak 22\u00a2 \u2192 24\u00a2).'}] },
+      battery:{ meter:'Inverter telemetry \u2014 metered', tier:'measured', usual:'Battery normally sits idle through the evening peak.', usualFrom:16, usualTo:21, ranFrom:18, ranTo:21,
+        constraints:['Held a 20% reserve for outages','Recharged off-peak overnight'],
+        tariff:[{label:'Off-peak',rate:'8\u00a2/kWh',when:'11pm\u20137am'},{label:'Shoulder',rate:'14\u00a2/kWh',when:'7am\u20134pm, 9\u201311pm'},{label:'Peak',rate:'24\u00a2/kWh',when:'4pm\u20139pm'}],
+        effective:'Rates effective Jan 1, 2026 \u00b7 plan TOU-D-PRIME.', methodology:'Methodology v2.3', revisions:[] },
+      hp:{ meter:'Runtime \u00d7 class-typical load \u2014 modeled', tier:'modeled', usual:'Cooling normally runs into the 4pm peak block.', usualFrom:16, usualTo:20, ranFrom:14, ranTo:16,
+        constraints:['Kept your comfort floor at 68\u00b0F','No recovery ramp after peak'],
+        tariff:[{label:'Off-peak',rate:'8\u00a2/kWh',when:'11pm\u20137am'},{label:'Shoulder',rate:'14\u00a2/kWh',when:'7am\u20134pm, 9\u201311pm'},{label:'Peak',rate:'24\u00a2/kWh',when:'4pm\u20139pm'}],
+        effective:'Rates effective Jan 1, 2026 \u00b7 plan TOU-D-PRIME.', methodology:'Methodology v2.3',
+        revisions:[{when:'Jul 10, 2026',what:'Load model updated to class-typical HVAC curve v4.'}] },
+      water:{ meter:'Circuit meter \u2014 metered', tier:'measured', usual:'Reheats normally land in the evening peak.', usualFrom:17, usualTo:21, ranFrom:21, ranTo:23,
+        constraints:['Kept tank above 120\u00b0F','Ready before your 6am draw'],
+        tariff:[{label:'Off-peak',rate:'8\u00a2/kWh',when:'11pm\u20137am'},{label:'Shoulder',rate:'14\u00a2/kWh',when:'7am\u20134pm, 9\u201311pm'},{label:'Peak',rate:'24\u00a2/kWh',when:'4pm\u20139pm'}],
+        effective:'Rates effective Jan 1, 2026 \u00b7 plan TOU-D-PRIME.', methodology:'Methodology v2.3', revisions:[] },
+      other:{ meter:'Whole-home model \u2014 advisory', tier:'advisory', usual:'You ran this yourself after a nudge.', usualFrom:16, usualTo:21, ranFrom:22, ranTo:23,
+        constraints:['You chose the time \u2014 the credit is yours'],
+        tariff:[{label:'Off-peak',rate:'8\u00a2/kWh',when:'11pm\u20137am'},{label:'Shoulder',rate:'14\u00a2/kWh',when:'7am\u20134pm, 9\u201311pm'},{label:'Peak',rate:'24\u00a2/kWh',when:'4pm\u20139pm'}],
+        effective:'Rates effective Jan 1, 2026 \u00b7 plan TOU-D-PRIME.', methodology:'Methodology v2.3', revisions:[] },
+    };
+    return P[key]||P.ev;
+  }
+
+  tonightItemDefs(){
+    return [
+      { key:'ev', kind:'ev', title:'EV charging', text:'Charging your EV 1\u20135am, the cheapest window tonight.',
+        opensAt:'1am', conseq:{ type:'deadline', text:'Your car may not be fully charged by 8am.' },
+        result:{ amount:'\u2248 $2.10', tier:'measured', text:'Charged to 80% on off-peak power.' },
+        missed:'PIF couldn\u2019t reach your EV \u2014 nothing ran tonight.' },
+      { key:'hp', kind:'hp', title:'Pre-cooling', text:'Pre-cooling the house at 4pm before the peak-price block.',
+        opensAt:'4pm', conseq:{ type:'cost', text:'you\u2019ll likely pay about $2.40 more.' },
+        safety:{ note:'Skip stops at your 68\u00b0F comfort floor \u2014 PIF won\u2019t let the house get warmer than that.' },
+        result:{ amount:'\u2248 $0.86', tier:'modeled', text:'Pre-cooled to 71\u00b0 before the peak block.' },
+        missed:'Your thermostat was offline \u2014 pre-cool didn\u2019t run.' },
+      { key:'battery', kind:'battery', title:'Battery peak sell', text:'Holding a 30% reserve, then selling into the 6\u20139pm peak.',
+        opensAt:'6pm', conseq:{ type:'cost', text:'you\u2019ll likely earn about $1.80 less.' },
+        safety:{ hard:true, note:'Your 30% backup reserve is always held for outages \u2014 skipping only affects the sell above it.' },
+        result:{ amount:'$3.60', tier:'banked', text:'Sold 2 kWh into the 6\u20139pm peak.' },
+        missed:'Battery was unreachable \u2014 no peak sell tonight.' },
+      { key:'water', kind:'water', title:'Water heating', text:'Reheating after 9pm on off-peak power.',
+        opensAt:'9pm', conseq:{ type:'cost', text:'you\u2019ll likely pay about $0.50 more.' },
+        result:{ amount:'\u2248 $0.54', tier:'measured', text:'Reheated on off-peak power.' },
+        missed:'Water heater unreachable \u2014 no off-peak reheat tonight.' },
+    ];
+  }
+  windowOpened(time, key){
+    if(time==='before') return false;
+    if(time==='end') return true;
+    // mid-evening: hp (4pm) and battery (6pm) have opened; ev (1am) still upcoming
+    return key==='hp' || key==='battery';
+  }
+  tonightStateBadge(stateKey){
+    const map={
+      planned:{ label:'Planned', color:'var(--text-secondary)', icon:'clock' },
+      skipped:{ label:'Skipped', color:'var(--warning)', icon:'skip' },
+      running:{ label:'Running now', color:'var(--accent)', icon:'play' },
+      done:{ label:'Done', color:'var(--success)', icon:'check' },
+      missed:{ label:'Missed', color:'var(--danger)', icon:'alert' },
+    };
+    const c=map[stateKey]||map.planned;
+    return { label:c.label, icon:React.cloneElement(this.gi(c.icon),{width:13,height:13}), color:c.color,
+      style:{ display:'inline-flex', alignItems:'center', gap:'4px', fontSize:'11px', fontWeight:700, color:c.color, background:'color-mix(in srgb,'+c.color+' 13%,transparent)', border:'1px solid '+c.color, borderRadius:'999px', padding:'2px 8px', whiteSpace:'nowrap' } };
+  }
+  tonightModel(){
+    const st=this.state;
+    const comp=st.planComp||'full';
+    const time=st.planTime||'before';
+    if(comp==='empty') return { show:true, empty:true, offline:false, items:[], keys:[] };
+    if(comp==='offline') return { show:true, empty:false, offline:true, items:[], keys:[] };
+    let defs=this.tonightItemDefs();
+    if(comp==='single') defs=defs.slice(0,1);
+    const items=defs.map(d=>{
+      const stateKey=(st.itemState&&st.itemState[d.key])||'planned';
+      const opened=this.windowOpened(time,d.key);
+      const sb=this.tonightStateBadge(stateKey);
+      const resolved = stateKey==='done' || stateKey==='missed';
+      // lock: window opened, or already running/resolved
+      const locked = opened || stateKey==='running' || resolved;
+      const provisional = stateKey==='planned' || stateKey==='skipped';
+      // control mode
+      let control=null;
+      if(stateKey==='planned' && !opened){
+        control={ mode:'skip', label:'Skip tonight',
+          aria:'Skip tonight: '+d.title,
+          conseqType:d.conseq.type,
+          conseqText: d.conseq.type==='deadline' ? d.conseq.text : ('Skip tonight \u2014 '+d.conseq.text),
+          safetyNote: d.safety?d.safety.note:'',
+          onToggle:()=>this.setState(s=>({ itemState:Object.assign({},s.itemState,{[d.key]:'skipped'}) })) };
+      } else if(stateKey==='skipped' && !opened){
+        control={ mode:'unskip', label:'Un-skip',
+          aria:'Un-skip tonight: '+d.title,
+          conseqType:d.conseq.type,
+          conseqText:'Skipped for tonight only. Change back until the window opens.',
+          safetyNote:'',
+          onToggle:()=>this.setState(s=>({ itemState:Object.assign({},s.itemState,{[d.key]:'planned'}) })) };
+      } else if(stateKey==='planned' && opened){
+        control={ mode:'locked', reason:'This window has passed \u2014 it can\u2019t be changed now.', aria:d.title+': window passed, can no longer skip' };
+      } else if(stateKey==='skipped' && opened){
+        control={ mode:'locked', reason:'Skipped \u2014 the window has now passed.', aria:d.title+': skipped, window passed' };
+      } else if(stateKey==='running'){
+        control={ mode:'locked', reason:'Already running \u2014 can\u2019t skip now.', aria:d.title+': already running, can no longer skip' };
+      }
+      const result = stateKey==='done' ? (function(self){ const tb=self.tierBadge(d.result.tier); return {
+        show:true, amountNode:self.amt(d.result.amount), amountColor:(d.result.tier==='banked'?'var(--success)':'var(--text-primary)'),
+        tierIcon:tb.icon, tierLabel:tb.label, tierStyle:tb.style, text:d.result.text }; })(this) : { show:false };
+      const missed = stateKey==='missed' ? { show:true, text:d.missed } : { show:false };
+      const dim=(stateKey==='skipped'||stateKey==='missed');
+      const conseqColor = (control&&control.mode==='skip') ? (d.conseq.type==='deadline'?'var(--warning)':'var(--text-secondary)') : 'var(--text-secondary)';
+      const conseqIcon = (control&&control.mode==='skip'&&d.conseq.type==='deadline')
+        ? React.cloneElement(this.gi('alert'),{width:14,height:14})
+        : React.cloneElement(this.gi('banked'),{width:14,height:14});
+      return {
+        key:d.key, title:d.title, text:d.text, icon:this.gi(d.kind),
+        cardStyle:'border:1px solid var(--border-subtle);border-radius:12px;padding:12px 13px;background:'+(dim?'var(--surface-sunken)':'var(--surface-base)'),
+        iconOpacity: dim?'0.5':'1', textDecoration: stateKey==='skipped'?'line-through':'none',
+        stateKey, stateIcon:sb.icon, stateLabel:sb.label, stateStyle:sb.style,
+        dim, provisional,
+        conseqColor, conseqIcon,
+        control: control||{ mode:'none' },
+        isSkip: !!(control&&control.mode==='skip'), isUnskip: !!(control&&control.mode==='unskip'), isLocked: !!(control&&control.mode==='locked'),
+        hasSafety: !!(d.safety), safetyHard: !!(d.safety&&d.safety.hard),
+        result, missed,
+      };
+    });
+    return { show:true, empty:false, offline:false, items, keys:defs.map(d=>d.key) };
+  }
+
+  // ---- data-viz helpers (charts) ----
+  domTier(rs){ if(!rs.length) return 'measured'; const s={}; rs.forEach(r=>{ s[r.tier]=(s[r.tier]||0)+r.val; }); let best='measured',bv=-1; ['banked','measured','modeled','advisory'].forEach(t=>{ if((s[t]||0)>bv){bv=s[t]||0;best=t;} }); return best; }
+  edgesFor(days){
+    const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    if(days<=31){ const span=Math.max(4,Math.round(days/6)); const e=[]; for(let k=Math.ceil(days/span);k>=1;k--){ const hi=Math.min(days,k*span), lo=(k-1)*span+1; const mid=Math.round((lo+hi)/2); e.push({lo,hi,label:(lo===hi?(lo+'d ago'):(lo+'–'+hi+' days ago')), blabel:mid+'D'}); } return e; }
+    if(days<=366){ const N=Math.min(12,Math.max(3,Math.round(days/30))); const base=6; const e=[]; for(let k=N;k>=1;k--){ const hi=k*30, lo=(k-1)*30+1; const mIdx=((base-(k-1))%12+12)%12; e.push({lo,hi,label:(k===1?'last 30 days':(k+' mo ago')), blabel:MON[mIdx]}); } return e; }
+    const yrs=Math.min(6,Math.max(2,Math.round(days/365))); const baseY=2026; const e=[]; for(let k=yrs;k>=1;k--){ e.push({lo:(k-1)*365+1,hi:k*365,label:(k===1?'last year':(k+' yr ago')), blabel:String(baseY-(k-1))}); } return e;
+  }
+  tierMark(tier,size,note){
+    const meta=this.tierMeta(tier); const base=this.gi(meta.icon);
+    const label=meta.label+' — '+meta.note+(note?(' '+note):'');
+    return React.cloneElement(base, { width:size, height:size, role:'img', 'aria-label':label, 'aria-hidden':undefined, focusable:'false', style:{ flex:'none', color:meta.color } },
+      ...React.Children.toArray(base.props.children).concat(React.createElement('title',{key:'ttl'}, label)));
+  }
+  buildTrend(rows, edges){
+    const data=edges.map(e=>{ const rs=rows.filter(r=>r.ago>=e.lo && r.ago<=e.hi); const val=rs.reduce((s,r)=>s+r.val,0); return { val, tier:this.domTier(rs), label:e.label, blabel:e.blabel, mixed:(new Set(rs.map(r=>r.tier)).size>1) }; });
+    const max=Math.max(0.01, Math.max.apply(null, data.map(d=>d.val))); const AREA=84;
+    const cols=data.map(d=>{ const hpx=d.val<=0?2:Math.max(3,Math.round(d.val/max*AREA)); const meta=this.tierMeta(d.tier);
+      const amt=(d.val>=1?('≈ $'+Math.round(d.val)):('≈ $'+d.val.toFixed(2)));
+      const note=d.mixed?'This period includes a mix of tiers; the full breakdown is in the ledger.':'';
+      return { amountNode:this.amt(amt), tierMark:this.tierMark(d.tier,14,note), blabel:d.blabel, hasVal:d.val>0,
+        title:d.label+' · '+amt+' · leading tier '+meta.label+(d.mixed?' (mixed — full breakdown in the ledger)':''),
+        barStyle:{ width:'100%', maxWidth:'34px', height:hpx+'px', background:(d.val>0?'var(--accent)':'var(--border-strong)'), borderRadius:'4px 4px 0 0' } }; });
+    const total=data.reduce((s,d)=>s+d.val,0);
+    return { cols, empty: total<=0,
+      sr:'Savings by sub-period: '+data.map(d=>d.blabel+' approximately $'+d.val.toFixed(2)+', leading tier '+this.tierMeta(d.tier).label+(d.mixed?' (mixed)':'')).join('; ')+'.' };
+  }
+  buildTrendStacked(rows, edges){
+    const order=['banked','measured','modeled','advisory'];
+    const data=edges.map(e=>{ const rs=rows.filter(r=>r.ago>=e.lo && r.ago<=e.hi); const by={}; order.forEach(t=>by[t]=0); rs.forEach(r=>{ if(by[r.tier]!=null) by[r.tier]+=r.val; }); const total=order.reduce((s,t)=>s+by[t],0); return { by, total, blabel:e.blabel, label:e.label }; });
+    const max=Math.max(0.01, Math.max.apply(null, data.map(d=>d.total))); const AREA=90;
+    const cols=data.map(d=>{ const barPx=d.total<=0?2:Math.max(4,Math.round(d.total/max*AREA)); const segs=[];
+      if(d.total>0){ order.forEach(t=>{ if(d.by[t]>0){ const meta=this.tierMeta(t); const h=Math.max(2,Math.round(d.by[t]/d.total*barPx)); segs.push({ style:{ height:h+'px', background:meta.color, borderRadius:'2px' }, title:d.label+' · '+meta.label+' · '+(t==='banked'?'$':'≈ $')+d.by[t].toFixed(2) }); } }); }
+      else { segs.push({ style:{ height:'2px', background:'var(--border-strong)', borderRadius:'2px' }, title:d.label+' · $0.00' }); }
+      const amt=(d.total>=1?('≈ $'+Math.round(d.total)):('≈ $'+d.total.toFixed(2)));
+      return { hasVal:d.total>0, amountNode:(d.total>0?this.amt(amt):''), blabel:d.blabel,
+        stackStyle:{ display:'flex', flexDirection:'column-reverse', gap:'2px', width:'28px', height:barPx+'px' }, segs };
+      });
+    const legend=order.filter(t=>data.some(d=>d.by[t]>0)).map(t=>{ const meta=this.tierMeta(t); const sum=data.reduce((s,d)=>s+d.by[t],0);
+      return { iconEl:React.cloneElement(this.gi(meta.icon),{width:13,height:13,'aria-hidden':'true',style:{flex:'none',color:meta.color}}), color:meta.color, label:meta.label, amt:(t==='banked'?'$':'≈ $')+sum.toFixed(2) }; });
+    const total=data.reduce((s,d)=>s+d.total,0);
+    return { cols, legend, empty: total<=0,
+      sr:'Savings by sub-period, stacked by evidence tier: '+data.map(d=>{ const lead=order.reduce((a,b)=>d.by[b]>d.by[a]?b:a); return d.blabel+' approximately $'+d.total.toFixed(2)+(d.total>0?', leading tier '+this.tierMeta(lead).label:''); }).join('; ')+'.' };
+  }
+
+  renderVals(){
+    const st=this.state, rm=this.reduceMotion();
+    const isStale = st.dataState==='stale';
+    const scope = st.scope;
+    const linked = st.billConn==='linked';
+    const hasBills = st.billBills==='some';
+    const billChecked = linked || hasBills;
+    const stateLinked = linked;
+    const stateUnlinkedBills = !linked && hasBills;
+    const stateUnlinkedNone = !linked && !hasBills;
+
+    // harness segments
+    const segScreen = this.seg([{k:'home',label:'Home'},{k:'ledger',label:'Ledger'},{k:'devdetail',label:'Device'},{k:'bill',label:'Bill'}], st.screen, 'screen');
+    const segState = this.seg([{k:'normal',label:'Normal'},{k:'empty',label:'Empty'},{k:'loading',label:'Loading'},{k:'error',label:'Error'},{k:'stale',label:'Stale'}], st.dataState, 'dataState');
+    const segBilling = this.seg([{k:'none',label:'None'},{k:'payfail',label:'Payment failed'},{k:'suspended',label:'Suspended'}], st.billing, 'billing');
+    const segWinReview = this.winSeg(['1d','7d','30d','90d','1y','all']);
+    const segBillConn = this.seg([{k:'unlinked',label:'Unlinked'},{k:'linked',label:'Linked'}], st.billConn, 'billConn');
+    const billKey = st.billConn==='linked' ? 'linked' : (st.billBills==='some' ? 'unlinked-bills' : 'unlinked-none');
+    const segBillState = [
+      {k:'unlinked-none', label:'Unlinked, no bills', conn:'unlinked', bills:'none'},
+      {k:'unlinked-bills', label:'Unlinked, bills added', conn:'unlinked', bills:'some'},
+      {k:'linked', label:'Linked', conn:'linked', bills:'none'},
+    ].map(o=>({ label:o.label, active:billKey===o.k, onSelect:()=>this.setState({billConn:o.conn, billBills:o.bills}), style:this.segStyle(billKey===o.k) }));
+    const segBillBills = this.seg([{k:'none',label:'None'},{k:'some',label:'Some'}], st.billBills, 'billBills');
+    const segBillDue = [{k:false,label:'Off'},{k:true,label:'Bill ready'}].map(o=>({ label:o.label, active:st.billDue===o.k, onSelect:()=>this.setState({billDue:o.k, billNudgeDismissed:false, billDeclines:0}), style:this.segStyle(st.billDue===o.k) }));
+    const segPending = this.seg([{k:'none',label:'None'},{k:'scheduled',label:'Scheduled'}], st.pending, 'pending');
+    const segPlanComp = this.seg([{k:'full',label:'Full'},{k:'single',label:'Single'},{k:'empty',label:'Empty'},{k:'offline',label:'Offline'}], st.planComp, 'planComp');
+    const segPlanTime = this.seg([{k:'before',label:'Before'},{k:'mid',label:'Mid-evening'},{k:'end',label:'End of night'}], st.planTime, 'planTime');
+    const itemStateOpts=[{k:'planned',label:'Planned'},{k:'skipped',label:'Skipped'},{k:'running',label:'Running'},{k:'done',label:'Done'},{k:'missed',label:'Missed'}];
+    const segUnread = [{k:false,label:'Read'},{k:true,label:'Unread'}].map(o=>({ label:o.label, active:st.unread===o.k, onSelect:()=>this.set('unread',o.k), style:this.segStyle(st.unread===o.k) }));
+    const segTheme = ['light','dark','system'].map(mode=>({ label:mode.charAt(0).toUpperCase()+mode.slice(1), active:st.theme===mode, icon:this.themeIcon(mode), onSelect:()=>this.setState({theme:mode}), style:this.segStyle(st.theme===mode) }));
+
+    // hero — money leads (bottom-up sum of the ledger rows for this window); % is the evidence beneath
+    const pctMode = st.pctMode || 'whole';
+    const pd = st.periodData || 'rolling30';
+    const firstCycle = pd==='firstcycle';
+    // % basis is DERIVED from data availability: whole-home needs a linked utility (interval data)
+    // or a TOU bill itemised by period; otherwise only managed-load is knowable.
+    const wholeAvailable = (st.billConn==='linked') || (st.billBills==='some');
+    const effPctMode = wholeAvailable ? pctMode : 'managed';
+    const pctValue = effPctMode==='managed' ? 62 : 38;
+    const pctPhrase = effPctMode==='managed'
+      ? ('PIF moved ' + pctValue + '% of the energy it manages into cheap hours')
+      : (pctValue + '% of your home\u2019s energy ran in cheap hours');
+    const hw = this.win('winHome');
+    let heroRows = this.ledgerData().filter(r=> r.ago <= hw.days);
+    if(isStale) heroRows = heroRows.filter(r=>!(r.dev==='hp'&&r.tier==='modeled'));
+    const heroSum = heroRows.reduce((s,r)=>s+r.val,0);
+    const heroCount = heroRows.length;
+    const heroKwh = heroRows.reduce((s,r)=>s+(r.kwh||0),0);
+    const heroMoney = 'about $' + Math.round(heroSum).toLocaleString();
+    const heroWindowLabel = (pd==='inprogress') ? 'so far this month' : (pd==='insufficient') ? 'last month' : (pd==='firstcycle') ? 'so far' : hw.lower;
+    const heroEvidence = pctPhrase + ' \u2014 from ' + heroCount + ' shift' + (heroCount===1?'':'s') + ', ' + Math.round(heroKwh).toLocaleString() + ' kWh moved.';
+    const heroCheapNote = 'Cheap hours are the lowest-priced periods on your plan \u2014 they shift with your tariff.';
+    const heroInsuffShow = pd==='insufficient';
+    const heroInsuffNote = 'Not enough data this month yet \u2014 showing your last complete month.';
+    const heroTierBadge = this.tierBadge(billChecked ? 'billchecked' : 'modeled');
+    const segPeriod = this.winSeg(['30d','1y','all'], { field:'winHome' });
+
+    // ---- dashboard charts ----
+    const dashTrend = this.buildTrend(heroRows, this.edgesFor(hw.days));
+    const dashTrendShow = !firstCycle && !dashTrend.empty;
+    const dashNoHistory = firstCycle || dashTrend.empty;
+    const offPct = 38, offFrom = 12;
+    const mechCalloutNode = this.amt('≈ '+offPct+'% of your usage ran in the cheap window'+(billChecked?(' · up from '+offFrom+'% before PIF'):''));
+    const mechShow = (st.planComp!=='offline' && st.planComp!=='empty');
+    const tonight = this.tonightModel();
+    const LOADS=[
+      { key:'water', x:8, w:30, icon:'water', label:'Water', color:'var(--secondary)', title:'Water heater · overnight (cheap)' },
+      { key:'ev', x:42, w:32, icon:'ev', label:'EV', color:'var(--secondary)', title:'EV charge · overnight (cheap)' },
+      { key:'hp', x:166, w:40, icon:'hp', label:'Pre-cool', color:'var(--secondary)', title:'HVAC pre-cool · midday dip (cheap)' },
+      { key:'battery', x:230, w:48, icon:'battery', label:'Battery', color:'var(--secondary)', title:'Battery · discharge into the evening peak' }
+    ];
+    const mechLoads = LOADS.filter(l=> tonight.keys.indexOf(l.key)>=0).map(l=>({
+      iconEl: React.cloneElement(this.gi(l.icon), { width:14, height:14, 'aria-hidden':'true', style:{ flex:'none', color:l.color } }),
+      label:l.label, title:l.title,
+      blockStyle:{ position:'absolute', left:(l.x/320*100).toFixed(2)+'%', width:(l.w/320*100).toFixed(2)+'%', minWidth:'24px', top:'0', height:'26px', display:'inline-flex', alignItems:'center', justifyContent:'center', background:'color-mix(in srgb,'+l.color+' 16%,var(--surface-base))', border:'1px solid '+l.color, borderRadius:'7px', boxSizing:'border-box' },
+      labelStyle:{ position:'absolute', left:((l.x+l.w/2)/320*100).toFixed(2)+'%', transform:'translateX(-50%)', top:'29px', fontSize:'9px', fontWeight:600, color:'var(--text-secondary)', whiteSpace:'nowrap' }
+    }));
+
+    // devices
+    const devDefs = [
+      { name:'EV charger', kind:'ev', state:'active', amount:'\u2248 $5.44', tier:'measured', contrib:'last 30 days' },
+      { name:'Home battery', kind:'battery', state:'active', amount:'$3.60', tier:'banked', contrib:'VPP + arbitrage' },
+      { name:'Water heater', kind:'water', state:'dormant', amount:'\u2014', tier:null, contrib:'idle now' },
+      { name:'Heat pump', kind:'hp', state: isStale?'stale':'active', amount: isStale?'\u2014':'\u2248 $0.86', tier: isStale?null:'modeled', contrib: isStale?'unreachable 8d':'last 30 days' },
+    ];
+    const devices = devDefs.map(d=>{
+      const b=this.statusBadge(d.state);
+      const tb = d.tier ? this.tierBadge(d.tier) : null;
+      const color = d.tier==='banked' ? 'var(--success)' : (d.tier==='measured' ? 'var(--accent)' : (d.tier==='modeled' ? 'var(--text-primary)' : 'var(--text-secondary)'));
+      return { name:d.name, icon:this.gi(d.kind), badgeIcon:b.icon, badgeLabel:b.label, badgeStyle:b.style,
+        amount: (d.tier==='modeled' ? d.amount+'*' : d.amount),
+        amountNode: this.amt(d.tier==='modeled' ? d.amount+'*' : d.amount),
+        amountStyle:{ fontSize:'15px', fontWeight:700, fontVariantNumeric:'tabular-nums', color },
+        hasTier: !!tb, tierIcon: tb?tb.icon:null, tierLabel: tb?tb.label:'', tierStyle: tb?tb.style:{},
+        contribLabel:d.contrib };
+    });
+
+    // ledger
+    const winTabs = this.winSeg(['1d','7d','30d','90d','1y','all']);
+    const wd=this.win().days;
+    const W=this.win();
+    const devLabelMap={ ev:'EV charger', battery:'Home battery', hp:'Heat pump', water:'Water heater', solar:'Solar', other:'Other' };
+    const staleHidden = isStale ? this.ledgerData().filter(r=>r.dev==='hp'&&r.tier==='modeled').length : 0;
+    const DPAGE=20;
+    const mapEntry=(r)=>{ const tb=this.tierBadge(r.tier); const modeled=r.tier==='modeled'; const amtColor=r.tier==='banked'?'var(--success)':'var(--text-primary)';
+      return { action:r.action, detail:r.detail, inputs:r.inputs, assume:r.assume,
+        amountStyle:{ fontFamily:"'Space Grotesk',system-ui", fontSize:'17px', fontWeight:700, fontVariantNumeric:'tabular-nums', color:amtColor, whiteSpace:'nowrap' },
+        tierIcon:tb.icon, tierLabel:tb.label, tierStyle:tb.style,
+        amountNode:this.amt(modeled?(r.amount+'*'):r.amount), modeled }; };
+
+    // window-scoped rows (all devices, all actions)
+    let winRows=this.ledgerData().filter(r=> r.ago <= wd);
+    if(isStale) winRows=winRows.filter(r=>!(r.dev==='hp'&&r.tier==='modeled'));
+
+    // period header \u2014 bottom-up from the real rows
+    const phTotal=winRows.reduce((s,r)=>s+r.val,0);
+    const phKwh=winRows.reduce((s,r)=>s+(r.kwh||0),0);
+    const phAllBanked=winRows.length>0 && winRows.every(r=>r.tier==='banked');
+    const periodHeader={ head:W.head,
+      totalNode:this.amt((phAllBanked?'$':'\u2248 $')+phTotal.toFixed(2)),
+      meta: winRows.length+' shift'+(winRows.length===1?'':'s')+' \u00b7 '+Math.round(phKwh).toLocaleString()+' kWh moved' };
+
+    // ---- ledger charts ----
+    const ledgerStack = this.buildTrendStacked(winRows, this.edgesFor(wd));
+
+    // device list \u2014 a handful of rows at any window, each drillable (no event rows here)
+    const dgroup={};
+    winRows.forEach(r=>{ if(!dgroup[r.dev]) dgroup[r.dev]={sum:0,kwh:0,n:0,allBanked:true,kind:r.kind}; const g=dgroup[r.dev]; g.sum+=r.val; g.kwh+=(r.kwh||0); g.n++; if(r.tier!=='banked') g.allBanked=false; });
+    const deviceRows=Object.keys(dgroup).map(k=>{ const g=dgroup[k]; return {
+      key:k, sum:g.sum, label:devLabelMap[k]||k, icon:this.gi(g.kind),
+      meta:g.n+' shift'+(g.n===1?'':'s')+' \u00b7 '+Math.round(g.kwh).toLocaleString()+' kWh',
+      amountNode:this.amt((g.allBanked?'$':'\u2248 $')+g.sum.toFixed(2)),
+      onOpen:()=>this.setState(Object.assign(this.resetTransient(), { screen:'devdetail', devSel:k, devShown:DPAGE, devActionFilter:'all', devExpanded:{} }), ()=>this.animate()) }; }).sort((a,b)=>b.sum-a.sum);
+    const deviceListTitle = W.head + ' \u00b7 by device';
+    const csvExport = { label:'Export CSV', onExport:()=>this.exportCsv(winRows, W) };
+
+    // bill-level summary \u2014 keeps its own billing-period scope, never a window in the selector
+    const billMeta = { head:'Jul 12 \u2013 Aug 11', lower:'on your last bill', days:6, money:46, pct:39 };
+    let billRows=this.ledgerData().filter(r=> r.ago <= billMeta.days);
+    if(isStale) billRows=billRows.filter(r=>!(r.dev==='hp'&&r.tier==='modeled'));
+    const billTotal = billRows.reduce((s,r)=>s+r.val,0);
+    const billAllBanked = billRows.length>0 && billRows.every(r=>r.tier==='banked');
+    const summary = {
+      billChecked, linked: stateLinked, unlinkedBills: stateUnlinkedBills, unlinkedNone: stateUnlinkedNone, showPeriod: !stateUnlinkedNone,
+      tierLabel: billChecked ? 'Bill-checked' : 'Not yet bill-checked',
+      windowHead: 'Jul 12 \u2013 Aug 11',
+      periodChip: stateUnlinkedBills ? 'Checked: July, June' : 'Jul 12 \u2013 Aug 11',
+      billsList: 'July, June',
+      totalNode: this.amt((billAllBanked?'$':'\u2248 $') + billTotal.toFixed(2)),
+      totalSuffix: stateUnlinkedNone ? 'saved \u00b7 modeled estimate' : (stateUnlinkedBills ? 'saved \u00b7 checked through Jun 30' : 'saved \u00b7 Jul 12 \u2013 Aug 11'),
+      shift: stateUnlinkedNone ? ('About ' + billMeta.pct + '% of the energy PIF managed ran in cheap hours.') : (billMeta.pct + '% of your usage ran off-peak on your last bill.'),
+      badgeIcon: this.tierBadge(billChecked?'billchecked':'modeled').icon,
+      badgeStyle: this.tierBadge(billChecked?'billchecked':'modeled').style,
+    };
+
+    // === device detail \u2014 the one drill target; everything lives here, scoped to the window ===
+    const dsel=st.devSel||'ev';
+    const prof=this.deviceProfile(dsel);
+    const dAll=this.ledgerData().filter(r=> r.dev===dsel);
+    let dRows=this.ledgerData().filter(r=> r.ago <= wd && r.dev===dsel);
+    if(isStale) dRows=dRows.filter(r=>!(r.dev==='hp'&&r.tier==='modeled'));
+    const dFilterKey=st.devActionFilter||'all';
+    let dFiltered = dFilterKey==='all' ? dRows : dRows.filter(r=>r.lever===dFilterKey);
+    dFiltered = dFiltered.slice().sort((a,b)=> a.ago-b.ago || (a.action<b.action?-1:1));
+    const dShownN = st.devShown||DPAGE;
+    const dShown=dFiltered.slice(0, dShownN);
+    const dTotal=dRows.reduce((s,r)=>s+r.val,0);
+    const dKwh=dRows.reduce((s,r)=>s+(r.kwh||0),0);
+    const dAllBanked=dRows.length>0 && dRows.every(r=>r.tier==='banked');
+    const expandedMap=st.devExpanded||{};
+    const dActions=dShown.map((r)=>{ const e=mapEntry(r); const id=r.date+'|'+r.action;
+      return Object.assign(e, { id, time:r.time, mathText:r.mathText, meter:r.meter, expanded:!!expandedMap[id],
+        onToggle:()=>{ const m=Object.assign({},this.state.devExpanded); m[id]=!m[id]; this.setState({devExpanded:m}); } }); });
+    const leverLabel={charging:'Charging',precool:'Pre-cool',arbitrage:'Arbitrage',vpp:'VPP',shift:'Load-shift'};
+    const presentLevers=[]; dAll.forEach(r=>{ if(presentLevers.indexOf(r.lever)<0) presentLevers.push(r.lever); });
+    const devFilters=[{k:'all',label:'All actions'}].concat(presentLevers.map(l=>({k:l,label:leverLabel[l]||l}))).map(o=>({ label:o.label, active:dFilterKey===o.k, onSelect:()=>this.setState({devActionFilter:o.k, devShown:DPAGE}), style:this.pillStyle(dFilterKey===o.k) }));
+    // tariff bar \u2014 when the load ran vs where it usually sits, over the tariff periods
+    const bandColor={ off:'color-mix(in srgb,var(--success) 24%,transparent)', shoulder:'color-mix(in srgb,var(--warning) 20%,transparent)', peak:'color-mix(in srgb,var(--danger) 24%,transparent)' };
+    const bands=[{from:0,to:7,kind:'off'},{from:7,to:16,kind:'shoulder'},{from:16,to:21,kind:'peak'},{from:21,to:23,kind:'shoulder'},{from:23,to:24,kind:'off'}];
+    const pctOf=(h)=>((h/24)*100);
+    const segsFor=(from,to)=>{ if(to<=from) return [{left:pctOf(from),width:pctOf(24)-pctOf(from)},{left:0,width:pctOf(to)}]; return [{left:pctOf(from),width:pctOf(to)-pctOf(from)}]; };
+    const tariffBands=bands.map(b=>({ style:{ position:'absolute', top:0, bottom:0, left:pctOf(b.from)+'%', width:(pctOf(b.to)-pctOf(b.from))+'%', background:bandColor[b.kind] } }));
+    const ranSegs=segsFor(prof.ranFrom,prof.ranTo).map(s=>({ style:{ position:'absolute', height:'12px', bottom:'7px', left:s.left+'%', width:s.width+'%', background:'var(--accent)', borderRadius:'3px' } }));
+    const usualSegs=segsFor(prof.usualFrom,prof.usualTo).map(s=>({ style:{ position:'absolute', height:'12px', top:'7px', left:s.left+'%', width:s.width+'%', background:'transparent', border:'1.5px dashed var(--text-secondary)', borderRadius:'3px' } }));
+    const axisTicks=[0,6,12,18,24].map(h=>({ label:(h===0||h===24)?'12a':h===12?'12p':h<12?(h+'a'):((h-12)+'p'), style:{ position:'absolute', left:pctOf(h)+'%', transform:'translateX(-50%)' } }));
+    const devDetail={
+      key:dsel, name:devLabelMap[dsel]||dsel, icon:this.gi(dRows[0]?dRows[0].kind:dsel),
+      head:W.head, winTabs,
+      totalNode:this.amt((dAllBanked?'$':'\u2248 $')+dTotal.toFixed(2)),
+      meta:dRows.length+' shift'+(dRows.length===1?'':'s')+' \u00b7 '+Math.round(dKwh).toLocaleString()+' kWh moved \u00b7 '+W.head,
+      mathText: dRows.length ? (Math.round(dKwh).toLocaleString()+' kWh \u00d7 ($0.24 \u2212 $0.08) = '+(dAllBanked?'$':'\u2248 $')+dTotal.toFixed(2)) : 'No actions in this window.',
+      meter:prof.meter, meterBadge:this.tierBadge(prof.tier), usual:prof.usual,
+      tariff:prof.tariff, effective:prof.effective, constraints:prof.constraints,
+      methodology:prof.methodology, revisions:prof.revisions, hasRevisions:prof.revisions.length>0,
+      tariffBands, ranSegs, usualSegs, axisTicks,
+      filters:devFilters, actions:dActions, empty:dShown.length===0,
+      pager:{ show:dFiltered.length>dShown.length, showingText:'Showing '+dShown.length+' of '+dFiltered.length.toLocaleString(), moreLabel:'Load more', onMore:()=>this.setState({ devShown:(this.state.devShown||DPAGE)+DPAGE }) },
+      onBack:()=>this.set('screen','ledger'),
+    };
+    const staleNote = { show: isStale && staleHidden>0, text: staleHidden+' Modeled Heat-pump '+(staleHidden===1?'entry is':'entries are')+' hidden while it\u2019s unreachable \u2014 we don\u2019t model what we can\u2019t see.' };
+
+    const titleMap = { home:'Home', ledger:'Savings ledger', devdetail:'Device savings', bill:'Confirm your bill' };
+    const navActiveKey = (st.screen==='devdetail') ? 'ledger' : st.screen;
+    const navTabs = [
+      {k:'home',label:'Dashboard',isBtn:true,onSelect:()=>this.set('screen','home')},
+      {k:'ledger',label:'Ledger',isBtn:true,onSelect:()=>this.set('screen','ledger')},
+      {label:'Devices',isLink:true,href:'PIF-Devices-Connect-Batch4.dc.html'},
+      {label:'Settings',isLink:true,href:'PIF-Settings-Help-Batch5.dc.html'},
+      {label:'Billing',isLink:true,href:'PIF-Billing-Lifecycle-Batch6.dc.html'},
+    ].map(o=>{ const on=!!(o.k && navActiveKey===o.k); return { label:o.label, isLink:!!o.isLink, isBtn:!!o.isBtn, href:o.href||'#', active: on ? 'page' : undefined, onSelect:o.onSelect||null, style:this.navStyle(on) }; });
+
+    return {
+      theme: st.theme, rmFlag: rm ? '1':'0', rmOn: rm,
+      segScreen, segState, segWinReview, segBillState, segBillDue, segPending, segUnread, segTheme,
+      skeletonRows: [1,2,3,4,5,6],
+
+      isHome: st.screen==='home', isLedger: st.screen==='ledger', isDevDetail: st.screen==='devdetail', isBill: st.screen==='bill',
+      segBilling,
+      billingBanner: { showFail: st.billing==='payfail', showSuspend: st.billing==='suspended' },
+      homeGateStyle: st.billing==='suspended' ? 'opacity:.4;pointer-events:none;filter:saturate(.55);display:flex;flex-direction:column;gap:20px' : 'display:flex;flex-direction:column;gap:20px',
+      screenTitle: titleMap[st.screen] || 'Home', navTabs,
+      stLoading: st.dataState==='loading', stError: st.dataState==='error', stEmpty: st.dataState==='empty',
+      stContent: st.dataState==='normal' || st.dataState==='stale',
+      isStale,
+
+      ionaFace: this.ionaEl(96),
+      heroMoney, heroWindowLabel, heroEvidence, heroCheapNote, heroInsuffShow, heroInsuffNote,
+      heroTierIcon: heroTierBadge.icon, heroTierLabel: heroTierBadge.label, heroTierStyle: heroTierBadge.style,
+      segPeriod, goLedger: ()=> this.set('screen','ledger'),
+      dashTrend, dashTrendShow, dashNoHistory, mechShow, mechLoads, mechCalloutNode,
+      deviceHeading: '3 of 8', onViewAll: (e)=>{ if(e&&e.preventDefault) e.preventDefault(); this.set('screen','ledger'); }, onDeviceOpen: (e)=>{ if(e&&e.preventDefault) e.preventDefault(); this.set('screen','devdetail'); },
+      streakLabel: '7-day optimizing streak',
+      tonight,
+      tnMoonIcon: React.cloneElement(this.gi('clock'),{width:20,height:20}),
+      tnOfflineIcon: React.cloneElement(this.gi('alert'),{width:20,height:20}),
+      tnAlertMini: React.cloneElement(this.gi('alert'),{width:14,height:14}),
+      tnSkipIcon: React.cloneElement(this.gi('skip'),{width:15,height:15}),
+      tnUndoIcon: React.cloneElement(this.gi('modeled'),{width:15,height:15}),
+      tnLockMini: React.cloneElement(this.gi('lock'),{width:14,height:14}),
+      segPlanComp, segPlanTime,
+      deviceCountLabel: isStale ? '3 active · 1 stale' : '3 active · 1 idle',
+      devices,
+      nudge: { show: !st.nudgeDismissed, title:'Connect your thermostat', body:'It unlocks HVAC pre-cooling worth an estimated $6/mo* more. Two-minute setup.', cta:'Connect thermostat', onDismiss:()=>this.setState({nudgeDismissed:true}) },
+      pendingChip: { show: st.pending==='scheduled', label:'Basic in 12 days', onOpen:()=>this.setState({cancelOpen:true}) },
+
+      winTabs, periodHeader, ledgerStack, ledgerStackShow: !ledgerStack.empty, deviceRows, deviceListTitle, csvExport, devDetail, summary, staleNote, notBillChecked: !billChecked,
+      ledgerIntro: { show: !st.ledgerIntroDismissed, dismissed: !!st.ledgerIntroDismissed, face: this.ionaEl(50), onDismiss: ()=>{ try{ localStorage.setItem('pif_b3_introDismissed','1'); }catch(e){} this.setState({ ledgerIntroDismissed:true }); }, onReopen: (e)=>{ if(e&&e.preventDefault) e.preventDefault(); try{ localStorage.removeItem('pif_b3_introDismissed'); }catch(e){} this.setState({ ledgerIntroDismissed:false }); } },
+      segPct: [{k:'whole',label:'Whole-home'},{k:'managed',label:'Managed-load'}].map(o=>({ label:o.label, active:effPctMode===o.k, disabled:(o.k==='whole'&&!wholeAvailable), onSelect:()=>{ if(o.k==='whole'&&!wholeAvailable) return; this.set('pctMode',o.k); }, style:Object.assign({}, this.segStyle(effPctMode===o.k), (o.k==='whole'&&!wholeAvailable)?{opacity:.7,cursor:'not-allowed'}:{}) })),
+      pctDerivedNote: wholeAvailable ? 'Derived from connection — whole-home is available (linked utility or TOU bill).' : 'Derived from connection — whole-home needs a linked utility or a TOU bill, so it\u2019s managed-load only here.',
+      segPeriodData: this.seg([{k:'rolling30',label:'30 days'},{k:'inprogress',label:'In-progress'},{k:'insufficient',label:'Insufficient'},{k:'firstcycle',label:'First cycle'}], st.periodData, 'periodData'),
+
+      billNudge: { show: st.billDue && !st.billNudgeDismissed && st.billDeclines < 3, onAdd:()=>this.set('screen','bill'), onDismiss:()=>this.setState(s=>({billNudgeDismissed:true, billDeclines:s.billDeclines+1})) },
+      onAddBill: ()=> this.set('screen','bill'),
+      onConnectUtility: ()=> { try{ window.location.href='PIF-Settings-Help-Batch5.dc.html#s5'; }catch(err){ this.setState({ billConn:'linked' }); } },
+      onSaveBill: ()=> this.setState(Object.assign(this.resetTransient(), { billBills:'some', screen:'ledger' })),
+      onSkipBill: ()=> this.set('screen','home'),
+
+      onRetry: ()=> this.set('dataState','normal'),
+      onBackLedger: ()=> this.set('screen','ledger'),
+      onMethodology: (e)=>{ if(e&&e.preventDefault) e.preventDefault(); try{ window.location.href='PIF-Acquisition-Batch7.dc.html#a12'; }catch(err){} },
+
+      launcherAvatar: this.launcherAvatarEl(st.unread),
+      launcherAria: 'Ask Iona', fanOpen: st.fanOpen, fanTabs: this.fanTabs(st.tier||'optimum', rm),
+      onLauncher: ()=> this.setState(s=>({ fanOpen: !s.fanOpen, acctOpen:false })),
+      acctOpen: st.acctOpen,
+      onAcct: ()=> this.setState(s=>({ acctOpen: !s.acctOpen, fanOpen:false })),
+      harnessOpen: st.harnessOpen, drawerCls: st.harnessOpen ? 'open' : '',
+      onHarness: ()=> this.setState(s=>({ harnessOpen: !s.harnessOpen, acctOpen:false, fanOpen:false })),
+      overlayOpen: st.acctOpen || st.fanOpen || st.harnessOpen,
+      onOverlayClose: ()=> this.setState({ acctOpen:false, fanOpen:false, harnessOpen:false }),
+      onSettings: (e)=>{ if(e&&e.preventDefault) e.preventDefault(); },
+      avatarStyle: { width:'34px', height:'34px', borderRadius:'999px', background:'var(--surface-sunken)', border:'1px solid var(--border-subtle)', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:'13px', fontWeight:700, color:'var(--text-secondary)', textDecoration:'none', cursor:'pointer' },
+      acctMenu: this.acctMenu(),
+
+      cancelOpen: st.cancelOpen,
+      onCloseSheet: ()=> this.setState({ cancelOpen:false }),
+      onKeepPlan: ()=> this.setState({ cancelOpen:false, pending:'none' }),
+      stop: (e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

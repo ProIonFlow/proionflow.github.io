@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- PIF-Legal-Batch10 v2 — 26 Jul, DSR button gated to signed-in; signed-out gets "Plug in to manage" link -->
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<meta name="omelette-owns-print" content="1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#FFFFFF;font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--primary);text-decoration:none}
+  a:hover{color:var(--secondary);text-decoration:underline}
+  button,select,input,textarea{font-family:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+  .pif-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  :root,[data-theme="light"],[data-theme="system"]{
+    --surface-base:#FFFFFF; --surface-raised:#F4F7FB; --surface-sunken:#E9EEF6;
+    --text-primary:#16233B; --text-secondary:#586378; --text-onfill:#FFFFFF;
+    --border-subtle:#C9D4E3; --border-strong:#7C8BA3;
+    --primary:#1B3A6B; --secondary:#0E7C7B; --accent:#077A46; --accent-bright:#0FA968;
+    --success:#077A46; --warning:#9A6400; --danger:#C22F2F; --info:#1B5FB8;
+    --elev-1:0 1px 2px rgba(22,35,59,.06),0 1px 3px rgba(22,35,59,.08);
+    --elev-2:0 2px 6px rgba(22,35,59,.08),0 4px 12px rgba(22,35,59,.10);
+    --elev-3:0 8px 24px rgba(22,35,59,.14);
+  }
+  [data-theme="dark"]{
+    --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+    --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+    --border-subtle:#2A3852; --border-strong:#62738F;
+    --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+    --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+    --elev-1:0 1px 2px rgba(0,0,0,.40); --elev-2:0 4px 14px rgba(0,0,0,.50); --elev-3:0 10px 30px rgba(0,0,0,.60);
+  }
+  @media (prefers-color-scheme:dark){
+    [data-theme="system"]{
+      --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+      --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+      --border-subtle:#2A3852; --border-strong:#62738F;
+      --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+      --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+      --elev-1:0 1px 2px rgba(0,0,0,.40); --elev-2:0 4px 14px rgba(0,0,0,.50); --elev-3:0 10px 30px rgba(0,0,0,.60);
+    }
+  }
+  @keyframes pifFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes pifFanIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+  [data-rm="1"] *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
+  @media print{
+    .pif-noprint{display:none !important}
+    body,[data-theme]{background:#fff !important;color:#000 !important}
+    .pif-legalgrid{display:block !important}
+    .pif-legalnav{display:none !important}
+    a{color:#000 !important;text-decoration:none !important}
+    section{break-inside:avoid}
+  }
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" data-rm="{{ rmFlag }}" style="min-height:100vh;width:100%;background:var(--surface-base);color:var(--text-primary);font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;transition:background .3s cubic-bezier(.2,0,0,1),color .3s cubic-bezier(.2,0,0,1)">
+<div style="max-width:1100px;margin:0 auto;padding:24px 24px 96px">
+
+  <!-- ============ REVIEW HARNESS ============ -->
+  <div class="pif-noprint" role="region" aria-label="Review harness" style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;margin-bottom:24px;box-shadow:var(--elev-1)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">Review harness</span>
+      <span style="font-size:12px;color:var(--text-secondary)">— not part of the product · flip any state</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:18px">
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Screen</div><div role="tablist" aria-label="Screen" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segScreen }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Auth</div><div role="tablist" aria-label="Auth" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ segAuth }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Theme</div><div role="tablist" aria-label="Theme" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ segTheme }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.icon }}{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Motion</div><button onClick="{{ onToggleRm }}" aria-pressed="{{ rmOn }}" style="{{ rmBtnStyle }}">{{ rmBtnLabel }}</button></div>
+    </div>
+  </div>
+
+  <!-- ============ TOP BAR — MARKETING (signed out) ============ -->
+  <sc-if value="{{ signedOut }}" hint-placeholder-val="{{ true }}">
+    <div class="pif-noprint" style="display:flex;align-items:center;gap:14px;padding:0 4px 20px;border-bottom:1px solid var(--border-subtle);margin-bottom:28px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:9px">
+        <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
+        <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+      </div>
+      <nav aria-label="Primary" style="margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <a href="PIF-Acquisition-Batch7.dc.html#a12" style="{{ navInactiveStyle }}">How it works</a>
+        <a href="PIF-Acquisition-Batch7.dc.html#a11" style="{{ navInactiveStyle }}">Pricing</a>
+        <a href="PIF-Auth-Batch1.dc.html" style="{{ navInactiveStyle }}">Plug in</a>
+        <a href="PIF-Onboarding-Quiz-Batch2.dc.html" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font:700 14px Inter,system-ui,sans-serif;padding:9px 18px;border-radius:11px;background:var(--accent);color:var(--text-onfill);min-height:40px" style-hover="background:var(--accent-bright);text-decoration:none">Get started</a>
+      </nav>
+    </div>
+  </sc-if>
+
+  <!-- ============ TOP BAR — SIGNED IN (app shell) ============ -->
+  <sc-if value="{{ signedIn }}" hint-placeholder-val="{{ false }}">
+    <div class="pif-noprint" style="display:flex;align-items:center;gap:14px;padding:0 4px 20px;border-bottom:1px solid var(--border-subtle);margin-bottom:24px;position:relative">
+      <div style="display:flex;align-items:center;gap:9px">
+        <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
+        <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+      </div>
+      <nav aria-label="Primary" style="display:flex;gap:2px;margin-left:8px">
+        <a href="PIF-Dashboard-Ledger-Batch3.dc.html" style="{{ navInactiveStyle }}">Dashboard</a>
+        <a href="PIF-Dashboard-Ledger-Batch3.dc.html#ledger" style="{{ navInactiveStyle }}">Ledger</a>
+        <a href="PIF-Devices-Connect-Batch4.dc.html" style="{{ navInactiveStyle }}">Devices</a>
+        <a href="PIF-Settings-Help-Batch5.dc.html" style="{{ navInactiveStyle }}">Settings</a>
+        <a href="PIF-Billing-Lifecycle-Batch6.dc.html" style="{{ navInactiveStyle }}">Billing</a>
+      </nav>
+      <div style="margin-left:auto;position:relative">
+        <button onClick="{{ onAvatar }}" aria-label="Account settings" aria-expanded="{{ acctOpen }}" style="width:40px;height:40px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface-raised);color:var(--text-primary);font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">AR</button>
+        <sc-if value="{{ acctOpen }}" hint-placeholder-val="{{ false }}">
+          <div role="menu" aria-label="Account" style="position:absolute;right:0;top:48px;z-index:50;min-width:190px;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:14px;box-shadow:var(--elev-3);padding:6px;animation:pifFanIn .2s both">
+            <a href="PIF-Settings-Help-Batch5.dc.html" role="menuitem" style="text-decoration:none;display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:9px;font:600 13px Inter,system-ui,sans-serif;color:var(--text-primary)" style-hover="background:var(--surface-sunken)">{{ icoGear }}Settings</a>
+            <button role="menuitem" onClick="{{ onPlugOut }}" style="appearance:none;border:none;cursor:pointer;width:100%;text-align:left;display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:9px;font:600 13px Inter,system-ui,sans-serif;color:var(--danger);background:transparent" style-hover="background:var(--surface-sunken)">{{ icoLogout }}Plug out</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    <button class="pif-noprint" onClick="{{ onBackHistory }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+  </sc-if>
+
+  <!-- ============ WIREFRAME BANNER ============ -->
+  <div role="note" style="display:flex;align-items:flex-start;gap:10px;background:color-mix(in srgb,var(--warning) 12%,var(--surface-raised));border:1px solid var(--warning);border-radius:14px;padding:13px 16px;margin-bottom:24px;max-width:900px">
+    <span style="color:var(--warning);flex:none;margin-top:1px">{{ icoAlert }}</span>
+    <p style="font-size:12.5px;line-height:19px;color:var(--text-primary);margin:0;text-wrap:pretty"><b>This is a wireframe container.</b> Section structure is real; the wording is placeholder. Final legal copy is pending attorney review — nothing here is binding.</p>
+  </div>
+
+  <!-- header -->
+  <div style="max-width:860px;margin-bottom:12px">
+    <h1 style="font-family:'Space Grotesk',system-ui;font-size:34px;line-height:1.1;font-weight:700;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance">{{ pageTitle }}</h1>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <span style="display:inline-flex;align-items:center;gap:6px;font:700 12px 'JetBrains Mono',monospace;color:var(--text-onfill);background:var(--primary);border-radius:999px;padding:5px 12px">{{ meta.version }}</span>
+      <span style="font-size:13px;color:var(--text-secondary)">Last updated {{ meta.updated }}</span>
+      <span style="font-size:13px;color:var(--text-secondary)">· Effective {{ meta.effective }}</span>
+      <button class="pif-noprint" onClick="{{ onPrint }}" style="margin-left:auto;appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font:600 13px Inter,system-ui,sans-serif;padding:9px 15px;border-radius:11px;background:var(--surface-base);border:1px solid var(--border-strong);color:var(--text-primary);min-height:40px" style-hover="background:var(--surface-sunken)">{{ icoReceipt }}Print / download</button>
+    </div>
+  </div>
+
+  <!-- two-column: sticky nav + long-form -->
+  <div class="pif-legalgrid" style="display:grid;grid-template-columns:240px minmax(0,1fr);gap:32px;align-items:start;margin-top:28px">
+    <nav class="pif-legalnav pif-noprint" aria-label="On this page" style="position:sticky;top:20px;display:flex;flex-direction:column;gap:2px;border-left:2px solid var(--border-subtle);padding-left:14px;max-height:calc(100vh - 40px);overflow-y:auto">
+      <span style="font:700 11px Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px">On this page</span>
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="13">
+        <a href="#{{ n.id }}" style="font-size:12.5px;line-height:17px;color:var(--text-secondary);padding:6px 0;text-decoration:none" style-hover="color:var(--text-primary)">{{ n.num }}. {{ n.label }}</a>
+      </sc-for>
+    </nav>
+
+    <div style="max-width:720px;min-width:0">
+      <sc-for list="{{ sections }}" as="s" hint-placeholder-count="13">
+        <section id="{{ s.id }}" style="margin-bottom:38px;scroll-margin-top:20px">
+          <h2 style="font-family:'Space Grotesk',system-ui;font-size:20px;font-weight:700;letter-spacing:-.01em;margin:0 0 10px">{{ s.num }}. {{ s.title }}</h2>
+          <p style="font-size:14.5px;line-height:23px;color:var(--text-primary);margin:0 0 10px;text-wrap:pretty">{{ s.body }}</p>
+          <sc-if value="{{ s.showDsrBtn }}" hint-placeholder-val="{{ false }}">
+            <a href="PIF-Settings-Help-Batch5.dc.html#s10" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;font:700 13px Inter,system-ui,sans-serif;padding:11px 18px;border-radius:11px;background:var(--accent);color:var(--text-onfill);min-height:44px;margin-bottom:10px" style-hover="background:var(--accent-bright);text-decoration:none">{{ icoShield }}Manage your data &amp; requests <span aria-hidden="true">→</span></a>
+          </sc-if>
+          <sc-if value="{{ s.showDsrLink }}" hint-placeholder-val="{{ false }}">
+            <a href="PIF-Auth-Batch1.dc.html" style="display:inline-block;font:600 13px Inter,system-ui,sans-serif;margin-bottom:10px">Plug in to manage your data <span aria-hidden="true">→</span></a>
+          </sc-if>
+          <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:0;font-style:italic">[Draft placeholder — attorney-drafted final copy pending]</p>
+        </section>
+      </sc-for>
+
+      <!-- page legal note -->
+      <div style="border-top:1px solid var(--border-subtle);padding-top:20px;margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <span style="font-size:12.5px;color:var(--text-secondary)">© 2026 ProIonFlow, Inc.</span>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <a href="#tos" onClick="{{ onGoTos }}" style="font:600 12.5px Inter,system-ui,sans-serif;color:var(--text-secondary)">Terms</a>
+          <a href="#privacy" onClick="{{ onGoPrivacy }}" style="font:600 12.5px Inter,system-ui,sans-serif;color:var(--text-secondary)">Privacy</a>
+          <a href="PIF-Acquisition-Batch7.dc.html#a12" style="font:600 12.5px Inter,system-ui,sans-serif;color:var(--text-secondary)">Methodology</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ IONA GLOBAL LAUNCHER (signed-in only) ============ -->
+<sc-if value="{{ signedIn }}" hint-placeholder-val="{{ false }}">
+  <sc-if value="{{ overlayOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onOverlayClose }}" aria-hidden="true" style="position:fixed;inset:0;z-index:40;background:transparent"></div>
+  </sc-if>
+  <div class="pif-noprint" style="position:fixed;right:24px;bottom:24px;z-index:70;display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+    <sc-if value="{{ fanOpen }}" hint-placeholder-val="{{ false }}">
+      <div role="menu" aria-label="Iona" style="display:flex;flex-direction:column;align-items:flex-end;gap:9px">
+        <sc-for list="{{ fanTabs }}" as="t" hint-placeholder-count="4">
+          <button role="menuitem" onClick="{{ t.onSelect }}" style="{{ t.style }}"><span style="color:var(--text-secondary)">{{ t.icon }}</span><span>{{ t.label }}</span></button>
+        </sc-for>
+      </div>
+    </sc-if>
+    <button onClick="{{ onLauncher }}" aria-label="Ask Iona" aria-expanded="{{ fanOpen }}" style="appearance:none;border:none;background:transparent;cursor:pointer;padding:0;line-height:0;border-radius:999px">{{ launcherEl }}</button>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:1200},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;auth&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;signedOut&quot;,&quot;signedIn&quot;],&quot;default&quot;:&quot;signedOut&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    var hs=''; try{ var h=(window.location.hash||'').replace('#',''); if(/^tos$/.test(h)) hs='tos'; else if(/^privacy$/.test(h)) hs='privacy'; }catch(e){}
+    this.state = {
+      theme: props.initialTheme || 'light',
+      rm: !!props.previewReducedMotion,
+      screen: hs || 'tos',
+      auth: props.auth || 'signedOut',
+      fanOpen:false, acctOpen:false
+    };
+  }
+  set(k,v){ const p={}; p[k]=v; this.setState(p); }
+  componentDidMount(){ this._esc=(e)=>{ if(e.key==='Escape') this.setState({acctOpen:false,fanOpen:false}); }; try{ window.addEventListener('keydown', this._esc); }catch(e){} }
+  componentWillUnmount(){ try{ window.removeEventListener('keydown', this._esc); }catch(e){} }
+
+  ico(name,size){
+    const c={ width:size||18, height:size||18, viewBox:'0 0 20 20', fill:'none', style:{flex:'none'}, 'aria-hidden':'true' };
+    const P=(d,ex)=>React.createElement('path',Object.assign({ d, stroke:'currentColor', strokeWidth:1.6, strokeLinecap:'round', strokeLinejoin:'round' },ex||{}));
+    const C=(cx,cy,r,ex)=>React.createElement('circle',Object.assign({ cx,cy,r, stroke:'currentColor', strokeWidth:1.6 },ex||{}));
+    const D=(cx,cy,r)=>React.createElement('circle',{ cx,cy,r, fill:'currentColor' });
+    const m={
+      receipt:()=>[P('M6 3h8v14l-2-1.3-2 1.3-2-1.3-2 1.3z'),P('M8 7h4M8 10h4')],
+      shield:()=>[P('M10 3 4.7 5.1v4.1c0 3.3 2.2 5.4 5.3 6.8 3.1-1.4 5.3-3.5 5.3-6.8V5.1z')],
+      alert:()=>[P('M7 3.2h6L16.8 7v6L13 16.8H7L3.2 13V7z'),P('M10 6.6v4.2'),D(10,13.2,.6)],
+      info:()=>[C(10,10,7.2),P('M10 9v4M10 6.6h.01')],
+      gear:()=>[C(10,10,2.4),P('M10 3.2v1.8M10 15v1.8M16.8 10H15M5 10H3.2M14.8 5.2 13.5 6.5M6.5 13.5 5.2 14.8M14.8 14.8 13.5 13.5M6.5 6.5 5.2 5.2')],
+      logout:()=>[P('M8 4H4v12h4M12 7l3 3-3 3M15 10H7')],
+      bell:()=>[P('M6 8a4 4 0 0 1 8 0c0 4 1.5 5 1.5 5h-11S6 12 6 8z'),P('M8.5 16a1.6 1.6 0 0 0 3 0')],
+      up:()=>[C(10,10,7),P('M10 13.5V7M7 9.5 10 6.5l3 3')],
+      x:()=>[P('M5.5 5.5l9 9M14.5 5.5l-9 9')]
+    };
+    const f=m[name]||m.info;
+    return React.createElement('svg',c,...f());
+  }
+  themeIcon(mode){
+    const c={ width:13,height:13,viewBox:'0 0 16 16',fill:'none' };
+    if(mode==='light') return React.createElement('svg',c,React.createElement('circle',{cx:8,cy:8,r:3.1,fill:'currentColor'}),React.createElement('path',{d:'M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M13 3l-1 1M4 12l-1 1',stroke:'currentColor',strokeWidth:1.3,strokeLinecap:'round'}));
+    if(mode==='dark') return React.createElement('svg',c,React.createElement('path',{d:'M13 9.5A6 6 0 0 1 6.5 3 5.6 5.6 0 1 0 13 9.5z',fill:'currentColor'}));
+    return React.createElement('svg',c,React.createElement('circle',{cx:8,cy:8,r:6,stroke:'currentColor',strokeWidth:1.4}),React.createElement('path',{d:'M8 2a6 6 0 0 1 0 12z',fill:'currentColor'}));
+  }
+  launcherSvg(){
+    const defs='<defs><radialGradient id="a10ib" cx="42%" cy="36%" r="72%"><stop offset="0%" stop-color="#5CF3B6"/><stop offset="55%" stop-color="#2FE39A"/><stop offset="100%" stop-color="#0E7C7B"/></radialGradient><radialGradient id="a10ig" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#2FE39A" stop-opacity="0.55"/><stop offset="100%" stop-color="#2FE39A" stop-opacity="0"/></radialGradient></defs>';
+    const welcoming='<ellipse cx="0" cy="0" rx="118" ry="118" fill="url(#a10ig)"></ellipse><path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" fill="#F5B23D"></path><circle cx="0" cy="0" r="72" fill="url(#a10ib)"></circle><circle cx="-24" cy="-8" r="11" fill="#0B1220"></circle><circle cx="24" cy="-8" r="11" fill="#0B1220"></circle><circle cx="-20" cy="-12" r="4" fill="#fff"></circle><circle cx="28" cy="-12" r="4" fill="#fff"></circle><path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"></path><circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"></circle><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"></circle><path d="M62,-6 Q92,-30 86,-58" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"></path><circle cx="86" cy="-62" r="12" fill="#2FE39A"></circle>';
+    return '<svg viewBox="-120 -120 240 240" width="58" height="58" role="img" aria-label="Ask Iona">'+defs+welcoming+'</svg>';
+  }
+  launcherEl(){ return React.createElement('span',{ style:{ display:'inline-flex', filter:'drop-shadow(0 6px 16px rgba(0,0,0,.28))' }, dangerouslySetInnerHTML:{ __html:this.launcherSvg() } }); }
+
+  segStyle(active){
+    const base={ appearance:'none',border:'none',background:'transparent',color:'var(--text-secondary)',font:'600 12px Inter,system-ui,sans-serif',padding:'7px 12px',borderRadius:'999px',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:'5px',minHeight:'32px' };
+    return active ? Object.assign({},base,{ background:'var(--surface-base)',color:'var(--text-primary)',boxShadow:'var(--elev-1)' }) : base;
+  }
+  seg(list,cur,key){ return list.map(o=>({ label:o.label, active:cur===o.k, onSelect:()=>this.set(key,o.k), style:this.segStyle(cur===o.k) })); }
+  navStyle(){ return { display:'inline-flex',alignItems:'center',textDecoration:'none',background:'transparent',color:'var(--text-secondary)',font:'600 14px Inter,system-ui,sans-serif',padding:'8px 15px',borderRadius:'10px',minHeight:'38px' }; }
+  tabBtnStyle(){ return { display:'inline-flex',alignItems:'center',gap:'9px',padding:'9px 15px',borderRadius:'999px',border:'1px solid var(--border-subtle)',background:'var(--surface-raised)',color:'var(--text-primary)',font:'600 13px Inter,system-ui,sans-serif',cursor:'pointer',boxShadow:'var(--elev-2)',minHeight:'40px' }; }
+  fanTabs(){
+    const ext=(u)=>()=>{ this.setState({fanOpen:false}); try{ window.location.href=u; }catch(e){} };
+    const list=[
+      { label:'Help', icon:this.ico('info',17), onSelect:ext('PIF-Settings-Help-Batch5.dc.html#s12') },
+      { label:'Messages', icon:this.ico('bell',17), onSelect:ext('PIF-Messages-Batch8.dc.html#h1') },
+      { label:'Settings', icon:this.ico('gear',17), onSelect:ext('PIF-Settings-Help-Batch5.dc.html#s1') },
+      { label:'Close', icon:this.ico('x',17), onSelect:()=>this.setState({fanOpen:false}) }
+    ];
+    return list.map(t=>({ label:t.label, icon:t.icon, onSelect:t.onSelect, style:this.tabBtnStyle() }));
+  }
+
+  tosData(){
+    return { meta:{ version:'Terms v1.0', updated:'Jul 2026', effective:'Aug 1, 2026' }, title:'Terms of Service', sections:[
+      { id:'t-accept', label:'Acceptance & eligibility', title:'Acceptance & eligibility', body:'Covers who may use PIF: agreeing to these terms, being of age, and living at a serviceable address — a supported ZIP on a supported utility.' },
+      { id:'t-service', label:'The service', title:'The service — what PIF does', body:'Describes what PIF provides: automated load-shifting and device orchestration to run eligible devices during cheaper hours, with a savings ledger.' },
+      { id:'t-billing', label:'Subscription, billing & auto-renewal', title:'Subscription, billing & auto-renewal', body:'Explains the monthly subscription and per-tier price, that it renews automatically until cancelled (clear-and-conspicuous), and that payment is processed by Stripe.' },
+      { id:'t-cancel', label:'Cancellation & refunds', title:'Cancellation & refunds', body:'You can cancel anytime — your plan runs to the end of the paid period with no refund, and you can undo before the next cycle. The only refundable case is if PIF ends your subscription, where we refund the unused, prorated portion of your fee.' },
+      { id:'t-savings', label:'Savings — no guarantee', title:'Savings — no guarantee', body:'States that savings vary by home, devices and rates; figures are estimates, not guarantees; there is no make-good for a shortfall; and links to the Methodology for how figures are derived.' },
+      { id:'t-safety', label:'Device control & safety', title:'Device control & safety', body:'Covers the safety envelope PIF operates within, graceful hand-back of control on suspend or cancel, your always-present manual override, and that PIF is not liable for third-party device behavior or utility rates.' },
+      { id:'t-security', label:'Account security & responsibilities', title:'Account security & your responsibilities', body:'Your responsibilities: keep credentials confidential, use a strong password/passkey, notify us of unauthorized access, and step-up verification for sensitive actions.' },
+      { id:'t-referral', label:'Referral program terms', title:'Referral program terms', body:'Terms of the referral program: eligibility, how invites and rewards work, and anti-abuse conditions.' },
+      { id:'t-acceptable', label:'Acceptable use', title:'Acceptable use', body:'What you may not do: misuse, reverse-engineer, resell, or interfere with the service or others’ use of it.' },
+      { id:'t-disclaimer', label:'Disclaimers & liability', title:'Disclaimers, warranties & limitation of liability', body:'Provided “as-is”; no warranty of uninterrupted availability; no liability for consequential or indirect damages, subject to applicable law.' },
+      { id:'t-changes', label:'Changes to these terms', title:'Changes to these terms', body:'How we change these terms: an updated effective date and advance notice of material changes.' },
+      { id:'t-law', label:'Governing law & disputes', title:'Governing law & disputes', body:'The governing law, venue, and the process for resolving disputes.' },
+      { id:'t-contact', label:'Contact', title:'Contact', body:'How to reach us with questions about these terms.' }
+    ]};
+  }
+  privData(){
+    return { meta:{ version:'Privacy v1.0', updated:'Jul 2026', effective:'Aug 1, 2026' }, title:'Privacy Policy', sections:[
+      { id:'p-collect', label:'What we collect', title:'What we collect', body:'The data PIF collects: energy and device telemetry, learned behavior patterns, a utility-derived service address, and your account email.' },
+      { id:'p-use', label:'How we use it', title:'How we use it', body:'How that data is used: to plan and run savings, verify results against your bill, and operate your account.' },
+      { id:'p-minimize', label:'Data minimization', title:'Data minimization', body:'How we minimize data: discarding a bill image after reading it, and processing photos on-device where possible.' },
+      { id:'p-comms', label:'Marketing vs transactional', title:'Marketing vs transactional communications', body:'The difference between transactional messages you always receive and marketing messages, which are opt-in and off by default (CAN-SPAM compliant).' },
+      { id:'p-learning', label:'Automated behavior learning', title:'Automated behavior learning', body:'How PIF learns your routines to improve scheduling, and your ability to see, correct or reset what it learned.' },
+      { id:'p-rights', label:'Your rights (DSR)', title:'Your rights — access, export, correct, delete, opt-out', body:'Your data-subject rights and how to exercise them: access, export, correct, delete, and opt out — all from Privacy & data in Settings.', hasDsr:true },
+      { id:'p-retention', label:'Data retention', title:'Data retention', body:'How long we keep data: the Messages feed is kept for about two months, while financial and security records are retained longer where required by law.' },
+      { id:'p-security', label:'Security', title:'Security', body:'How we protect data: encryption in transit and at rest, a post-quantum-ready posture, and card details going straight to Stripe so they never touch our servers — described without absolute guarantees.' },
+      { id:'p-processors', label:'Third-party processors', title:'Third-party processors', body:'The processors we rely on: Stripe for payments, device OEMs for control, and infrastructure providers.' },
+      { id:'p-referral', label:'Referral data', title:'Referral data', body:'How referral data is handled: a friend’s email is used only to send the invite, and the referrer’s name is shared with the friend so they know who invited them.' },
+      { id:'p-children', label:'Children / age', title:'Children / age', body:'PIF is not directed to children; the minimum age to hold an account.' },
+      { id:'p-changes', label:'Changes & contact', title:'Changes & contact', body:'How we notify you of policy changes and how to contact us with privacy questions.' }
+    ]};
+  }
+
+  renderVals(){
+    const st=this.state, rm=st.rm;
+    const signedIn = st.auth==='signedIn', signedOut=!signedIn;
+    const isTos = st.screen==='tos', isPriv = st.screen==='privacy';
+    const data = isPriv ? this.privData() : this.tosData();
+    const sections = data.sections.map((s,i)=>Object.assign({ num:i+1, hasDsr:!!s.hasDsr, showDsrBtn: !!s.hasDsr && signedIn, showDsrLink: !!s.hasDsr && signedOut }, s));
+    const nav = sections.map(s=>({ id:s.id, num:s.num, label:s.label }));
+
+    const goScreen=(k)=>(e)=>{ if(e&&e.preventDefault) e.preventDefault(); this.set('screen',k); try{ history.replaceState(null,'','#'+k); }catch(err){} if(typeof window!=='undefined') window.scrollTo(0,0); };
+
+    const segScreen=this.seg([{k:'tos',label:'H5 Terms'},{k:'privacy',label:'H6 Privacy'}], st.screen, 'screen');
+    const segAuth=this.seg([{k:'signedOut',label:'Signed out'},{k:'signedIn',label:'Signed in'}], st.auth, 'auth');
+    const segTheme=['light','dark','system'].map(mode=>({ label:mode.charAt(0).toUpperCase()+mode.slice(1), active:st.theme===mode, icon:this.themeIcon(mode), onSelect:()=>this.set('theme',mode), style:this.segStyle(st.theme===mode) }));
+    const rmBtnStyle={ appearance:'none',cursor:'pointer',font:'600 12px Inter,system-ui,sans-serif',padding:'8px 14px',borderRadius:'999px',minHeight:'34px',border:'1px solid '+(rm?'var(--info)':'var(--border-strong)'),background:rm?'color-mix(in srgb,var(--info) 14%,transparent)':'var(--surface-base)',color:rm?'var(--info)':'var(--text-primary)' };
+
+    return {
+      theme:st.theme, rmFlag: rm?'1':'', rmOn:rm,
+      signedIn, signedOut,
+      segScreen, segAuth, segTheme, rmBtnStyle, rmBtnLabel: rm?'On':'Off', onToggleRm:()=>this.set('rm',!rm),
+
+      navInactiveStyle:this.navStyle(),
+      acctOpen:st.acctOpen, onAvatar:()=>this.setState(s=>({ acctOpen:!s.acctOpen, fanOpen:false })),
+      onPlugOut:()=>{ this.setState({ acctOpen:false }); try{ window.location.href='PIF-Auth-Batch1.dc.html'; }catch(e){} },
+      onBackHistory:()=>{ try{ window.history.back(); }catch(e){} },
+      backBtnStyle:'appearance:none;border:none;background:transparent;cursor:pointer;color:var(--text-secondary);font:600 13px Inter,system-ui,sans-serif;padding:8px 0;min-height:24px;display:inline-flex;align-items:center;gap:6px;margin-bottom:8px',
+
+      pageTitle:data.title, meta:data.meta, sections, nav,
+      onGoTos:goScreen('tos'), onGoPrivacy:goScreen('privacy'),
+      onPrint:()=>{ try{ window.print(); }catch(e){} },
+
+      icoReceipt:this.ico('receipt',16), icoShield:this.ico('shield',16), icoAlert:this.ico('alert',16),
+      icoGear:this.ico('gear',16), icoLogout:this.ico('logout',16),
+
+      fanOpen:st.fanOpen, fanTabs:this.fanTabs(), launcherEl:this.launcherEl(),
+      onLauncher:()=>this.setState(s=>({ fanOpen:!s.fanOpen, acctOpen:false })),
+      overlayOpen: st.acctOpen || st.fanOpen,
+      onOverlayClose: ()=>this.setState({ acctOpen:false, fanOpen:false })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- PIF-Settings-Help-Batch5 v17 — 26 Jul, Privacy & data → Batch 10 Privacy/Terms links -->
+<!-- BUILD NOTE — cross-file navigation: launcher/avatar tabs, top-nav, and the bill-check "Connect your utility"
+     button use URL-hash deep-links between these wireframe files (e.g. #s5, #s12). In the real app
+     these are IN-APP client-side route transitions, NOT full page loads. The hash approach is a
+     wireframe convenience only. -->
+<!-- BUILD NOTE — launcher boundary: the Iona global launcher (this fan-out) appears from the DASHBOARD
+     ONWARD, once onboarding is complete. It is deliberately NOT shown on Auth (pre-login) or during the
+     Quiz (post-signup): Iona is already present there as the guide, a second Iona in the corner would
+     confuse, and most tabs (notifications, nudges, tips, settings, upgrade) are meaningless mid-onboarding.
+     Only Help has value during the quiz — routed through Iona-as-guide, not the launcher. Clean boundary:
+     guide during onboarding, launcher after. -->
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#FFFFFF;font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--primary);text-decoration:none}
+  a:hover{color:var(--secondary);text-decoration:underline}
+  button,select,input,textarea{font-family:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+  .pif-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  :root,[data-theme="light"],[data-theme="system"]{
+    --surface-base:#FFFFFF; --surface-raised:#F4F7FB; --surface-sunken:#E9EEF6;
+    --text-primary:#16233B; --text-secondary:#586378; --text-onfill:#FFFFFF;
+    --border-subtle:#C9D4E3; --border-strong:#7C8BA3;
+    --primary:#1B3A6B; --secondary:#0E7C7B; --accent:#077A46; --accent-bright:#0FA968;
+    --success:#077A46; --warning:#9A6400; --danger:#C22F2F; --info:#1B5FB8;
+    --elev-1:0 1px 2px rgba(22,35,59,.06),0 1px 3px rgba(22,35,59,.08);
+    --elev-2:0 2px 6px rgba(22,35,59,.08),0 4px 12px rgba(22,35,59,.10);
+    --elev-3:0 8px 24px rgba(22,35,59,.14);
+  }
+  [data-theme="dark"]{
+    --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+    --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+    --border-subtle:#2A3852; --border-strong:#62738F;
+    --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+    --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+    --elev-1:0 1px 2px rgba(0,0,0,.40);
+    --elev-2:0 4px 14px rgba(0,0,0,.50);
+    --elev-3:0 10px 30px rgba(0,0,0,.60);
+  }
+  @media (prefers-color-scheme:dark){
+    [data-theme="system"]{
+      --surface-base:#0B1220; --surface-raised:#141E32; --surface-sunken:#070C16;
+      --text-primary:#E9EEF7; --text-secondary:#A2AEC4; --text-onfill:#0B1220;
+      --border-subtle:#2A3852; --border-strong:#62738F;
+      --primary:#6C9BF0; --secondary:#3FBFBC; --accent:#2FE39A; --accent-bright:#2FE39A;
+      --success:#2FE39A; --warning:#F5B23D; --danger:#FF6B6B; --info:#7FB2FF;
+      --elev-1:0 1px 2px rgba(0,0,0,.40); --elev-2:0 4px 14px rgba(0,0,0,.50); --elev-3:0 10px 30px rgba(0,0,0,.60);
+    }
+  }
+  @keyframes pifShimmer{0%{background-position:-240px 0}100%{background-position:240px 0}}
+  @keyframes pifFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes pifFanIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+  [data-rm="1"] *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" data-rm="{{ rmFlag }}" style="min-height:100vh;width:100%;background:var(--surface-base);color:var(--text-primary);font-family:Inter,'SF Pro Text',Roboto,system-ui,sans-serif;transition:background .3s cubic-bezier(.2,0,0,1),color .3s cubic-bezier(.2,0,0,1)">
+<div style="max-width:1100px;margin:0 auto;padding:24px 24px 96px">
+
+  <!-- ============ REVIEW HARNESS ============ -->
+  <div role="region" aria-label="Review harness" style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;margin-bottom:24px;box-shadow:var(--elev-1)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)">Review harness</span>
+      <span style="font-size:12px;color:var(--text-secondary)">— not part of the product · flip any state</span>
+      <sc-if value="{{ rmOn }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--info);background:color-mix(in srgb,var(--info) 14%,transparent);border:1px solid var(--info);border-radius:999px;padding:3px 9px">Reduced motion on</span></sc-if>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:18px">
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Screen</div><div role="tablist" aria-label="Screen" style="display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px;max-width:660px"><sc-for list="{{ segScreen }}" as="s" hint-placeholder-count="13"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Tier</div><div role="tablist" aria-label="Tier" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ segTier }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Data state</div><div role="tablist" aria-label="Data state" style="display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segState }}" as="s" hint-placeholder-count="5"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Utility</div><div role="tablist" aria-label="Utility connection" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segUtil }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Completeness</div><div role="tablist" aria-label="Completeness" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:14px"><sc-for list="{{ segMeter }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Home</div><div role="tablist" aria-label="Home config" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ segHome }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Unread</div><div role="tablist" aria-label="Launcher unread" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ segUnread }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Theme</div><div role="tablist" aria-label="Theme" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ segTheme }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.icon }}{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Motion</div><button onClick="{{ onToggleRm }}" aria-pressed="{{ rmOn }}" style="{{ rmBtnStyle }}">{{ rmBtnLabel }}</button></div>
+    </div>
+  </div>
+
+  <div style="zoom:{{ textZoom }}">
+  <!-- ============ TOP BAR ============ -->
+  <div style="display:flex;align-items:center;gap:14px;padding:0 4px 20px;border-bottom:1px solid var(--border-subtle);margin-bottom:24px;position:relative">
+    <div style="display:flex;align-items:center;gap:9px">
+      <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
+      <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+    </div>
+    <nav aria-label="Primary" style="display:flex;gap:2px;margin-left:8px">
+      <a href="PIF-Dashboard-Ledger-Batch3.dc.html" style="{{ navInactiveStyle }}">Dashboard</a>
+      <a href="PIF-Dashboard-Ledger-Batch3.dc.html#ledger" style="{{ navInactiveStyle }}">Ledger</a>
+      <a href="PIF-Devices-Connect-Batch4.dc.html" style="{{ navInactiveStyle }}">Devices</a>
+      <span style="{{ navActiveStyle }}">Settings</span>
+      <a href="PIF-Billing-Lifecycle-Batch6.dc.html" style="{{ navInactiveStyle }}">Billing</a>
+    </nav>
+    <div style="margin-left:auto;position:relative">
+      <button onClick="{{ onAvatar }}" aria-label="Account settings" aria-expanded="{{ acctOpen }}" style="width:40px;height:40px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface-raised);color:var(--text-primary);font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">AR</button>
+      <sc-if value="{{ acctOpen }}" hint-placeholder-val="{{ false }}">
+        <div role="menu" aria-label="Account" style="position:absolute;right:0;top:48px;z-index:50;min-width:180px;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:14px;box-shadow:var(--elev-3);padding:6px;animation:pifFanIn .2s both">
+          <button role="menuitem" onClick="{{ onAvatarSettings }}" style="appearance:none;border:none;cursor:pointer;width:100%;text-align:left;display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:9px;font:600 13px Inter,system-ui,sans-serif;color:var(--text-primary);background:transparent" style-hover="background:var(--surface-sunken)">{{ icoGear }}Settings</button>
+          <button role="menuitem" onClick="{{ onAvatarSignout }}" style="appearance:none;border:none;cursor:pointer;width:100%;text-align:left;display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:9px;font:600 13px Inter,system-ui,sans-serif;color:var(--danger);background:transparent" style-hover="background:var(--surface-sunken)">{{ icoLogout }}Plug out</button>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- global save/unsaved banners -->
+  <sc-if value="{{ banner.show }}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="{{ banner.style }}">
+      <span style="flex:none;color:{{ banner.color }}">{{ banner.icon }}</span>
+      <span style="font-size:13px;line-height:18px;font-weight:600;flex:1;min-width:0">{{ banner.text }}</span>
+      <sc-if value="{{ banner.showActions }}" hint-placeholder-val="{{ false }}">
+        <span style="display:flex;gap:8px;flex:none"><button onClick="{{ banner.onSave }}" style="appearance:none;border:none;cursor:pointer;font:700 12.5px Inter,system-ui,sans-serif;padding:7px 14px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:36px">Save</button><button onClick="{{ banner.onDiscard }}" style="appearance:none;cursor:pointer;font:700 12.5px Inter,system-ui,sans-serif;padding:7px 14px;border-radius:999px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:36px">Discard</button></span>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- loading / offline overlays for content -->
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:12px" aria-hidden="true"><sc-for list="{{ skeleton }}" as="s" hint-placeholder-count="5"><div style="height:64px;border-radius:14px;background:linear-gradient(90deg,var(--surface-raised) 25%,var(--surface-sunken) 37%,var(--surface-raised) 63%);background-size:480px 100%;animation:pifShimmer 1.3s infinite linear;border:1px solid var(--border-subtle)"></div></sc-for></div>
+  </sc-if>
+  <sc-if value="{{ isOffline }}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="background:var(--surface-raised);border:1px solid var(--warning);border-radius:16px;padding:26px;text-align:center"><div style="color:var(--warning);display:flex;justify-content:center;margin-bottom:10px">{{ icoOffline }}</div><div style="font-size:16px;font-weight:700;margin-bottom:4px">You're offline</div><div style="font-size:13px;color:var(--text-secondary);max-width:360px;margin:0 auto">Settings will sync when you're back online. Your saved preferences are safe on your devices.</div></div>
+  </sc-if>
+
+  <sc-if value="{{ showContent }}" hint-placeholder-val="{{ true }}">
+
+  <!-- ============ SCREEN 1 — SETTINGS HOME ============ -->
+  <sc-if value="{{ isS1 }}" hint-placeholder-val="{{ true }}">
+    <div style="animation:pifFadeIn .3s both">
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:27px;font-weight:700;margin:0 0 16px">Settings</h1>
+      <div style="position:relative;margin-bottom:18px">
+        <span style="position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--text-secondary);pointer-events:none">{{ icoSearch }}</span>
+        <input value="{{ query }}" onInput="{{ onSearch }}" aria-label="Search settings" placeholder="Search settings — e.g. notifications, EV, passkey" style="width:100%;appearance:none;border:1px solid var(--border-strong);background:var(--surface-raised);color:var(--text-primary);border-radius:12px;padding:13px 15px 13px 44px;font:500 14px Inter,system-ui,sans-serif;min-height:48px">
+      </div>
+
+      <!-- completeness meter -->
+      <sc-if value="{{ meter.show }}" hint-placeholder-val="{{ true }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;margin-bottom:20px;box-shadow:var(--elev-1)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+            <span style="font-size:14px;font-weight:700">Profile completeness</span>
+            <span style="font-family:'Space Grotesk',system-ui;font-size:15px;font-weight:700;color:var(--accent)">{{ meter.pct }}%</span>
+          </div>
+          <div role="progressbar" aria-valuenow="{{ meter.pctNum }}" aria-valuemin="0" aria-valuemax="100" aria-label="Profile completeness" style="height:8px;border-radius:999px;background:var(--surface-sunken);overflow:hidden;margin-bottom:11px"><div style="height:100%;width:{{ meter.pct }}%;background:var(--accent);border-radius:999px"></div></div>
+          <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><span style="color:{{ meter.nudgeColor }};flex:none">{{ meter.icon }}</span><span style="font-size:13px;color:var(--text-secondary);flex:1;min-width:150px"><b style="color:var(--text-primary)">{{ meter.nudgeTitle }}</b>{{ meter.nudgeBody }}</span><button onClick="{{ meter.onCta }}" style="appearance:none;cursor:pointer;font:700 12.5px Inter,system-ui,sans-serif;padding:8px 14px;border-radius:999px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:38px">{{ meter.ctaLabel }}</button></div>
+        </div>
+      </sc-if>
+
+      <!-- search: no results -->
+      <sc-if value="{{ search.noResults }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;padding:40px 20px;background:var(--surface-raised);border:1px dashed var(--border-strong);border-radius:16px">
+          <div style="color:var(--text-secondary);display:flex;justify-content:center;margin-bottom:10px">{{ icoSearch }}</div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:4px">No settings match “{{ query }}”</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-bottom:14px">Try a different word, or ask Iona.</div>
+          <button onClick="{{ onAskIona }}" style="appearance:none;border:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:10px 16px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:42px">Ask Iona</button>
+        </div>
+      </sc-if>
+
+      <!-- section groups -->
+      <sc-if value="{{ search.showGroups }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ onMessages }}" style="width:100%;appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--secondary) 7%,var(--surface-raised));border:1px solid var(--secondary);border-radius:14px;padding:12px 16px;box-shadow:var(--elev-1);margin-bottom:14px;color:inherit" style-hover="background:color-mix(in srgb,var(--secondary) 12%,var(--surface-raised))"><span style="width:34px;height:34px;border-radius:10px;background:var(--surface-base);border:1px solid var(--border-subtle);display:inline-flex;align-items:center;justify-content:center;color:var(--secondary);flex:none">{{ icoBell }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:14px;font-weight:700">Messages</span><span style="display:block;font-size:12px;color:var(--text-secondary)">Notifications, nudges &amp; tips in one place</span></span><sc-if value="{{ messages.hasUnread }}" hint-placeholder-val="{{ true }}"><span aria-label="{{ messages.count }} unread" style="min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--danger);color:#fff;font:700 12px Inter,system-ui,sans-serif;display:inline-flex;align-items:center;justify-content:center;flex:none">{{ messages.count }}</span></sc-if><span style="color:var(--text-secondary);flex:none">{{ icoChevronR }}</span></button>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+            <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;box-shadow:var(--elev-1);overflow:hidden">
+              <button onClick="{{ g.onToggle }}" aria-expanded="{{ g.expanded }}" style="appearance:none;border:none;cursor:pointer;width:100%;display:flex;align-items:center;gap:12px;padding:16px 18px;background:transparent;color:inherit;text-align:left" style-hover="background:var(--surface-sunken)">
+                <span style="width:38px;height:38px;border-radius:11px;background:var(--surface-sunken);border:1px solid var(--border-subtle);display:inline-flex;align-items:center;justify-content:center;color:var(--primary);flex:none">{{ g.icon }}</span>
+                <span style="flex:1;min-width:0"><span style="display:block;font-size:15px;font-weight:700">{{ g.title }}</span><span style="display:block;font-size:12.5px;color:var(--text-secondary)">{{ g.sub }}</span></span>
+                <span style="color:var(--text-secondary);flex:none;transform:{{ g.chevron }}">{{ icoChevron }}</span>
+              </button>
+              <sc-if value="{{ g.expanded }}" hint-placeholder-val="{{ true }}">
+                <div style="border-top:1px solid var(--border-subtle)">
+                  <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="4">
+                    <button onClick="{{ r.onOpen }}" style="{{ r.rowStyle }}" style-hover="background:var(--surface-sunken)">
+                      <span style="color:{{ r.iconColor }};flex:none">{{ r.icon }}</span>
+                      <span style="flex:1;min-width:0"><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:14px;font-weight:600">{{ r.label }}</span><sc-if value="{{ r.badge }}" hint-placeholder-val="{{ false }}"><span style="{{ r.badgeStyle }}">{{ r.badgeText }}</span></sc-if><sc-if value="{{ r.kwHint }}" hint-placeholder-val="{{ false }}"><span style="font-size:10.5px;font-weight:600;color:var(--secondary);background:color-mix(in srgb,var(--secondary) 12%,transparent);border-radius:999px;padding:1px 7px">{{ r.kwHintText }}</span></sc-if></span><sc-if value="{{ r.hasDesc }}" hint-placeholder-val="{{ false }}"><span style="display:block;font-size:12px;color:var(--text-secondary);margin-top:2px">{{ r.desc }}</span></sc-if></span>
+                      <span style="color:var(--text-secondary);flex:none">{{ icoChevronR }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 2 — PROFILE ============ -->
+  <sc-if value="{{ isS2 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:640px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Profile &amp; account</h1>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 20px">Your details. Changes ask you to confirm before saving.</p>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <sc-for list="{{ profileFields }}" as="f" hint-placeholder-count="2">
+          <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:var(--elev-1)">
+            <span style="color:var(--text-secondary);flex:none">{{ f.icon }}</span>
+            <div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--text-secondary);margin-bottom:2px">{{ f.label }}</div><div style="font-size:14.5px;font-weight:600">{{ f.value }}</div></div>
+            <button onClick="{{ f.onEdit }}" aria-label="Edit {{ f.label }}" style="appearance:none;cursor:pointer;font:700 12.5px Inter,system-ui,sans-serif;padding:8px 14px;border-radius:999px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:38px">Edit</button>
+          </div>
+        </sc-for>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:var(--elev-1)">
+          <span style="color:var(--text-secondary);flex:none">{{ icoHome }}</span>
+          <div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--text-secondary);margin-bottom:2px">Service area</div><div style="font-size:14.5px;font-weight:600">{{ serviceArea.value }}</div><div style="font-size:11.5px;color:var(--text-secondary);margin-top:2px">{{ serviceArea.source }}</div></div>
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;padding:4px 10px;flex:none">{{ icoLock }}Read-only</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 3 — COMFORT & SCHEDULE ============ -->
+  <sc-if value="{{ isS3 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:680px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Comfort &amp; schedule</h1>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 8px">The same facts you set during onboarding — now editable. Each change previews its impact. <b style="color:var(--text-primary)">One shared data model</b>: the quiz just walks a subset of these.</p>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        <sc-for list="{{ comfortFields }}" as="f" hint-placeholder-count="4">
+          <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="color:var(--secondary)">{{ f.icon }}</span><span style="font-size:14.5px;font-weight:700">{{ f.label }}</span></div>
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              <div role="radiogroup" aria-label="{{ f.label }}" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px">
+                <sc-for list="{{ f.options }}" as="o" hint-placeholder-count="3"><button role="radio" aria-checked="{{ o.checked }}" onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+              </div>
+              <span style="display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-secondary)"><span style="color:{{ f.impactColor }}">{{ f.impactIcon }}</span>{{ f.impact }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ comfortAdvisory }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,var(--warning) 8%,var(--surface-raised));border:1px solid var(--warning);border-radius:14px;padding:13px 15px;margin-top:14px"><span style="color:var(--warning);flex:none;margin-top:1px">{{ icoInfo }}</span><div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)"><b style="color:var(--text-primary)">Advisory only.</b> Your heating/cooling isn't electric &amp; controllable, so PIF suggests these settings but can't act on them — no dollar impact is shown.</div></div>
+      </sc-if>
+      <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:14px 2px 0"><b style="color:var(--text-primary)">≈</b> marks an estimate — modeled from typical behaviour and shown with the <b style="color:var(--text-primary)">estimates footnote</b> until it's metered or bill-checked. Figures update as PIF learns your home.</p>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 4 — RATE & UTILITY ============ -->
+  <sc-if value="{{ isS4 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:640px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Rate &amp; utility</h1>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 20px">Your utility and rate plan. These re-resolve when you move or switch provider.</p>
+
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><span style="color:var(--secondary)">{{ icoDoc }}</span><span style="font-size:14.5px;font-weight:700">Utility &amp; plan</span></div>
+        <div style="display:flex;flex-direction:column;gap:1px;border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden">
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Utility</span><span style="font-size:13.5px;font-weight:600">{{ rate.utility }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Rate plan</span><span style="font-size:13.5px;font-weight:600">{{ rate.plan }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Peak window</span><span style="font-size:13.5px;font-weight:600">{{ rate.peak }}</span></div>
+        </div>
+        <button onClick="{{ onChangeUtility }}" aria-expanded="{{ changeOpen }}" style="appearance:none;cursor:pointer;font:700 12.5px Inter,system-ui,sans-serif;padding:9px 15px;border-radius:999px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:40px;margin-top:14px">Change utility or plan</button>
+        <sc-if value="{{ changeOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+            <button onClick="{{ onChangeManual }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:12px;background:var(--surface-base);border:1px solid var(--border-subtle);color:inherit"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoDoc }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:700">Change plan or rate manually</span><span style="display:block;font-size:12px;color:var(--text-secondary)">Pick a different rate plan without re-authorizing — for when only your tariff changed.</span></span></button>
+            <button onClick="{{ onReconnect }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:12px;background:var(--surface-base);border:1px solid var(--border-subtle);color:inherit"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoRefresh }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:700">Switch provider (re-connect)</span><span style="display:block;font-size:12px;color:var(--text-secondary)">Sign in to a different utility — full provider connection.</span></span></button>
+            <button onClick="{{ onMoving }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:12px;background:var(--surface-base);border:1px solid var(--secondary);color:inherit"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoHome }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:700">I&rsquo;m moving home</span><span style="display:block;font-size:12px;color:var(--text-secondary)">Moving? Check if PIF comes with you and re-point your service.</span></span></button>
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- bill-reconciliation status -->
+      <sc-if value="{{ recon.show }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-raised);border:1px solid {{ recon.tone }};border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span style="color:{{ recon.tone }}">{{ recon.icon }}</span><span style="font-size:14.5px;font-weight:700">{{ recon.title }}</span></div>
+          <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:13px">{{ recon.note }}</div>
+          <div style="display:flex;flex-direction:column;gap:1px;border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden">
+            <sc-for list="{{ recon.rows }}" as="row" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:12px;padding:12px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">{{ row.k }}</span><span style="font-size:13px;font-weight:600">{{ row.v }}</span></div></sc-for>
+          </div>
+          <sc-if value="{{ recon.cta }}" hint-placeholder-val="{{ false }}"><button onClick="{{ onConnectUtility }}" style="appearance:none;border:none;cursor:pointer;font:700 12.5px Inter,system-ui,sans-serif;padding:9px 15px;border-radius:11px;background:var(--secondary);color:var(--text-onfill);min-height:40px;margin-top:13px">Connect for ongoing checks</button></sc-if>
+        </div>
+      </sc-if>
+
+      <!-- timezone editable fact -->
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;box-shadow:var(--elev-1);margin-bottom:14px">
+        <div style="display:flex;align-items:flex-start;gap:11px">
+          <span style="color:var(--text-secondary);flex:none;margin-top:1px">{{ icoClock }}</span>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;line-height:20px"><span style="color:var(--text-secondary)">Times shown in </span><span style="font-weight:700">{{ tzLabel }}</span><span style="color:var(--text-secondary)"> · </span><button onClick="{{ onTzChange }}" aria-expanded="{{ tzPickerOpen }}" style="appearance:none;border:none;background:transparent;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;color:var(--primary);padding:0" style-hover="text-decoration:underline">change</button></div><div style="font-size:12px;color:var(--text-secondary);margin-top:3px">TOU windows are defined in your utility's local time. We use it for every tariff time.</div><sc-if value="{{ tzPickerOpen }}" hint-placeholder-val="{{ false }}"><div role="radiogroup" aria-label="Time zone" style="display:flex;flex-direction:column;gap:6px;margin-top:12px"><sc-for list="{{ tzZones }}" as="z" hint-placeholder-count="5"><button role="radio" aria-checked="{{ z.checked }}" onClick="{{ z.onPick }}" style="{{ z.style }}">{{ z.label }}</button></sc-for></div></sc-if></div>
+        </div>
+      </div>
+
+      <!-- connect utility entry -->
+      <div style="{{ utilCard.style }}">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span style="flex:none;margin-top:1px;color:{{ utilCard.color }}">{{ utilCard.icon }}</span>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;margin-bottom:2px">{{ utilCard.title }}</div><div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)">{{ utilCard.body }}</div></div>
+        </div>
+        <sc-if value="{{ utilCard.showCta }}" hint-placeholder-val="{{ true }}"><button onClick="{{ onConnectUtility }}" style="appearance:none;border:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:10px 16px;border-radius:11px;background:var(--secondary);color:var(--text-onfill);min-height:44px;margin-top:13px">Connect your utility</button></sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 5 — CONNECT UTILITY FLOW ============ -->
+  <sc-if value="{{ isS5 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:520px;margin:0 auto">
+      <button onClick="{{ onUtilBack }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <div style="background:color-mix(in srgb,var(--secondary) 8%,var(--surface-raised));border:1px solid var(--secondary);border-radius:16px;padding:14px 16px;margin-bottom:18px;display:flex;gap:11px;align-items:flex-start">
+        <span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoInfo }}</span>
+        <div style="font-size:13px;line-height:18px"><b>Connecting your utility = ongoing automatic bill-checking.</b><span style="color:var(--text-secondary)"> Uploading a single bill is a one-off. This is the automatic path.</span></div>
+      </div>
+
+      <!-- step: provider -->
+      <sc-if value="{{ utilFlow.isProvider }}" hint-placeholder-val="{{ true }}">
+        <h1 style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin:0 0 4px">Find your utility</h1>
+        <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 16px">Pick your provider — you'll sign in on their own secure page.</p>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ utilProviders }}" as="p" hint-placeholder-count="4">
+            <button onClick="{{ p.onPick }}" style="appearance:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:13px;background:var(--surface-raised);border:1px solid var(--border-subtle);box-shadow:var(--elev-1);color:inherit;text-align:left;min-height:56px" style-hover="border-color:var(--secondary)"><span style="width:34px;height:34px;border-radius:9px;background:var(--surface-sunken);border:1px solid var(--border-subtle);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex:none">{{ p.mono }}</span><span style="flex:1;font-size:14px;font-weight:600">{{ p.name }}</span><span style="color:var(--text-secondary)">{{ icoChevronR }}</span></button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- step: authorize -->
+      <sc-if value="{{ utilFlow.isAuth }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:24px;box-shadow:var(--elev-2)">
+          <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:18px"><span style="width:44px;height:44px;border-radius:11px;display:block"><img src="assets/pif-tile.png" alt="ProIonFlow" style="width:44px;height:44px;border-radius:11px;display:block"></span><span style="color:var(--text-secondary)">{{ icoArrow }}</span><span style="width:44px;height:44px;border-radius:11px;background:var(--surface-sunken);border:1px solid var(--border-subtle);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px">DE</span></div>
+          <h1 style="font-family:'Space Grotesk',system-ui;font-size:20px;font-weight:700;margin:0 0 6px;text-align:center">Continue to Dominion Energy</h1>
+          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);text-align:center;margin:0 0 18px">You'll sign in on your utility's own page. PIF never sees your password.</p>
+          <div style="background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:14px 16px;margin-bottom:18px"><div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:10px">PIF will read (only)</div><div style="display:flex;flex-direction:column;gap:9px"><sc-for list="{{ utilScopes }}" as="s" hint-placeholder-count="3"><div style="display:flex;align-items:flex-start;gap:9px"><span style="flex:none;margin-top:1px;color:var(--secondary)">{{ s.icon }}</span><span style="font-size:12.5px;line-height:18px"><b>{{ s.title }}</b><span style="color:var(--text-secondary)"> — {{ s.detail }}</span></span></div></sc-for></div></div>
+          <button onClick="{{ utilFlow.onAuthorize }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:13px;border-radius:12px;background:var(--secondary);color:var(--text-onfill);min-height:50px">Continue to Dominion Energy</button>
+        </div>
+      </sc-if>
+
+      <!-- step: scope confirm -->
+      <sc-if value="{{ utilFlow.isScope }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:24px;box-shadow:var(--elev-2);text-align:center">
+          <div style="width:54px;height:54px;border-radius:999px;background:color-mix(in srgb,var(--success) 14%,transparent);color:var(--success);display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px">{{ icoBigCheck }}</div>
+          <h1 style="font-family:'Space Grotesk',system-ui;font-size:21px;font-weight:700;margin:0 0 6px">Dominion Energy connected</h1>
+          <p style="font-size:13px;color:var(--text-secondary);margin:0 0 16px">Here's exactly what you granted.</p>
+          <div style="text-align:left;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;flex-direction:column;gap:9px"><sc-for list="{{ utilScopes }}" as="s" hint-placeholder-count="3"><div style="display:flex;align-items:flex-start;gap:9px"><span style="flex:none;margin-top:1px;color:var(--success)">{{ icoCheck }}</span><span style="font-size:12.5px;line-height:18px"><b>{{ s.title }}</b><span style="color:var(--text-secondary)"> — {{ s.detail }}</span></span></div></sc-for></div>
+          <div style="display:flex;align-items:center;gap:8px;justify-content:center;font-size:12px;color:var(--text-secondary);margin-bottom:16px">{{ icoLock }}<span>Read-only. Revoke anytime in Settings → Connections.</span></div>
+          <button onClick="{{ utilFlow.onDone }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:13px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:50px">Done</button>
+        </div>
+      </sc-if>
+
+      <!-- step: error -->
+      <sc-if value="{{ utilFlow.isError }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:24px;box-shadow:var(--elev-2);text-align:center">
+          <div style="width:54px;height:54px;border-radius:999px;background:color-mix(in srgb,var(--danger) 13%,transparent);color:var(--danger);display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px">{{ icoCross }}</div>
+          <h1 style="font-family:'Space Grotesk',system-ui;font-size:20px;font-weight:700;margin:0 0 6px">Couldn't connect</h1>
+          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0 0 18px">The sign-in didn't finish, or the link expired. Nothing was connected — you can try again.</p>
+          <div style="display:flex;flex-direction:column;gap:9px"><button onClick="{{ utilFlow.onRetry }}" style="appearance:none;border:none;cursor:pointer;font:700 14px Inter,system-ui,sans-serif;padding:12px;border-radius:12px;background:var(--secondary);color:var(--text-onfill);min-height:48px">Try again</button><button onClick="{{ utilFlow.onDone }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:11px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:44px">Skip for now</button></div>
+        </div>
+      </sc-if>
+
+      <!-- step: already connected -->
+      <sc-if value="{{ utilFlow.isAlready }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:22px;box-shadow:var(--elev-2)">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px"><span style="width:42px;height:42px;border-radius:999px;background:color-mix(in srgb,var(--success) 13%,transparent);color:var(--success);display:inline-flex;align-items:center;justify-content:center;flex:none">{{ icoCheck }}</span><div><div style="font-size:16px;font-weight:700">Already connected</div><div style="font-size:12.5px;color:var(--text-secondary)">Dominion Energy · alex@home.com · bill-checking on</div></div></div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap"><button onClick="{{ utilFlow.onRefresh }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:10px 15px;border-radius:11px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:42px">Refresh connection</button><button onClick="{{ utilFlow.onDisconnect }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:10px 15px;border-radius:11px;background:transparent;color:var(--danger);border:1px solid var(--danger);min-height:42px">Disconnect</button></div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 6 — NOTIFICATIONS & COMMS ============ -->
+  <sc-if value="{{ isS6 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:680px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Notifications &amp; communications</h1>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 20px">Choose how each kind of message reaches you. Transactional and marketing consent are tracked separately.</p>
+
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;box-shadow:var(--elev-1);overflow:hidden;margin-bottom:16px">
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border-subtle);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary)"><span>Category</span><span style="width:56px;text-align:center">Email</span><span style="width:56px;text-align:center">Push</span></div>
+        <sc-for list="{{ notifRows }}" as="n" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border-subtle)">
+            <div style="min-width:0"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><span style="font-size:14px;font-weight:600">{{ n.label }}</span><sc-if value="{{ n.locked }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--info)">{{ icoLock }}Always on</span></sc-if></div><div style="font-size:12px;color:var(--text-secondary)">{{ n.desc }}</div></div>
+            <button role="switch" aria-checked="{{ n.emailOn }}" aria-disabled="{{ n.disabled }}" aria-label="{{ n.label }} email" onClick="{{ n.onEmail }}" style="{{ n.emailStyle }}"><span style="{{ n.emailKnob }}"></span></button>
+            <button role="switch" aria-checked="{{ n.pushOn }}" aria-disabled="{{ n.disabled }}" aria-label="{{ n.label }} push" onClick="{{ n.onPush }}" style="{{ n.pushStyle }}"><span style="{{ n.pushKnob }}"></span></button>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;box-shadow:var(--elev-1)">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <span style="color:var(--secondary)">{{ icoClock }}</span>
+          <div style="flex:1;min-width:150px"><div style="font-size:14px;font-weight:700">Quiet hours</div><div style="font-size:12.5px;color:var(--text-secondary)">No marketing or savings push between these times. Security &amp; billing alerts still send.</div></div>
+          <button role="switch" aria-checked="{{ quietOn }}" aria-label="Quiet hours" onClick="{{ onQuietToggle }}" style="{{ quietSwStyle }}"><span style="{{ quietSwKnob }}"></span></button>
+        </div>
+        <sc-if value="{{ quietOn }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border-subtle)">
+            <label style="font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:8px">From <input type="time" value="{{ quietFrom }}" onInput="{{ onQuietFrom }}" aria-label="Quiet hours start" style="appearance:none;border:1px solid var(--border-strong);background:var(--surface-base);color:var(--text-primary);border-radius:9px;padding:8px 10px;font:600 13px 'JetBrains Mono',monospace;min-height:40px"></label>
+            <label style="font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:8px">To <input type="time" value="{{ quietTo }}" onInput="{{ onQuietTo }}" aria-label="Quiet hours end" style="appearance:none;border:1px solid var(--border-strong);background:var(--surface-base);color:var(--text-primary);border-radius:9px;padding:8px 10px;font:600 13px 'JetBrains Mono',monospace;min-height:40px"></label>
+          </div>
+        </sc-if>
+      </div>
+      <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:12px 2px 0"><b style="color:var(--text-primary)">Marketing</b> messages (tips, offers) are off unless you opt in above; <b style="color:var(--text-primary)">transactional</b> messages (security, billing, outages) always send and are consented separately. A separate <b style="color:var(--text-primary)">SMS</b> channel will join email and push in a later batch.</p>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 7 — APPEARANCE & ACCESSIBILITY ============ -->
+  <sc-if value="{{ isS7 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:640px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 20px">Appearance &amp; accessibility</h1>
+
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+        <div style="font-size:14.5px;font-weight:700;margin-bottom:4px">Theme</div>
+        <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:14px"><b style="color:var(--text-primary)">System</b> follows your device automatically and updates live when it changes.</div>
+        <div role="radiogroup" aria-label="Theme" style="display:flex;gap:10px;flex-wrap:wrap"><sc-for list="{{ themeCards }}" as="t" hint-placeholder-count="3"><button role="radio" aria-checked="{{ t.checked }}" onClick="{{ t.onPick }}" style="{{ t.style }}"><span style="color:{{ t.color }}">{{ t.icon }}</span><span style="font-size:13px;font-weight:700">{{ t.label }}</span></button></sc-for></div>
+      </div>
+
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+        <div style="font-size:14.5px;font-weight:700;margin-bottom:14px">Text size</div>
+        <div role="radiogroup" aria-label="Text size" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ textSizes }}" as="t" hint-placeholder-count="4"><button role="radio" aria-checked="{{ t.checked }}" onClick="{{ t.onPick }}" style="{{ t.style }}">{{ t.label }}</button></sc-for></div>
+        <div style="margin-top:14px;padding:12px 14px;border-radius:11px;background:var(--surface-sunken);border:1px solid var(--border-subtle)"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin-bottom:6px">Preview</div><div style="font-size:16px;line-height:1.5">The quick brown fox jumps over the lazy dog.</div></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:12px 0 0;display:flex;align-items:center;gap:7px"><span style="flex:none">{{ icoInfo }}</span><span>Text size applies across the PIF app on this device once you're signed in.</span></p>
+      </div>
+
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;box-shadow:var(--elev-1);display:flex;align-items:center;gap:14px">
+        <div style="flex:1;min-width:0"><div style="font-size:14.5px;font-weight:700">Reduce motion</div><div style="font-size:12.5px;color:var(--text-secondary)">Follows your system setting. You can force it on here.</div></div>
+        <button role="switch" aria-checked="{{ rmOn }}" aria-label="Reduce motion" onClick="{{ onToggleRm }}" style="{{ rmSwitchStyle }}"><span style="{{ rmSwitchKnob }}"></span></button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 8 — WHAT PIF LEARNED ============ -->
+  <sc-if value="{{ isS8 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:680px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">What PIF learned</h1>
+      <p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 0 20px">In plain language, here's what PIF has picked up from your home. It's yours — correct anything that's off, or reset it entirely.</p>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ learned }}" as="l" hint-placeholder-count="4">
+          <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:16px 18px;box-shadow:var(--elev-1);display:flex;gap:13px;align-items:flex-start">
+            <span style="color:var(--secondary);flex:none;margin-top:1px">{{ l.icon }}</span>
+            <div style="flex:1;min-width:0"><div style="font-size:14px;line-height:20px">{{ l.text }}</div><div style="display:flex;gap:8px;margin-top:10px"><button onClick="{{ l.onCorrect }}" style="appearance:none;cursor:pointer;font:700 12px Inter,system-ui,sans-serif;padding:7px 13px;border-radius:999px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:36px">Correct</button></div></div>
+          </div>
+        </sc-for>
+      </div>
+      <button onClick="{{ onResetLearned }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:11px 16px;border-radius:11px;background:transparent;color:var(--danger);border:1px solid var(--danger);min-height:44px;margin-top:16px">Reset everything PIF learned</button>
+    </div>
+  </sc-if>
+
+  <!-- SCREEN 9 (Personalization) removed in v5 — folded out of Data & learning per revision A -->
+
+  <!-- ============ SCREEN 10 — PRIVACY & DATA ============ -->
+  <sc-if value="{{ isS10 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:640px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 20px">Privacy &amp; data</h1>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:16px 18px;box-shadow:var(--elev-1);display:flex;align-items:center;gap:14px"><span style="color:var(--primary)">{{ icoDownload }}</span><div style="flex:1"><div style="font-size:14px;font-weight:700">Export my data</div><div style="font-size:12.5px;color:var(--text-secondary)">A full copy of your account and ledger, emailed as a file.</div></div><button onClick="{{ onExport }}" style="appearance:none;cursor:pointer;font:700 12.5px Inter,system-ui,sans-serif;padding:9px 15px;border-radius:999px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:40px">Request</button></div>
+        <div style="background:var(--surface-raised);border:1px solid var(--danger);border-radius:14px;padding:16px 18px;box-shadow:var(--elev-1);display:flex;align-items:center;gap:14px"><span style="color:var(--danger)">{{ icoTrash }}</span><div style="flex:1"><div style="font-size:14px;font-weight:700">Delete account &amp; data</div><div style="font-size:12.5px;color:var(--text-secondary)">Permanently erase everything. This can't be undone.</div></div><button onClick="{{ onDelete }}" style="appearance:none;cursor:pointer;font:700 12.5px Inter,system-ui,sans-serif;padding:9px 15px;border-radius:999px;background:transparent;color:var(--danger);border:1px solid var(--danger);min-height:40px">Delete</button></div>
+      </div>
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;box-shadow:var(--elev-1);overflow:hidden">
+        <sc-for list="{{ privacyToggles }}" as="p" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:14px;padding:15px 18px;border-bottom:1px solid var(--border-subtle)"><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">{{ p.label }}</div><div style="font-size:12px;color:var(--text-secondary)">{{ p.desc }}</div></div><button role="switch" aria-checked="{{ p.on }}" aria-label="{{ p.label }}" onClick="{{ p.onToggle }}" style="{{ p.style }}"><span style="{{ p.knob }}"></span></button></div>
+        </sc-for>
+      </div>
+      <p style="font-size:12.5px;color:var(--text-secondary);margin:16px 2px 0">Read our <a href="PIF-Legal-Batch10.dc.html#privacy" style="font-weight:600">Privacy Policy</a> and <a href="PIF-Legal-Batch10.dc.html#tos" style="font-weight:600">Terms</a>.</p>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 11 — SECURITY ============ -->
+  <sc-if value="{{ isS11 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:640px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 20px">Security</h1>
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span style="color:var(--accent)">{{ icoKey }}</span><span style="font-size:14.5px;font-weight:700">Passkeys &amp; 2FA</span><span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--success);background:color-mix(in srgb,var(--success) 13%,transparent);border:1px solid var(--success);border-radius:999px;padding:2px 8px;margin-left:auto">{{ icoCheck }}On</span></div>
+        <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:14px">A passkey on this device, plus an authenticator app as backup.</div>
+        <button onClick="{{ onManagePasskeys }}" style="appearance:none;cursor:pointer;font:700 12.5px Inter,system-ui,sans-serif;padding:9px 15px;border-radius:999px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:40px">Manage</button>
+      </div>
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;box-shadow:var(--elev-1);overflow:hidden;margin-bottom:14px">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border-subtle);font-size:14px;font-weight:700">Active sessions</div>
+        <sc-for list="{{ sessions }}" as="s" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:13px;padding:14px 18px;border-bottom:1px solid var(--border-subtle)"><span style="color:var(--text-secondary);flex:none">{{ s.icon }}</span><div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:600">{{ s.device }}</div><div style="font-size:12px;color:var(--text-secondary)">{{ s.meta }}</div></div><sc-if value="{{ s.current }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;color:var(--success)">This device</span></sc-if></div>
+        </sc-for>
+      </div>
+      <button onClick="{{ onSignoutAll }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:11px 16px;border-radius:11px;background:transparent;color:var(--danger);border:1px solid var(--danger);min-height:44px;margin-bottom:16px">Plug out everywhere</button>
+      <div style="background:color-mix(in srgb,var(--info) 8%,var(--surface-raised));border:1px solid var(--info);border-radius:14px;padding:14px 16px;display:flex;gap:11px;align-items:flex-start"><span style="color:var(--info);flex:none;margin-top:1px">{{ icoLock }}</span><div style="font-size:12.5px;line-height:18px"><b>Step-up verification.</b><span style="color:var(--text-secondary)"> Sensitive actions — cancelling, changing payout, deleting data — ask you to re-confirm with your passkey, even while signed in.</span></div></div>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 12 — HELP ============ -->
+  <sc-if value="{{ isS12 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:720px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:26px;font-weight:700;margin:0 0 16px">Help</h1>
+      <div style="position:relative;margin-bottom:18px">
+        <span style="position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--text-secondary);pointer-events:none">{{ icoSearch }}</span>
+        <input value="{{ helpQuery }}" onInput="{{ onHelpSearch }}" aria-label="Search help" placeholder="Search help — e.g. how are savings calculated?" style="width:100%;appearance:none;border:1px solid var(--border-strong);background:var(--surface-raised);color:var(--text-primary);border-radius:12px;padding:13px 15px 13px 44px;font:500 14px Inter,system-ui,sans-serif;min-height:48px">
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+        <button onClick="{{ onCompareTiers }}" style="appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font:700 13px Inter,system-ui,sans-serif;padding:11px 16px;border-radius:12px;background:var(--surface-raised);color:var(--text-primary);border:1px solid var(--border-subtle);box-shadow:var(--elev-1);min-height:44px">{{ icoTiers }}Compare the 3 tiers</button>
+        <button onClick="{{ onAskIona }}" style="appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font:700 13px Inter,system-ui,sans-serif;padding:11px 16px;border-radius:12px;background:var(--primary);color:var(--text-onfill);border:none;min-height:44px">{{ icoIonaSmall }}Ask Iona</button>
+      </div>
+      <sc-if value="{{ help.noResults }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;padding:36px 20px;background:var(--surface-raised);border:1px dashed var(--border-strong);border-radius:16px"><div style="font-size:15px;font-weight:700;margin-bottom:4px">No answers match “{{ helpQuery }}”</div><div style="font-size:13px;color:var(--text-secondary)">Ask Iona and we'll get back to you by email.</div></div>
+      </sc-if>
+      <sc-if value="{{ help.showTopics }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <sc-for list="{{ helpTopics }}" as="t" hint-placeholder-count="3">
+            <div>
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px"><span style="color:var(--secondary)">{{ t.icon }}</span><span style="font-size:15px;font-weight:700">{{ t.title }}</span></div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <sc-for list="{{ t.qs }}" as="q" hint-placeholder-count="3"><div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:12px;box-shadow:var(--elev-1);overflow:hidden"><button onClick="{{ q.onToggle }}" aria-expanded="{{ q.open }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;padding:14px 16px;background:transparent;border:none;color:inherit;min-height:48px;width:100%" style-hover="background:var(--surface-sunken)"><span style="flex:1;font-size:13.5px;font-weight:600">{{ q.q }}</span><span style="color:var(--text-secondary)">{{ icoChevronR }}</span></button><sc-if value="{{ q.open }}" hint-placeholder-val="{{ false }}"><div style="padding:0 16px 15px;font-size:13px;line-height:19px;color:var(--text-secondary)">{{ q.a }}</div></sc-if></div></sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 13 — ASK IONA ============ -->
+  <sc-if value="{{ isS13 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:520px;margin:0 auto">
+      <button onClick="{{ onBackHelp }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <sc-if value="{{ ionaSent }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:20px;padding:32px 26px;box-shadow:var(--elev-2);text-align:center">
+          <div style="display:flex;justify-content:center;margin-bottom:14px">{{ ionaBig }}</div>
+          <h1 style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin:0 0 8px">Got it! Iona will reply to the email on your account.</h1>
+          <p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 0 20px">Usually within a day.</p>
+          <button onClick="{{ onBackHelp }}" style="appearance:none;border:none;cursor:pointer;font:700 14px Inter,system-ui,sans-serif;padding:12px 20px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:46px"><span aria-hidden="true">←</span> Back</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ ionaNotSent }}" hint-placeholder-val="{{ true }}">
+        <div style="text-align:center;margin-bottom:18px"><div style="display:flex;justify-content:center;margin-bottom:12px">{{ ionaBig }}</div><h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Ask Iona</h1><p style="font-size:13.5px;color:var(--text-secondary);margin:0">Tell me what's up and I'll get back to you by email.</p></div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:20px;box-shadow:var(--elev-1)">
+          <label for="b5-q" style="display:block;font-size:12.5px;font-weight:700;margin-bottom:7px">Your question</label>
+          <textarea id="b5-q" value="{{ ionaQuestion }}" onInput="{{ onIonaInput }}" placeholder="e.g. Why did my EV charge switch to 2am last night?" style="width:100%;min-height:110px;resize:vertical;appearance:none;border:1px solid var(--border-strong);background:var(--surface-base);color:var(--text-primary);border-radius:12px;padding:12px 14px;font:500 14px Inter,system-ui,sans-serif;margin-bottom:16px"></textarea>
+          <button onClick="{{ onIonaSend }}" aria-disabled="{{ ionaSendDisabled }}" style="{{ ionaSendStyle }}">Send to Iona</button>
+          <p style="font-size:11px;line-height:16px;color:var(--text-secondary);margin:12px 0 0;text-align:center">Replies are handled by our team for now — not an automated bot.</p>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 14 — PLAN & BILLING ============ -->
+  <sc-if value="{{ isS14 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:680px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Plan &amp; billing</h1>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 20px">Your subscription, payment method and invoices — and the paths to change tier or cancel.</p>
+
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:14.5px;font-weight:700">Current plan</span><span style="font-size:12px;font-weight:700;color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,transparent);border:1px solid var(--accent);border-radius:999px;padding:2px 10px">{{ planTierName }} · $15/mo</span></div>
+        <p style="font-size:12.5px;color:var(--text-secondary);margin:10px 0 0">Renews automatically each month until cancelled. Cancel anytime — your plan runs to the end of the paid month.</p>
+      </div>
+
+      <!-- upgrade / compare -->
+      <sc-if value="{{ planCanUpgrade }}" hint-placeholder-val="{{ true }}">
+        <div id="upgrade" style="background:var(--surface-raised);border:1px solid var(--accent);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span style="color:var(--accent)">{{ icoTiers }}</span><span style="font-size:14.5px;font-weight:700">Compare tiers &amp; upgrade</span></div>
+          <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:13px">See what each tier saves for your home, side by side. Any dollar figure carries its evidence tier.</div>
+          <button onClick="{{ onUpgradeFlow }}" style="appearance:none;border:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:10px 16px;border-radius:11px;background:var(--accent);color:var(--text-onfill);min-height:44px">Compare &amp; upgrade</button>
+        </div>
+      </sc-if>
+
+      <!-- billing -->
+      <div id="billing" style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="color:var(--secondary)">{{ icoCard }}</span><span style="font-size:14.5px;font-weight:700">Billing</span></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:13px 15px;border:1px solid var(--border-subtle);border-radius:12px;background:var(--surface-sunken);margin-bottom:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600">•••• 4242</span><span style="font-size:12.5px;color:var(--text-secondary)">Visa · exp 08/27</span><button onClick="{{ onUpdatePay }}" style="appearance:none;cursor:pointer;font:700 12px Inter,system-ui,sans-serif;padding:7px 13px;border-radius:999px;background:var(--surface-raised);color:var(--text-primary);border:1px solid var(--border-strong);min-height:36px;margin-left:auto">Update</button></div>
+        <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Recent invoices</div>
+        <div style="display:flex;flex-direction:column;gap:1px;border:1px solid var(--border-subtle);border-radius:10px;overflow:hidden">
+          <sc-for list="{{ invoices }}" as="i" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface-sunken)"><span style="flex:1;font-size:13px;font-weight:600">{{ i.date }}</span><span style="font-size:13px;font-variant-numeric:tabular-nums">{{ i.amt }}</span><button onClick="{{ onInvoice }}" aria-label="Download invoice {{ i.date }}" style="appearance:none;cursor:pointer;color:var(--primary);background:transparent;border:none;padding:4px;min-height:32px">{{ icoDownload }}</button></div></sc-for>
+        </div>
+      </div>
+
+      <!-- downgrade -->
+      <sc-if value="{{ planCanDowngrade }}" hint-placeholder-val="{{ false }}">
+        <div id="downgrade" style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span style="color:var(--text-secondary)">{{ icoDown }}</span><span style="font-size:14.5px;font-weight:700">Downgrade</span></div>
+          <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:13px">Move to a lower tier. We'll show what you'd leave on the table first — with the estimates footnote.</div>
+          <button onClick="{{ onDowngrade }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:10px 16px;border-radius:11px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:44px">See downgrade options</button>
+        </div>
+      </sc-if>
+
+      <!-- cancel -->
+      <div id="cancel" style="background:var(--surface-raised);border:1px solid var(--danger);border-radius:16px;padding:18px;box-shadow:var(--elev-1)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span style="color:var(--danger)">{{ icoCross }}</span><span style="font-size:14.5px;font-weight:700">Cancel subscription</span></div>
+        <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:13px">Cancel anytime — your plan runs to the end of the paid month (no refund for the current month).</div>
+        <button onClick="{{ onCancelSub }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:10px 16px;border-radius:11px;background:transparent;color:var(--danger);border:1px solid var(--danger);min-height:44px">Cancel subscription</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 15 — HOME & HVAC FACTS (edit) ============ -->
+  <sc-if value="{{ isS15 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:680px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Home &amp; HVAC facts</h1>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 18px">The same facts the quiz collected — edit just this slice, never the whole quiz. Changes feed your comfort estimates.</p>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1)">
+          <div style="font-size:14.5px;font-weight:700;margin-bottom:14px">Household</div>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px">
+            <span style="font-size:13.5px;font-weight:600;flex:1;min-width:120px">Adults</span>
+            <div style="display:inline-flex;align-items:center;gap:10px"><button onClick="{{ homeVM.adultsDec.onClick }}" aria-disabled="{{ homeVM.adultsDec.dis }}" aria-label="Fewer adults" style="{{ homeVM.adultsDec.style }}">{{ icoMinus }}</button><span style="font-family:'Space Grotesk',system-ui;font-size:18px;font-weight:700;min-width:24px;text-align:center">{{ homeVM.adults }}</span><button onClick="{{ homeVM.adultsInc.onClick }}" aria-disabled="{{ homeVM.adultsInc.dis }}" aria-label="More adults" style="{{ homeVM.adultsInc.style }}">{{ icoPlus }}</button></div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button onClick="{{ homeVM.onEditSqft }}" style="flex:1;min-width:140px;appearance:none;cursor:pointer;text-align:left;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:11px;padding:11px 14px;color:inherit"><span style="display:block;font-size:12px;color:var(--text-secondary)">Square feet</span><span style="display:block;font-size:14.5px;font-weight:600">{{ homeVM.sqft }}</span></button>
+            <button onClick="{{ homeVM.onEditBuilt }}" style="flex:1;min-width:140px;appearance:none;cursor:pointer;text-align:left;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:11px;padding:11px 14px;color:inherit"><span style="display:block;font-size:12px;color:var(--text-secondary)">Year built</span><span style="display:block;font-size:14.5px;font-weight:600">{{ homeVM.built }}</span></button>
+          </div>
+        </div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="color:var(--secondary)">{{ icoThermo }}</span><span style="font-size:14.5px;font-weight:700">Heating</span></div>
+          <div role="radiogroup" aria-label="Heating type" style="display:flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ homeVM.heat }}" as="o" hint-placeholder-count="3"><button role="radio" aria-checked="{{ o.checked }}" onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div>
+        </div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="color:var(--secondary)">{{ icoThermo }}</span><span style="font-size:14.5px;font-weight:700">Cooling</span></div>
+          <div role="radiogroup" aria-label="Cooling type" style="display:flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ homeVM.cool }}" as="o" hint-placeholder-count="3"><button role="radio" aria-checked="{{ o.checked }}" onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div>
+        </div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;box-shadow:var(--elev-1);display:flex;align-items:center;gap:14px">
+          <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700">Smart, controllable thermostat</div><div style="font-size:12.5px;color:var(--text-secondary)">If off, comfort changes are advisory only — no dollar impact.</div></div>
+          <button role="switch" aria-checked="{{ homeVM.controllable }}" aria-label="Controllable thermostat" onClick="{{ homeVM.onToggleCtrl }}" style="{{ homeVM.ctrlSwStyle }}"><span style="{{ homeVM.ctrlSwKnob }}"></span></button>
+        </div>
+        <sc-if value="{{ homeVM.crossShow }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ homeVM.onCross }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--secondary) 8%,var(--surface-raised));border:1px solid var(--secondary);border-radius:14px;padding:14px 16px;color:inherit"><span style="color:var(--secondary);flex:none">{{ icoHub }}</span><span style="flex:1;font-size:13px;line-height:18px">You have a smart thermostat — <b>connect it in Devices to enable control</b>.</span><span style="color:var(--secondary)">{{ icoChevronR }}</span></button>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 16 — SOLAR & BATTERY (edit) ============ -->
+  <sc-if value="{{ isS16 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:680px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Solar &amp; battery</h1>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 18px">Your generation and storage. These shape how PIF times charging and backup.</p>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="color:var(--secondary)">{{ icoSolar }}</span><span style="font-size:14.5px;font-weight:700">Solar panels</span></div>
+          <div role="radiogroup" aria-label="Solar present" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;margin-bottom:14px"><sc-for list="{{ solarVM.solarChips }}" as="o" hint-placeholder-count="2"><button role="radio" aria-checked="{{ o.checked }}" onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div>
+          <sc-if value="{{ solarVM.solar }}" hint-placeholder-val="{{ true }}"><button onClick="{{ solarVM.onEditSolarKw }}" style="width:100%;appearance:none;cursor:pointer;text-align:left;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:11px;padding:11px 14px;color:inherit"><span style="display:block;font-size:12px;color:var(--text-secondary)">System size</span><span style="display:block;font-size:14.5px;font-weight:600">{{ solarVM.solarKw }}</span></button></sc-if>
+        </div>
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="color:var(--secondary)">{{ icoBattery }}</span><span style="font-size:14.5px;font-weight:700">Home battery</span></div>
+          <div role="radiogroup" aria-label="Battery present" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;margin-bottom:14px"><sc-for list="{{ solarVM.batteryChips }}" as="o" hint-placeholder-count="2"><button role="radio" aria-checked="{{ o.checked }}" onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div>
+          <sc-if value="{{ solarVM.battery }}" hint-placeholder-val="{{ true }}"><button onClick="{{ solarVM.onEditBatteryKwh }}" style="width:100%;appearance:none;cursor:pointer;text-align:left;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:11px;padding:11px 14px;color:inherit"><span style="display:block;font-size:12px;color:var(--text-secondary)">Usable capacity</span><span style="display:block;font-size:14.5px;font-weight:600">{{ solarVM.batteryKwh }}</span></button></sc-if>
+        </div>
+        <sc-if value="{{ solarVM.crossShow }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ solarVM.onCross }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--secondary) 8%,var(--surface-raised));border:1px solid var(--secondary);border-radius:14px;padding:14px 16px;color:inherit"><span style="color:var(--secondary);flex:none">{{ icoBattery }}</span><span style="flex:1;font-size:13px;line-height:18px">You have a home battery — <b>connect it in Devices to enable control</b>.</span><span style="color:var(--secondary)">{{ icoChevronR }}</span></button>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ SCREEN 17 — EV (edit) ============ -->
+  <sc-if value="{{ isS17 }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:pifFadeIn .3s both;max-width:680px">
+      <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Electric vehicle</h1>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 18px">Your EV and when you need it charged. This unlocks overnight charge timing.</p>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="color:var(--secondary)">{{ icoEv }}</span><span style="font-size:14.5px;font-weight:700">Do you have an EV?</span></div>
+          <div role="radiogroup" aria-label="EV present" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px"><sc-for list="{{ evVM.evChips }}" as="o" hint-placeholder-count="2"><button role="radio" aria-checked="{{ o.checked }}" onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div>
+        </div>
+        <sc-if value="{{ evVM.ev }}" hint-placeholder-val="{{ true }}">
+          <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1)">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+              <button onClick="{{ evVM.onEditModel }}" style="flex:1;min-width:150px;appearance:none;cursor:pointer;text-align:left;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:11px;padding:11px 14px;color:inherit"><span style="display:block;font-size:12px;color:var(--text-secondary)">Make &amp; model</span><span style="display:block;font-size:14.5px;font-weight:600">{{ evVM.evModel }}</span></button>
+              <button onClick="{{ evVM.onEditKwh }}" style="flex:1;min-width:120px;appearance:none;cursor:pointer;text-align:left;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:11px;padding:11px 14px;color:inherit"><span style="display:block;font-size:12px;color:var(--text-secondary)">Battery size</span><span style="display:block;font-size:14.5px;font-weight:600">{{ evVM.evKwh }}</span></button>
+            </div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:8px">Ready-by deadline</div>
+            <div role="radiogroup" aria-label="Ready-by deadline" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;margin-bottom:12px"><sc-for list="{{ evVM.departChips }}" as="o" hint-placeholder-count="3"><button role="radio" aria-checked="{{ o.checked }}" onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div>
+            <div style="display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-secondary)"><span style="color:{{ evVM.arbColor }}">{{ evVM.arbIcon }}</span>{{ evVM.arbImpact }}</div>
+          </div>
+          <sc-if value="{{ evVM.crossShow }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ evVM.onCross }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--secondary) 8%,var(--surface-raised));border:1px solid var(--secondary);border-radius:14px;padding:14px 16px;color:inherit"><span style="color:var(--secondary);flex:none">{{ icoEv }}</span><span style="flex:1;font-size:13px;line-height:18px">You have an EV — <b>connect your charger in Devices to enable control</b>.</span><span style="color:var(--secondary)">{{ icoChevronR }}</span></button>
+          </sc-if>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  </sc-if>
+
+  </div>
+</div>
+
+<!-- ============ GLOBAL OVERLAYS: edit sheet · confirm · toast ============ -->
+<sc-if value="{{ editOpen }}" hint-placeholder-val="{{ false }}">
+  <div role="dialog" aria-modal="true" aria-label="Edit field" style="position:fixed;inset:0;z-index:80;background:rgba(8,12,20,.5);display:flex;align-items:center;justify-content:center;padding:24px">
+    <div style="width:100%;max-width:420px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:22px;box-shadow:var(--elev-3)">
+      <div style="font-size:17px;font-weight:700;font-family:'Space Grotesk',system-ui;margin-bottom:14px">Edit {{ editLabel }}</div>
+      <input value="{{ editVal }}" onInput="{{ onEditInput }}" aria-label="{{ editLabel }}" style="width:100%;appearance:none;border:1px solid var(--border-strong);background:var(--surface-base);color:var(--text-primary);border-radius:11px;padding:12px 14px;font:500 14px Inter,system-ui,sans-serif;margin-bottom:16px"/>
+      <sc-if value="{{ editNote.show }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:9px;align-items:flex-start;background:var(--surface-base);border:1px solid {{ editNote.color }};border-radius:11px;padding:11px 13px;margin:-4px 0 16px"><span style="color:{{ editNote.color }};flex:none;margin-top:1px">{{ editNote.icon }}</span><div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)">{{ editNote.body }}<sc-if value="{{ editNote.hasLink }}" hint-placeholder-val="{{ false }}"> <button onClick="{{ editNote.onLink }}" style="appearance:none;border:none;background:transparent;cursor:pointer;color:var(--primary);font:600 12.5px Inter,system-ui,sans-serif;padding:0;text-decoration:underline">{{ editNote.linkLabel }}</button></sc-if></div></div></sc-if>
+      <div style="display:flex;gap:10px;justify-content:flex-end"><button onClick="{{ onEditCancel }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:11px 18px;border-radius:11px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px">Cancel</button><button onClick="{{ onEditSave }}" style="appearance:none;border:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:11px 18px;border-radius:11px;background:var(--primary);color:var(--text-onfill);min-height:46px">{{ editSaveLabel }}</button></div>
+    </div>
+  </div>
+</sc-if>
+<sc-if value="{{ confirmOpen }}" hint-placeholder-val="{{ false }}">
+  <div role="dialog" aria-modal="true" aria-label="{{ confirmTitle }}" style="position:fixed;inset:0;z-index:80;background:rgba(8,12,20,.5);display:flex;align-items:center;justify-content:center;padding:24px">
+    <div style="width:100%;max-width:440px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:22px;box-shadow:var(--elev-3)">
+      <div style="font-size:17px;font-weight:700;font-family:'Space Grotesk',system-ui;margin-bottom:8px">{{ confirmTitle }}</div>
+      <div style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin-bottom:16px">{{ confirmBody }}</div>
+      <sc-if value="{{ confirmPasskey }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:9px;align-items:flex-start;background:color-mix(in srgb,var(--info) 8%,var(--surface-base));border:1px solid var(--info);border-radius:11px;padding:11px 13px;margin-bottom:16px"><span style="color:var(--info);flex:none;margin-top:1px">{{ icoKey }}</span><div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)"><b style="color:var(--text-primary)">Passkey required.</b> You'll confirm on this device before anything is deleted — no typed confirmation needed.</div></div></sc-if>
+      <sc-if value="{{ confirmNeedsType }}" hint-placeholder-val="{{ false }}"><div style="margin-bottom:16px"><label style="font-size:12px;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:6px">Type DELETE to confirm</label><input value="{{ confirmTyped }}" onInput="{{ onConfirmType }}" aria-label="Type DELETE to confirm" style="width:100%;appearance:none;border:1px solid var(--danger);background:var(--surface-base);color:var(--text-primary);border-radius:11px;padding:11px 13px;font:600 14px 'JetBrains Mono',monospace;letter-spacing:.1em"/></div></sc-if>
+      <div style="display:flex;gap:10px;justify-content:flex-end"><button onClick="{{ onConfirmCancel }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:11px 18px;border-radius:11px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px">Cancel</button><button onClick="{{ onConfirmRun }}" aria-disabled="{{ confirmNeedsType }}" style="{{ confirmBtnStyle }}">{{ confirmLabel }}</button></div>
+    </div>
+  </div>
+</sc-if>
+<sc-if value="{{ toastShow }}" hint-placeholder-val="{{ false }}">
+  <div role="status" aria-live="polite" style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:90;background:var(--text-primary);color:var(--surface-base);font:600 13px Inter,system-ui,sans-serif;padding:12px 20px;border-radius:999px;box-shadow:var(--elev-3);max-width:90vw">{{ toast }}</div>
+</sc-if>
+
+<sc-if value="{{ overlayOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ onOverlayClose }}" aria-hidden="true" style="position:fixed;inset:0;z-index:40;background:transparent"></div>
+</sc-if>
+<!-- ============ IONA GLOBAL LAUNCHER (fan-out) ============ -->
+<div style="position:fixed;right:24px;bottom:24px;z-index:70;display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+  <sc-if value="{{ fanOpen }}" hint-placeholder-val="{{ false }}">
+    <div role="menu" aria-label="Iona" style="display:flex;flex-direction:column;align-items:flex-end;gap:9px">
+      <sc-for list="{{ fanTabs }}" as="t" hint-placeholder-count="5">
+        <button role="menuitem" onClick="{{ t.onSelect }}" style="{{ t.style }}"><span style="color:var(--text-secondary)">{{ t.icon }}</span><span>{{ t.label }}</span><sc-if value="{{ t.hi }}" hint-placeholder-val="{{ false }}"><span style="font-size:9px;font-weight:800;letter-spacing:.05em;color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,transparent);border-radius:999px;padding:1px 6px">NEW</span></sc-if></button>
+      </sc-for>
+    </div>
+  </sc-if>
+  <button onClick="{{ onLauncher }}" aria-label="Ask Iona" aria-expanded="{{ fanOpen }}" style="appearance:none;border:none;background:transparent;cursor:pointer;padding:0;line-height:0;border-radius:999px">{{ launcherEl }}</button>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:1200},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;s1&quot;,&quot;s2&quot;,&quot;s3&quot;,&quot;s4&quot;,&quot;s5&quot;,&quot;s6&quot;,&quot;s7&quot;,&quot;s8&quot;,&quot;s10&quot;,&quot;s11&quot;,&quot;s12&quot;,&quot;s13&quot;,&quot;s14&quot;,&quot;s15&quot;,&quot;s16&quot;,&quot;s17&quot;],&quot;default&quot;:&quot;s1&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;tier&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;basic&quot;,&quot;optimum&quot;,&quot;premium&quot;],&quot;default&quot;:&quot;optimum&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;dataState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;unsaved&quot;,&quot;saved&quot;,&quot;savefail&quot;,&quot;loading&quot;,&quot;offline&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;util&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;unlinked&quot;,&quot;bills&quot;,&quot;linked&quot;],&quot;default&quot;:&quot;unlinked&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    var hashScreen=''; try{ var h=(window.location.hash||'').replace('#',''); if(/^s(1[0-3]|[1-9])$/.test(h)) hashScreen=h; }catch(e){}
+    this.state = {
+      theme: props.initialTheme || 'light',
+      rm: false,
+      screen: hashScreen || props.screen || 's1',
+      tier: props.tier || 'optimum',
+      dataState: props.dataState || 'normal',
+      util: props.util || 'unlinked',
+      unread: true,
+      query: '', helpQuery: '',
+      expanded: { account:true, home:true, prefs:true, data:true },
+      fanOpen: false, acctOpen: false,
+      utilStep: 'provider', utilOrigin: 'settings',
+      ionaSent: false, ionaQuestion: '',
+      notif: { savings:{email:true,push:true}, tips:{email:false,push:false}, security:{email:true,push:true}, billing:{email:true,push:false} },
+      privacy: { analytics:true, personalization:true, thirdparty:false },
+      textSize: 'default',
+      openFaq:'', editField:null, editLabel:'', editVal:'',
+      comfort:{ floor:'68°', ceil:'76°', ev:'7am', res:'30%', drift:'±2°', away:'9–5 away' },
+      profileVals:{ name:'Alex Rivera', email:'alex@home.com', addr:'812 Maple Ave, Richmond, VA 23220' },
+      rate:{ utility:'Dominion Energy', plan:'TOU-D-PRIME', peak:'4–9pm · 24¢/kWh' },
+      tz:'Eastern Time', tzPickerOpen:false,
+      meterVariant:'ev', homePreset:'full', cfg:this.homeCfg('full'),
+      quietOn:true, quietFrom:'22:00', quietTo:'07:00', changeOpen:false,
+      confirm:null, confirmTyped:'', toast:'',
+    };
+  }
+  set(k,v){ const p={}; p[k]=v; this.setState(p); }
+  componentDidMount(){ this._esc=(e)=>{ if(e.key==='Escape') this.setState({acctOpen:false,fanOpen:false}); }; try{ window.addEventListener('keydown', this._esc); }catch(e){} }
+  componentWillUnmount(){ try{ window.removeEventListener('keydown', this._esc); }catch(e){} }
+  wrapApprox(text){ const parts=String(text||'').split('≈ '); const out=[]; parts.forEach((p,i)=>{ if(i>0){ out.push(React.createElement('span',{key:'ah'+i,'aria-hidden':'true'},'≈'), React.createElement('span',{key:'sr'+i,className:'pif-sr'},'approximately ')); } if(p) out.push(p); }); return React.createElement(React.Fragment,null,...out); }
+  goBatch6(h){ try{ window.location.href='PIF-Billing-Lifecycle-Batch6.dc.html#'+h; }catch(e){} }
+  goBatch7(){ try{ window.location.href='PIF-Acquisition-Batch7.dc.html#a11'; }catch(e){} }
+  resetView(){ return { query:'', expanded:{ account:true, home:true, prefs:true, data:true }, tzPickerOpen:false, editField:null, changeOpen:false, utilStep:'provider' }; }
+  toastMsg(m){ this.setState({toast:m}); clearTimeout(this._tt); this._tt=setTimeout(()=>this.setState({toast:''}),3000); }
+  askConfirm(o){ this.setState({confirm:o, confirmTyped:''}); }
+  homeCfg(preset){
+    if(preset==='minimal') return { ev:false, battery:false, solar:false, hvacElectric:false, thermostatControllable:false, heat:'Gas furnace', cool:'Central AC', adults:1, sqft:'1,900', built:'1998', evModel:'', evKwh:'—', solarKw:'—', batteryKwh:'—' };
+    return { ev:true, battery:true, solar:true, hvacElectric:true, thermostatControllable:true, heat:'Heat pump', cool:'Central AC', adults:2, sqft:'1,900', built:'1998', evModel:'Tesla Model 3', evKwh:'60 kWh', solarKw:'7.2 kW', batteryKwh:'13.5 kWh' };
+  }
+  applyHomePreset(p){ this.setState({ homePreset:p, cfg:this.homeCfg(p) }); }
+  lockedSwStyle(){ return { appearance:'none',border:'1px solid var(--success)',flex:'none',width:'50px',height:'29px',borderRadius:'999px',background:'var(--success)',position:'relative',cursor:'not-allowed',opacity:.85 }; }
+  componentDidUpdate(){ if(this._pendingAnchor){ const id=this._pendingAnchor; this._pendingAnchor=null; try{ const el=document.getElementById(id); if(el){ const y=el.getBoundingClientRect().top+window.pageYOffset-80; window.scrollTo(0, y<0?0:y); } }catch(e){} } }
+
+  // ---------- icon registry (ported from Foundations §15 + UI icons) ----------
+  ico(name, size){
+    // --- registry namespace resolution (device.* / status.* / action.* / tier.*) ---
+    // Unknown namespaced keys fall back to device.generic, per the icon registry (Foundations §15).
+    const REG={
+      'device.ev-charger':'ev-charger','device.thermostat':'thermostat-hvac','device.water-heater':'water-heater',
+      'device.solar':'solar-inverter','device.home-battery':'home-battery','device.smart-plug':'smart-plug','device.hub':'smart-home-hub','device.generic':'generic',
+      'status.active':'active','status.dormant':'dormant','status.stale':'stale','status.unclassified':'unclassified',
+      'status.protected':'protected','status.critical':'critical','status.error':'error','status.offline':'offline',
+      'tier.banked':'banked','tier.measured':'measured','tier.modeled':'modeled','tier.advisory':'advisory',
+      'action.shift':'shift-delay','action.charge':'charge','action.precool':'pre-cool','action.nudge':'nudge-advisory',
+    };
+    if(name && name.indexOf('.')>=0) name = REG[name] || 'generic';
+    const c={ width:size||18, height:size||18, viewBox:'0 0 20 20', fill:'none', style:{flex:'none'}, 'aria-hidden':'true' };
+    const P=(d,ex)=>React.createElement('path',Object.assign({ d, stroke:'currentColor', strokeWidth:1.6, strokeLinecap:'round', strokeLinejoin:'round' },ex||{}));
+    const C=(cx,cy,r,ex)=>React.createElement('circle',Object.assign({ cx,cy,r, stroke:'currentColor', strokeWidth:1.6 },ex||{}));
+    const D=(cx,cy,r)=>React.createElement('circle',{ cx,cy,r, fill:'currentColor' });
+    const m={
+      // Foundations §15 registry — canonical geometry, reused verbatim
+      // device.*
+      'ev-charger':()=>[P('M3 13l1.3-3.3a1 1 0 0 1 .93-.62h4.54a1 1 0 0 1 .93.62L12 13M3 13v2.3M12 13v2.3M3.5 13h8.5'),D(5,15.3,1),D(10.5,15.3,1),P('M15.5 5.5l-1.6 2.6h1.8L14.3 11')],
+      'thermostat-hvac':()=>[C(10,10,6.6),C(10,10,1.9),P('M10 3.4V4.9')],
+      'water-heater':()=>[P('M6 3.5h8v13H6z'),P('M10 8s1.9 2.1 1.9 3.3a1.9 1.9 0 0 1-3.8 0C8.1 10.1 10 8 10 8z')],
+      'dryer':()=>[P('M4 4h12v12H4z'),C(10,11,3.3),D(10,11,0.6),P('M6.4 6.6h.01M8.6 6.6h.01')],
+      'dishwasher':()=>[P('M4 4h12v12H4zM4 7.4h12'),P('M6.3 5.6h.01'),P('M8.5 12.4h3')],
+      'pool-pump-spa':()=>[P('M4 13.5c1.1 0 1.1-1 2.2-1s1.1 1 2.2 1 1.1-1 2.2-1 1.1 1 2.2 1'),P('M4 16c1.1 0 1.1-1 2.2-1s1.1 1 2.2 1 1.1-1 2.2-1 1.1 1 2.2 1'),P('M7 10V6M10 10V5M13 10V6')],
+      'home-battery':()=>[P('M3 7h11v6H3zM14 9h2v2h-2'),P('M8.4 8l-1.2 2.3h1.5L8 12.4')],
+      'solar-inverter':()=>[C(10,9.6,3),P('M10 3.2V4.8M10 14.4V16M3.4 9.6H5M15 9.6h1.6M5.4 5l1.1 1.1M13.5 13.1l1.1 1.1M14.6 5l-1.1 1.1M6.5 13.1l-1.1 1.1')],
+      'smart-plug':()=>[P('M7.6 3.5v3.2M12.4 3.5v3.2M6 6.5h8v2.3a4 4 0 0 1-8 0zM10 12.8V16.5')],
+      'smart-home-hub':()=>[C(10,10,1.9),C(10,4.6,1.3),C(10,15.4,1.3),C(4.6,10,1.3),C(15.4,10,1.3),P('M10 6.6v1.4M10 12v1.4M6.5 10h1.4M12.1 10h1.4')],
+      'space-heater':()=>[P('M3.6 4.6h12.8v10.8H3.6z'),P('M6 7v6M8.4 7v6M11 7v6M13.4 7v6')],
+      'well-pump':()=>[P('M3.4 15.5h13.2'),P('M10 15.5V7.4M7.4 10 10 7.4l2.6 2.6'),P('M6 15.5c0-2.4 8-2.4 8 0')],
+      'generic':()=>[P('M5 5h10v10H5z'),D(10,10,1.6)],
+      // action.*
+      'shift-delay':()=>[P('M4 8h9l-2.4-2.4M16 12H7l2.4 2.4')],
+      'charge':()=>[P('M4 9.5h9v4H4zM13 10.8h2v1.4h-2'),P('M8.5 3v4M6.6 5.2l1.9 1.9 1.9-1.9')],
+      'discharge':()=>[P('M4 9.5h9v4H4zM13 10.8h2v1.4h-2'),P('M8.5 7V3M6.6 4.8l1.9-1.9 1.9 1.9')],
+      'pre-cool':()=>[P('M10 3v14M4.2 6.5l11.6 7M15.8 6.5l-11.6 7M10 6.2 8.1 4.3M10 6.2l1.9-1.9M10 13.8l-1.9 1.9M10 13.8l1.9 1.9')],
+      'pre-heat':()=>[P('M7 16c0-2-2-2-2-4s2-2 2-4M10 16c0-2-2-2-2-4s2-2 2-4M13 16c0-2-2-2-2-4s2-2 2-4')],
+      'hold-reserve':()=>[P('M10 3 4.7 5.1v4.1c0 3.3 2.2 5.4 5.3 6.8 3.1-1.4 5.3-3.5 5.3-6.8V5.1z'),P('M8.2 9.2h3.6v2.6H8.2z')],
+      'sell-to-grid':()=>[P('M7 16l1-10M13 16l-1-10M7.4 9.4h5.2M6 6.4h8l-1-2.4H7z'),P('M10 12.2V15')],
+      'nudge-advisory':()=>[P('M6.6 9a3.4 3.4 0 0 1 6.8 0c0 3.4 1.2 4.3 1.2 4.3H5.4S6.6 12.4 6.6 9z'),P('M8.8 15.5a1.4 1.4 0 0 0 2.4 0'),P('M15.2 3.4l.55 1.35L17 5.3l-1.25.55L15.2 7l-.55-1.15L13.4 5.3l1.25-.55z')],
+      // status.*
+      'active':()=>[C(10,10,6.8),P('M6.8 10.2 9 12.4 13.4 7.8')],
+      'dormant':()=>[C(10,10,6.8),P('M8.4 7.6v4.8M11.6 7.6v4.8')],
+      'stale':()=>[P('M6 4h8M6 16h8M7 4c0 3 6 3 6 6s-6 3-6 6M13 4c0 3-6 3-6 6')],
+      'unclassified':()=>[C(10,10,6.8),P('M8.2 8.2a1.85 1.85 0 0 1 3.5.7c0 1.2-1.7 1.4-1.7 2.6'),D(10,13.7,0.55)],
+      'protected':()=>[P('M10 3 4.7 5.1v4.1c0 3.3 2.2 5.4 5.3 6.8 3.1-1.4 5.3-3.5 5.3-6.8V5.1z')],
+      'critical':()=>[P('M6.4 9.2V7a3.6 3.6 0 0 1 7.2 0v2.2'),P('M5.4 9.2h9.2v6.6H5.4z'),D(10,12.2,0.8)],
+      'error':()=>[P('M10 3.4 17.2 16.6H2.8z'),P('M10 8.4v3.4'),D(10,14.2,0.5)],
+      'offline':()=>[P('M3.4 8.1a10 10 0 0 1 13.2 0M6 10.7a6 6 0 0 1 8 0M8.3 13.2a2.6 2.6 0 0 1 3.4 0'),D(10,15.6,0.6),P('M4 4l12 12')],
+      // tier.*
+      'banked':()=>[P('M4 7c0-1.3 2.7-2.3 6-2.3s6 1 6 2.3-2.7 2.3-6 2.3-6-1-6-2.3zM4 7v5c0 1.3 2.7 2.3 6 2.3s6-1 6-2.3V7')],
+      'measured':()=>[P('M4 13a6 6 0 0 1 12 0'),P('M10 13l3.2-3')],
+      'modeled':()=>[P('M4 14c3.5 0 4.5-8 12-8'),P('M13 6h3v3')],
+      'advisory':()=>[P('M7 11V6.4a1.2 1.2 0 0 1 2.4 0V10M9.4 9.6V4.8a1.2 1.2 0 0 1 2.4 0V10M11.8 6.2a1.2 1.2 0 0 1 2.4 0V12a4 4 0 0 1-4 4H9a3 3 0 0 1-2.3-1.1L4.2 12.2s.8-1 2-.5l.8.4')],
+      'billchecked':()=>[C(10,10,6.8),P('M6.8 10.2 9 12.4 13.4 7.8')],
+      'controllable':()=>[P('M10 3v6'),P('M6 6.5a6 6 0 1 0 8 0')],
+      'heat-pump':()=>[P('M10 4v7'),C(10,13,2.4),P('M8 4h4')],
+      // ui / chrome
+      'search':()=>[C(9,9,5.4),P('M13 13l3.5 3.5')],
+      'user':()=>[C(10,7,3),P('M4.5 16a5.5 5.5 0 0 1 11 0')],
+      'users':()=>[C(7.5,8,2.4),P('M3.4 15.2a4.1 4.1 0 0 1 8.2 0'),P('M13 6.4a2.3 2.3 0 0 1 0 4.4M13.6 15.2a4.1 4.1 0 0 0-1.7-3.3')],
+      'lock':()=>[P('M6.4 9.2V7a3.6 3.6 0 0 1 7.2 0v2.2'),P('M5.4 9.2h9.2v6.6H5.4z'),D(10,12.2,0.8)],
+      'key':()=>[C(7,10,3),P('M9.6 9.4 16 3M13.5 5.5l1.6 1.6M12 7l1.6 1.6')],
+      'card':()=>[P('M3 6h14v8H3zM3 9h14')],
+      'bell':()=>[P('M6 8a4 4 0 0 1 8 0c0 4 1.5 5 1.5 5h-11S6 12 6 8z'),P('M8.5 16a1.6 1.6 0 0 0 3 0')],
+      'mail':()=>[P('M3 5h14v10H3zM3 6l7 5 7-5')],
+      'gear':()=>[C(10,10,2.4),P('M10 3.2v1.8M10 15v1.8M16.8 10H15M5 10H3.2M14.8 5.2 13.5 6.5M6.5 13.5 5.2 14.8M14.8 14.8 13.5 13.5M6.5 6.5 5.2 5.2')],
+      'home':()=>[P('M4 9l6-5 6 5v7H4z')],
+      'doc':()=>[P('M6 3h6l3 3v11H6zM12 3v3h3'),P('M8 10h5M8 13h5')],
+      'star':()=>[P('M10 3.5l1.9 3.9 4.3.6-3.1 3 .7 4.3L10 13.3 6.3 15.3l.7-4.3-3.1-3 4.3-.6z')],
+      'sparkles':()=>[P('M10 3l1.6 3.6L15 8l-3.4 1.4L10 13l-1.6-3.6L5 8l3.4-1.4z'),P('M15.5 13l.7 1.6 1.8.7-1.8.7-.7 1.6-.7-1.6-1.8-.7 1.8-.7z')],
+      'gift':()=>[P('M4 9h12v7H4zM4 6.5h12V9H4zM10 6.5V16'),P('M10 6.5C10 4.8 8.7 4 7.6 4.4S6.6 6.5 10 6.5M10 6.5C10 4.8 11.3 4 12.4 4.4S13.4 6.5 10 6.5')],
+      'share':()=>[C(6,10,2),C(14,6,2),C(14,14,2),P('M7.8 9l4.4-2M7.8 11l4.4 2')],
+      'copy':()=>[P('M7.5 7.5h7v8h-7zM5.5 12.5h-1v-8h8v1')],
+      'grip':()=>[D(7.5,6,1),D(12.5,6,1),D(7.5,10,1),D(12.5,10,1),D(7.5,14,1),D(12.5,14,1)],
+      'up':()=>[C(10,10,7),P('M10 13.5V7M7 9.5 10 6.5l3 3')],
+      'down':()=>[C(10,10,7),P('M10 6.5V13M13 10.5 10 13.5l-3-3')],
+      'x':()=>[P('M5.5 5.5l9 9M14.5 5.5l-9 9')],
+      'chevron':()=>[P('M5 8l5 5 5-5')],
+      'chevronR':()=>[P('M8 5l5 5-5 5')],
+      'plus':()=>[P('M10 4v12M4 10h12')],
+      'minus':()=>[P('M4 10h12')],
+      'download':()=>[P('M10 3v9M6.5 8.5 10 12l3.5-3.5M4 15.5h12')],
+      'trash':()=>[P('M4 6h12M8 6V4.5h4V6M6 6l.8 10h6.4L14 6')],
+      'clock':()=>[C(10,10,7),P('M10 6.4V10l2.4 1.6')],
+      'back':()=>[P('M15 10H4M9 5 4 10l5 5')],
+      'arrow':()=>[P('M4 10h11M11 5l5 5-5 5')],
+      'info':()=>[C(10,10,7.2),P('M10 9v4M10 6.6h.01')],
+      'warn':()=>[P('M10 3.4 17.2 16.6H2.8z'),P('M10 8.4v3.4'),D(10,14.2,0.5)],
+      'check':()=>[P('M4 10.5 8 14.5 16 5.5')],
+      'refresh':()=>[P('M15.5 8A6 6 0 1 0 16 11'),P('M16 4v4h-4')],
+      'tiers':()=>[P('M4 15h3V9H4zM8.5 15h3V5h-3zM13 15h3v-4h-3z')],
+      'swap':()=>[P('M5 7h10l-2.5-2.5M15 13H5l2.5 2.5')],
+      'logout':()=>[P('M8 4H4v12h4M12 7l3 3-3 3M15 10H7')],
+      'phone':()=>[P('M6.5 3.5h7v13h-7z'),P('M9 14.5h2')],
+      'monitor':()=>[P('M3 5h14v9H3zM7.5 17h5M10 14v3')],
+      'dot':()=>[D(10,10,3)],
+      'bolt':()=>[P('M11 3 5 11h4l-1 6 6-8h-4z')],
+      'cal':()=>[P('M4 5h12v11H4zM4 8h12M8 3v3M12 3v3')],
+      'eye':()=>[P('M2.5 10S5.5 5 10 5s7.5 5 7.5 5-3 5-7.5 5-7.5-5-7.5-5z'),C(10,10,2.2)],
+      'link':()=>[P('M8 12a3 3 0 0 1 0-4l2-2a3 3 0 0 1 4 4l-1 1'),P('M12 8a3 3 0 0 1 0 4l-2 2a3 3 0 0 1-4-4l1-1')],
+      'power':()=>[P('M10 3v6'),P('M6 6.5a6 6 0 1 0 8 0')],
+      'shield':()=>[P('M10 3 4.5 5.2v4.3c0 3.4 2.3 5.6 5.5 7 3.2-1.4 5.5-3.6 5.5-7V5.2z')],
+      'sliders':()=>[P('M4 6h8M15 6h1M4 10h1M8 10h8M4 14h5M12 14h4'),D(13,6,1.4),D(6,10,1.4),D(10,14,1.4)],
+      'sun':()=>[C(10,10,3),P('M10 3v1.5M10 15.5V17M3 10h1.5M15.5 10H17')],
+      'wifi':()=>[P('M3 8a10 10 0 0 1 14 0M5.5 10.6a6 6 0 0 1 9 0M8 13.2a2.4 2.4 0 0 1 4 0'),D(10,16,0.6)],
+      'cross':()=>[P('M6 6l8 8M14 6l-8 8')],
+    };
+    const f=m[name]||m['generic'];
+    return React.createElement('svg', c, ...f());
+  }
+
+  tierBadge(tier){
+    const map={ banked:{l:'Banked',c:'var(--success)',i:'tier.banked'}, measured:{l:'Measured',c:'var(--info)',i:'tier.measured'} };
+    const t=map[tier]||map.measured;
+    return { label:t.l, icon:this.ico(t.i,13), style:{ display:'inline-flex',alignItems:'center',gap:'4px',fontSize:'11px',fontWeight:700,color:t.c,background:'color-mix(in srgb,'+t.c+' 13%,transparent)',border:'1px solid '+t.c,borderRadius:'999px',padding:'2px 8px',whiteSpace:'nowrap' } };
+  }
+
+  // ---------- harness helpers ----------
+  segStyle(active){
+    const base={ appearance:'none',border:'none',background:'transparent',color:'var(--text-secondary)',font:'600 12px Inter,system-ui,sans-serif',padding:'7px 12px',borderRadius:'999px',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:'5px',minHeight:'34px' };
+    return active ? Object.assign({}, base, { background:'var(--surface-base)',color:'var(--text-primary)',boxShadow:'var(--elev-1)' }) : base;
+  }
+  seg(list,current,key){ return list.map(o=>({ label:o.label, active:current===o.k, onSelect:()=>this.set(key,o.k), style:this.segStyle(current===o.k) })); }
+  themeIcon(mode){
+    const c={ width:13,height:13,viewBox:'0 0 16 16',fill:'none' };
+    if(mode==='light') return React.createElement('svg',c,React.createElement('circle',{cx:8,cy:8,r:3.1,fill:'currentColor'}),React.createElement('path',{d:'M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M13 3l-1 1M4 12l-1 1',stroke:'currentColor',strokeWidth:1.3,strokeLinecap:'round'}));
+    if(mode==='dark') return React.createElement('svg',c,React.createElement('path',{d:'M13 9.5A6 6 0 0 1 6.5 3 5.6 5.6 0 1 0 13 9.5z',fill:'currentColor'}));
+    return React.createElement('svg',c,React.createElement('circle',{cx:8,cy:8,r:6,stroke:'currentColor',strokeWidth:1.4}),React.createElement('path',{d:'M8 2a6 6 0 0 1 0 12z',fill:'currentColor'}));
+  }
+  navStyle(active){ return { display:'inline-flex',alignItems:'center',background:active?'var(--surface-sunken)':'transparent',color:active?'var(--text-primary)':'var(--text-secondary)',font:'600 14px Inter,system-ui,sans-serif',padding:'8px 15px',borderRadius:'10px' }; }
+  sw(on){ return { appearance:'none',border:'none',cursor:'pointer',flex:'none',width:'50px',height:'29px',borderRadius:'999px',background:on?'var(--accent)':'var(--border-strong)',position:'relative',transition:'background .2s' }; }
+  swKnob(on){ return { position:'absolute',top:'3px',left:on?'24px':'3px',width:'23px',height:'23px',borderRadius:'999px',background:'#fff',transition:'left .2s',boxShadow:'0 1px 3px rgba(0,0,0,.3)' }; }
+  radioPill(active){
+    const base={ appearance:'none',cursor:'pointer',border:'none',background:'transparent',color:'var(--text-secondary)',font:'600 12.5px Inter,system-ui,sans-serif',padding:'8px 14px',borderRadius:'999px',minHeight:'36px' };
+    return active ? Object.assign({}, base, { background:'var(--surface-base)',color:'var(--text-primary)',boxShadow:'var(--elev-1)' }) : base;
+  }
+  iconBtn(enabled){ return { appearance:'none',cursor:enabled?'pointer':'not-allowed',border:'1px solid var(--border-strong)',background:'var(--surface-raised)',color:enabled?'var(--text-primary)':'var(--text-secondary)',borderRadius:'9px',width:'34px',height:'34px',display:'inline-flex',alignItems:'center',justifyContent:'center',opacity:enabled?1:.4 }; }
+
+  // ---------- Iona launcher (destinations wired) ----------
+  tabBtnStyle(hi,i,rm){
+    return { display:'inline-flex',alignItems:'center',gap:'9px',padding:'9px 15px',borderRadius:'999px',border:'1px solid '+(hi?'var(--accent)':'var(--border-subtle)'),background:hi?'color-mix(in srgb,var(--accent) 12%,var(--surface-raised))':'var(--surface-raised)',color:'var(--text-primary)',font:'600 13px Inter,system-ui,sans-serif',cursor:'pointer',minHeight:'40px',boxShadow:'var(--elev-2)',appearance:'none',animation:rm?'none':('pifFanIn .28s cubic-bezier(.2,0,0,1.2) both '+(i*45)+'ms') };
+  }
+  fanTabs(rm){
+    const u=this.state.unread, tier=this.state.tier;
+    const go=(screen)=>()=>this.setState(Object.assign(this.resetView(),{ screen, fanOpen:false }));
+    const ext=(url)=>()=>{ this.setState({fanOpen:false}); try{ window.location.href=url; }catch(e){} };
+    const soon=(m)=>()=>{ this.setState({fanOpen:false}); this.toastMsg(m); };
+    const goMsg=()=>{ this.setState({fanOpen:false}); try{ window.location.href='PIF-Messages-Batch8.dc.html#h1'; }catch(e){} };
+    const list=[
+      { label:'Help', icon:this.ico('info',17), onSelect:go('s12') },
+      { label:'Messages', icon:this.ico('bell',17), hi:u, onSelect:goMsg },
+    ];
+    if(tier!=='premium') list.push({ label:'Upgrade', icon:this.ico('up',17), onSelect:go('s14') });
+    list.push({ label:'Settings', icon:this.ico('gear',17), onSelect:go('s1') });
+    list.push({ label:'Close', icon:this.ico('x',17), onSelect:()=>this.setState({fanOpen:false}) });
+    return list.map((t,i)=>({ label:t.label, icon:t.icon, hi:!!t.hi, onSelect:t.onSelect, style:this.tabBtnStyle(!!t.hi,i,rm) }));
+  }
+  launcherSvg(unread){
+    const head='<svg viewBox="-120 -120 240 240" width="60" height="60"><defs><radialGradient id="b5la1" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient><radialGradient id="b5la2" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#2FE39A" stop-opacity="0.5"/><stop offset="1" stop-color="#2FE39A" stop-opacity="0"/></radialGradient></defs>';
+    const glow='<ellipse cx="0" cy="0" rx="118" ry="118" fill="url(#b5la2)"/>';
+    const q='<text x="0" y="-76" fill="#F5B23D" font-size="58" font-weight="700" text-anchor="middle" font-family="Inter,system-ui">?</text>';
+    const body='<circle cx="0" cy="0" r="72" fill="url(#b5la1)"/><circle cx="-24" cy="-8" r="11" fill="#0B1220"/><circle cx="24" cy="-8" r="11" fill="#0B1220"/><circle cx="-20" cy="-12" r="4" fill="#fff"/><circle cx="28" cy="-12" r="4" fill="#fff"/><path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/>';
+    const letter='<path d="M60,-2 Q80,-24 82,-46" fill="none" stroke="#0E7C7B" stroke-width="12" stroke-linecap="round"/><g transform="translate(84,-70)"><rect x="-20" y="-14" width="40" height="28" rx="4" fill="#F4F7FB" stroke="#0B1220" stroke-width="2.5"/><path d="M-20,-13 L0,3 L20,-13" fill="none" stroke="#0B1220" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></g>';
+    const cheeks='<circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/>';
+    return head+glow+q+body+(unread?letter:cheeks)+'</svg>';
+  }
+  launcherEl(){ return React.createElement('span',{ style:{ display:'inline-flex', filter:'drop-shadow(0 6px 16px rgba(0,0,0,.3)) drop-shadow(0 0 10px rgba(47,227,154,.4))' }, dangerouslySetInnerHTML:{ __html:this.launcherSvg(this.state.unread) } }); }
+  ionaEl(size){
+    const svg='<svg viewBox="0 0 84 84" width="'+size+'" height="'+size+'"><defs><radialGradient id="b5ib" cx="42%" cy="36%" r="72%"><stop offset="0" stop-color="#5CF3B6"/><stop offset=".55" stop-color="#2FE39A"/><stop offset="1" stop-color="#0E7C7B"/></radialGradient></defs><g transform="translate(42,48) scale(0.30)"><path d="M-8,-104 L10,-104 L-2,-84 L14,-84 L-14,-56 L-4,-80 L-18,-80 Z" fill="#F5B23D"/><circle cx="0" cy="0" r="72" fill="url(#b5ib)"/><circle cx="-24" cy="-8" r="11" fill="#0B1220"/><circle cx="24" cy="-8" r="11" fill="#0B1220"/><circle cx="-20" cy="-12" r="4" fill="#fff"/><circle cx="28" cy="-12" r="4" fill="#fff"/><path d="M-22,20 Q0,42 22,20" fill="none" stroke="#0B1220" stroke-width="6" stroke-linecap="round"/><circle cx="-44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/><circle cx="44" cy="14" r="8" fill="#5CF3B6" opacity="0.5"/></g></svg>';
+    return React.createElement('span',{ style:{ display:'inline-flex', filter:'drop-shadow(0 0 6px rgba(47,227,154,.5))' }, dangerouslySetInnerHTML:{ __html:svg } });
+  }
+
+  // ---------- settings model ----------
+  settingsGroups(){
+    return [
+      { key:'account', title:'Account', sub:'Plan, security, profile, billing', icon:'user', rows:[
+        { label:'Upgrade', desc:'Compare tiers and move up', icon:'up', color:'var(--accent)', href:'PIF-Acquisition-Batch7.dc.html#a11', tiers:['basic','optimum'], badge:'Save more', badgeColor:'var(--accent)', kw:'plan tier premium optimum arbitrage' },
+        { label:'Security', desc:'Passkeys, 2FA, active sessions', icon:'lock', screen:'s11', kw:'password pin credentials login face id touch id 2fa mfa passkey biometrics sessions' },
+        { label:'Downgrade', desc:'Move to a lower tier', icon:'down', screen:'s14', anchor:'downgrade', tiers:['optimum','premium'], kw:'plan tier cheaper basic' },
+        { label:'Cancel subscription', desc:'End your plan', icon:'x', color:'var(--danger)', screen:'s14', anchor:'cancel', kw:'unsubscribe stop end quit refund' },
+        { label:'Moving home or utility', desc:'Moving? Check if PIF comes with you', icon:'home', href:'PIF-Billing-Lifecycle-Batch6.dc.html#f10', kw:'moving move relocate new home new address change utility' },
+        { label:'Profile', desc:'Name, email, address', icon:'user', screen:'s2', kw:'name email address account contact' },
+        { label:'Billing', desc:'Payment method & invoices', icon:'card', href:'PIF-Billing-Lifecycle-Batch6.dc.html#f1', kw:'payment card invoice receipt visa charge billing subscription' },
+        { label:'Refer friends', desc:'Give a friend 50% off — earn $5 each', icon:'sparkles', color:'var(--accent)', href:'PIF-Billing-Lifecycle-Batch6.dc.html#f8', kw:'refer referral invite friends reward share credit' },
+        { label:'Help', desc:'FAQ, compare tiers, ask Iona', icon:'info', screen:'s12', kw:'support faq question contact iona' },
+      ]},
+      { key:'home', title:'My home & devices', sub:'Edit your quiz answers · add or remove devices', icon:'home', rows:[
+        { label:'Devices', desc:'View, classify and manage your devices', icon:'device.hub', ext:'batch4', kw:'devices hardware thermostat charger plug hub connect' },
+        { label:'Add a device', desc:'Opens the connect flow', icon:'device.smart-plug', color:'var(--accent)', ext:'batch4', kw:'add device pair connect new hardware' },
+        { label:'Home & HVAC facts', desc:'Size, occupancy, heating & cooling', icon:'home', screen:'s15', kw:'square feet sqft adults occupancy year built heating cooling furnace heat pump ac household' },
+        { label:'Solar & battery', desc:'System details', icon:'device.solar', screen:'s16', kw:'solar panels battery storage backup powerwall inverter' },
+        { label:'EV', desc:'Your electric vehicle', icon:'device.ev-charger', id:'ev', screen:'s17', kw:'ev electric vehicle car tesla charging arbitrage' },
+      ]},
+      { key:'prefs', title:'Preferences', sub:'Comfort, rates, notifications, appearance', icon:'gear', rows:[
+        { label:'Comfort & schedule', desc:'Floors, ceilings, deadlines', icon:'thermostat-hvac', screen:'s3', kw:'temperature setpoint thermostat comfort schedule drift away occupancy' },
+        { label:'Rate & utility', desc:'Provider, plan, timezone', icon:'doc', screen:'s4', kw:'utility provider rate plan tariff timezone peak tou dominion bill' },
+        { label:'Notifications & comms', desc:'Channels, quiet hours, consent', icon:'bell', screen:'s6', kw:'notifications email push quiet hours unsubscribe marketing alerts sms' },
+        { label:'Appearance & accessibility', desc:'Theme, text size, motion', icon:'gear', screen:'s7', kw:'dark mode light theme font text size motion accessibility contrast' },
+      ]},
+      { key:'data', title:'Data & learning', sub:'What PIF learned and your privacy', icon:'measured', rows:[
+        { label:'What PIF learned', desc:'See and correct learned behavior', icon:'sparkles', screen:'s8', kw:'learned model routine patterns ai correct reset' },
+        { label:'Privacy & data', desc:'Export, delete, opt-outs', icon:'shield', screen:'s10', kw:'privacy export download delete gdpr data opt out analytics' },
+      ]},
+    ];
+  }
+
+  renderVals(){
+    const st=this.state, rm=st.rm, scr=st.screen, tier=st.tier;
+    const S=(k)=>scr===k;
+    const isLoading = st.dataState==='loading';
+    const isOffline = st.dataState==='offline';
+    const showContent = !(isLoading||isOffline);
+
+    // harness
+    const segScreen=this.seg([
+      {k:'s1',label:'1 Home'},{k:'s2',label:'2 Profile'},{k:'s3',label:'3 Comfort'},{k:'s4',label:'4 Rate'},
+      {k:'s5',label:'5 Connect'},{k:'s6',label:'6 Notif'},{k:'s7',label:'7 Appear'},{k:'s8',label:'8 Learned'},
+      {k:'s10',label:'9 Privacy'},{k:'s11',label:'10 Security'},{k:'s12',label:'11 Help'},{k:'s13',label:'12 Ask'},{k:'s14',label:'13 Plan'},
+      {k:'s15',label:'Home facts'},{k:'s16',label:'Solar/batt'},{k:'s17',label:'EV'}
+    ], scr, 'screen');
+    const segTier=this.seg([{k:'basic',label:'Basic'},{k:'optimum',label:'Optimum'},{k:'premium',label:'Premium'}], tier, 'tier');
+    const segState=this.seg([{k:'normal',label:'Normal'},{k:'unsaved',label:'Unsaved'},{k:'saved',label:'Saved'},{k:'savefail',label:'Save failed'},{k:'loading',label:'Loading'},{k:'offline',label:'Offline'}], st.dataState, 'dataState');
+    const segUtil=this.seg([{k:'unlinked',label:'Unlinked'},{k:'bills',label:'Bills added'},{k:'linked',label:'Linked'}], st.util, 'util');
+    const segMeter=this.seg([{k:'ev',label:'EV gap'},{k:'util',label:'Utility gap'},{k:'allset',label:'All set'}], st.meterVariant, 'meterVariant');
+    const segHome=[{k:'full',label:'Full home'},{k:'minimal',label:'Minimal'}].map(o=>({ label:o.label, active:st.homePreset===o.k, onSelect:()=>this.applyHomePreset(o.k), style:this.segStyle(st.homePreset===o.k) }));
+    const segUnread=[{k:true,label:'Unread'},{k:false,label:'Read'}].map(o=>({ label:o.label, active:st.unread===o.k, onSelect:()=>this.set('unread',o.k), style:this.segStyle(st.unread===o.k) }));
+    const segTheme=['light','dark','system'].map(mode=>({ label:mode.charAt(0).toUpperCase()+mode.slice(1), active:st.theme===mode, icon:this.themeIcon(mode), onSelect:()=>this.set('theme',mode), style:this.segStyle(st.theme===mode) }));
+    const rmBtnStyle={ appearance:'none',cursor:'pointer',font:'600 12px Inter,system-ui,sans-serif',padding:'8px 14px',borderRadius:'999px',minHeight:'34px',border:'1px solid '+(rm?'var(--info)':'var(--border-strong)'),background:rm?'color-mix(in srgb,var(--info) 14%,transparent)':'var(--surface-sunken)',color:rm?'var(--info)':'var(--text-secondary)' };
+
+    // banner (unsaved / saved / failed)
+    let banner={ show:false };
+    if(st.dataState==='unsaved') banner={ show:true, showActions:true, color:'var(--warning)', icon:this.ico('warn',18), text:'You have unsaved changes.', style:'display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--warning) 9%,var(--surface-raised));border:1px solid var(--warning);border-radius:14px;padding:12px 16px;margin-bottom:18px', onSave:()=>this.set('dataState','saved'), onDiscard:()=>this.set('dataState','normal') };
+    else if(st.dataState==='saved') banner={ show:true, showActions:false, color:'var(--success)', icon:this.ico('check',18), text:'Saved. Your changes are live.', style:'display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--success) 9%,var(--surface-raised));border:1px solid var(--success);border-radius:14px;padding:12px 16px;margin-bottom:18px' };
+    else if(st.dataState==='savefail') banner={ show:true, showActions:true, color:'var(--danger)', icon:this.ico('warn',18), text:'Couldn\u2019t save — check your connection and retry.', style:'display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--danger) 9%,var(--surface-raised));border:1px solid var(--danger);border-radius:14px;padding:12px 16px;margin-bottom:18px', onSave:()=>this.set('dataState','saved'), onDiscard:()=>this.set('dataState','normal') };
+
+    // settings groups (tier gating + search)
+    const cfg=st.cfg;
+    const q=(st.query||'').trim().toLowerCase();
+    const groups=this.settingsGroups().map(g=>{
+      let rows=g.rows.filter(r=> !r.tiers || r.tiers.indexOf(tier)>=0);
+      if(q) rows=rows.filter(r=> (r.label+' '+(r.desc||'')+' '+(r.kw||'')).toLowerCase().indexOf(q)>=0);
+      return { g, rows };
+    }).filter(x=> x.rows.length>0);
+    const kwHintFor=(r)=>{ if(!q) return ''; const hay=(r.label+' '+(r.desc||'')).toLowerCase(); if(hay.indexOf(q)>=0) return ''; const hit=(r.kw||'').split(' ').find(w=>w&&w.indexOf(q)>=0); return hit?('matches “'+hit+'”'):''; };
+    const groupsVM=groups.map(({g,rows})=>({
+      key:g.key, title:g.title, sub:g.sub, icon:this.ico(g.icon,20),
+      expanded: q ? true : !!st.expanded[g.key],
+      chevron: (q?true:!!st.expanded[g.key]) ? 'rotate(180deg)' : 'rotate(0deg)',
+      onToggle:()=>this.setState(s=>({ expanded:Object.assign({},s.expanded,{[g.key]:!s.expanded[g.key]}) })),
+      rows: rows.map(r=>{
+        const evBadge = r.id==='ev' && !cfg.ev && tier!=='basic';
+        const showBadge = evBadge || (!!r.badge && r.id!=='ev');
+        const badgeText = evBadge ? 'Unlocks $' : (r.badge||'');
+        const badgeColor = r.badgeColor||'var(--accent)';
+        const kwHint = kwHintFor(r);
+        return {
+          label:r.label, desc:r.desc, hasDesc:!!r.desc, icon:this.ico(r.icon,18), iconColor:r.color||'var(--text-secondary)',
+          badge:showBadge, badgeText, badgeStyle:{ fontSize:'10px',fontWeight:700,letterSpacing:'.03em',textTransform:'uppercase',color:badgeColor,background:'color-mix(in srgb,'+badgeColor+' 13%,transparent)',border:'1px solid '+badgeColor,borderRadius:'999px',padding:'1px 7px',whiteSpace:'nowrap' },
+          kwHint:!!kwHint, kwHintText:kwHint,
+          rowStyle:'appearance:none;border:none;cursor:pointer;width:100%;display:flex;align-items:center;gap:12px;padding:14px 18px;background:transparent;color:inherit;text-align:left;border-top:1px solid var(--border-subtle)',
+          onOpen:()=>{ if(r.href){ try{ window.location.href=r.href; }catch(e){} return; } if(r.ext==='batch4'){ try{ window.location.href='PIF-Devices-Connect-Batch4.dc.html'; }catch(e){} } else { if(r.anchor) this._pendingAnchor=r.anchor; this.set('screen', r.screen); } },
+        };
+      }),
+    }));
+    const anyRows = groups.reduce((n,x)=>n+x.rows.length,0);
+    const searchNo = q.length>0 && anyRows===0;
+
+    // completeness meter (variant + tier aware)
+    const goBatch4=()=>{ try{ window.location.href='PIF-Devices-Connect-Batch4.dc.html'; }catch(e){} };
+    let meterVM;
+    if(st.meterVariant==='allset' || q){ meterVM={ show:false, pct:100, pctNum:100 }; }
+    else if(st.meterVariant==='util'){ meterVM={ show:true, pct:85, pctNum:85, icon:this.ico('doc',18), nudgeColor:'var(--secondary)', nudgeTitle:'Connect your utility', nudgeBody:' for automatic bill-checking.', ctaLabel:'Connect', onCta:()=>this.setState({screen:'s5', utilStep: st.util==='linked'?'already':'provider', utilOrigin:'settings'}) }; }
+    else if(tier==='basic'){ meterVM={ show:true, pct:70, pctNum:70, icon:this.ico('up',18), nudgeColor:'var(--accent)', nudgeTitle:'Basic can\u2019t earn from a battery yet', nudgeBody:' — arbitrage needs Optimum. See what it unlocks for your home.', ctaLabel:'See Optimum', onCta:()=>{ this._pendingAnchor='upgrade'; this.setState({screen:'s14'}); } }; }
+    else { meterVM={ show:true, pct:80, pctNum:80, icon:this.ico('device.ev-charger',18), nudgeColor:'var(--accent)', nudgeTitle:'Add your EV', nudgeBody:' to unlock overnight charge arbitrage.', ctaLabel:'Add EV', onCta:goBatch4 }; }
+
+    // profile
+    const pv=st.profileVals;
+    const profileFields=[
+      { key:'name', label:'Name', value:pv.name, icon:this.ico('user',18) },
+      { key:'email', label:'Email', value:pv.email, icon:this.ico('mail',18) },
+    ].map(f=>Object.assign(f,{ onEdit:()=>this.setState({ editField:f.key, editLabel:f.label, editVal:st.profileVals[f.key] }) }));
+    const serviceArea = st.util==='linked'
+      ? { value:'812 Maple Ave, Richmond, VA 23220', source:'from your utility' }
+      : { value:'23220 · Richmond, VA', source:'from your quiz answers' };
+
+    // comfort fields with impact preview (config + tier gated)
+    const cf=st.comfort;
+    const hvacDollar = cfg.hvacElectric && cfg.thermostatControllable;
+    const dollarImp={
+      floor:{'66°':'66°F ≈ −$9/mo','68°':'68°F ≈ −$4/mo','70°':'70°F · baseline'},
+      ceil:{'74°':'74°F · baseline','76°':'76°F ≈ −$6/mo','78°':'78°F ≈ −$11/mo'},
+    };
+    const advImp={
+      floor:{'66°':'66°F · deeper setback','68°':'68°F · balanced','70°':'70°F · baseline'},
+      ceil:{'74°':'74°F · baseline','76°':'76°F · warmer','78°':'78°F · warmest'},
+    };
+    const evImp={'6am':'6am · less off-peak used','7am':'7am ≈ −$3/mo vs 6am','8am':'8am ≈ −$5/mo vs 6am'};
+    const resImp={'20%':'20% held ≈ +$5/mo vs 50%','30%':'30% held ≈ +$3/mo vs 50%','50%':'50% held · max backup'};
+    const driftImp={'±1°':'Tight — fewer shift windows','±2°':'Balanced','±3°':'Wide — most off-peak windows'};
+    const awayImp={'Home all day':'PIF acts conservatively','9–5 away':'Daytime free to optimize','Custom':'Set your own hours'};
+    const comfortDefs=[
+      {field:'floor', label:'Comfort floor (heating)', icon:'device.thermostat', opts:['66°','68°','70°'], dollar:hvacDollar, imp:hvacDollar?dollarImp.floor:advImp.floor},
+      {field:'ceil', label:'Comfort ceiling (cooling)', icon:'device.thermostat', opts:['74°','76°','78°'], dollar:hvacDollar, imp:hvacDollar?dollarImp.ceil:advImp.ceil},
+      {field:'drift', label:'Comfort-drift tolerance', icon:'sliders', opts:['±1°','±2°','±3°'], dollar:false, imp:driftImp},
+      {field:'away', label:'Occupancy / away schedule', icon:'clock', opts:['Home all day','9–5 away','Custom'], dollar:false, imp:awayImp},
+    ];
+    if(cfg.ev) comfortDefs.push({field:'ev', label:'EV ready-by deadline', icon:'device.ev-charger', opts:['6am','7am','8am'], dollar:true, imp:evImp});
+    if(cfg.battery) comfortDefs.push({field:'res', label:'Battery backup reserve', icon:'device.home-battery', opts:['20%','30%','50%'], dollar:true, imp:resImp});
+    const comfortFields=comfortDefs.map(d=>{ const cur=cf[d.field];
+      return { label:d.label, icon:this.ico(d.icon,18),
+        options:d.opts.map(o=>({ label:o, checked:cur===o?'true':'false', onPick:()=>this.setState(s=>({ comfort:Object.assign({},s.comfort,{[d.field]:o}) })), style:this.radioPill(cur===o) })),
+        impact:this.wrapApprox(d.imp[cur]), impactIcon:this.ico(d.dollar?'tier.measured':'tier.advisory',15), impactColor:d.dollar?'var(--accent)':'var(--text-secondary)' };
+    });
+    const comfortAdvisory = !hvacDollar;
+
+    // edit-sheet field notes (email step-up, address re-resolve, manual plan)
+    let editNote={show:false}, editSaveLabel='Save';
+    if(st.editField==='email'){ editSaveLabel='Verify with passkey'; editNote={ show:true, color:'var(--info)', icon:this.ico('key',16), body:'Changing your email needs a passkey check. We\u2019ll email a confirmation link to both your current and new address — the change applies only after both are confirmed.', hasLink:false }; }
+    else if(st.editField==='plan'){ editNote={ show:true, color:'var(--secondary)', icon:this.ico('info',16), body:'Manual change — updates your rate plan without re-running the provider sign-in.', hasLink:false }; }
+
+    // rate & utility card (derives from util state)
+    const utilCard = st.util==='linked' ? { style:'background:color-mix(in srgb,var(--success) 8%,var(--surface-raised));border:1px solid var(--success);border-radius:16px;padding:16px 18px;box-shadow:var(--elev-1)', color:'var(--success)', icon:this.ico('check',20), title:'Utility connected — bill-checking on', body:'Dominion Energy is linked. We check our savings math against your real bill automatically.', showCta:false }
+      : { style:'background:var(--surface-raised);border:1px solid var(--secondary);border-radius:16px;padding:16px 18px;box-shadow:var(--elev-1)', color:'var(--secondary)', icon:this.ico('doc',20), title:'Connect your utility for automatic bill-checking', body:'Ongoing — checks every bill automatically. (Uploading a single bill is a one-off.)', showCta:true };
+
+    const recon = st.util==='linked' ? { show:true, tone:'var(--success)', icon:this.ico('check',18), title:'Bill-checking active', note:'Ongoing — every statement checked automatically.', rows:[{k:'Last checked',v:'Jul 3, 2026'},{k:'Last bill matched',v:'Jun statement · within 1.8%'},{k:'Variance vs our estimate',v:'−$0.42 · within range'}], cta:false }
+      : st.util==='bills' ? { show:true, tone:'var(--info)', icon:this.ico('doc',18), title:'One-off bills added', note:'You uploaded statements manually — a snapshot, not ongoing checking.', rows:[{k:'Bills uploaded',v:'2 statements'},{k:'Coverage',v:'Apr–May 2026'},{k:'Auto-checking',v:'Off'}], cta:true }
+      : { show:false };
+
+    // connect-utility flow
+    const utilProviders=[['Dominion Energy','DE'],['Duke Energy','DK'],['Pacific Gas & Electric','PG'],['Other provider','+']].map(p=>({ name:p[0], mono:p[1], onPick:()=>this.set('utilStep','auth') }));
+    const utilScopes=[
+      { icon:this.ico('doc',16), title:'Your statements', detail:'totals, kWh and billing periods.' },
+      { icon:this.ico('measured',16), title:'Interval usage', detail:'hour-by-hour, where offered.' },
+      { icon:this.ico('sparkles',16), title:'Your rate plan', detail:'so peak windows are exact.' },
+    ];
+    const utilFlow={
+      backLabel: st.utilOrigin==='ledger' ? 'Ledger' : 'Rate & utility',
+      isProvider: st.utilStep==='provider', isAuth: st.utilStep==='auth', isScope: st.utilStep==='scope', isError: st.utilStep==='error', isAlready: st.utilStep==='already',
+      onAuthorize:()=>this.set('utilStep','scope'),
+      onDone:()=>{ if(st.utilOrigin==='ledger'){ try{ window.location.href='PIF-Dashboard-Ledger-Batch3.dc.html'; }catch(e){} return; } this.setState({ util:'linked', screen:'s4', utilStep:'provider' }); },
+      onRetry:()=>this.set('utilStep','auth'),
+      onRefresh:()=>this.set('utilStep','auth'), onDisconnect:()=>this.setState({ util:'unlinked', utilStep:'provider' }),
+    };
+
+    // notifications (security & billing locked-on)
+    const notifDefs=[
+      { key:'savings', label:'Savings & results', desc:'Nightly plan, monthly summary' },
+      { key:'tips', label:'Tips & offers', desc:'Marketing — off by default' },
+      { key:'security', label:'Security alerts', desc:'Sign-ins, passkey changes', locked:true },
+      { key:'billing', label:'Billing & outages', desc:'Payments, service notices', locked:true },
+    ];
+    const notifRows=notifDefs.map(n=>{
+      const v=st.notif[n.key];
+      if(n.locked){ return { label:n.label, desc:n.desc, locked:true, disabled:'true', emailOn:'true', pushOn:'true', emailStyle:this.lockedSwStyle(), pushStyle:this.lockedSwStyle(), emailKnob:this.swKnob(true), pushKnob:this.swKnob(true), onEmail:()=>this.toastMsg('Security & billing alerts always send — they can\u2019t be turned off.'), onPush:()=>this.toastMsg('Security & billing alerts always send — they can\u2019t be turned off.') }; }
+      return { label:n.label, desc:n.desc, locked:false, disabled:'false',
+        emailOn:v.email?'true':'false', pushOn:v.push?'true':'false',
+        emailStyle:this.sw(v.email), emailKnob:this.swKnob(v.email), pushStyle:this.sw(v.push), pushKnob:this.swKnob(v.push),
+        onEmail:()=>this.setState(s=>({ notif:Object.assign({},s.notif,{[n.key]:Object.assign({},s.notif[n.key],{email:!v.email})}) })),
+        onPush:()=>this.setState(s=>({ notif:Object.assign({},s.notif,{[n.key]:Object.assign({},s.notif[n.key],{push:!v.push})}) })),
+      };
+    });
+
+    // appearance
+    const themeCards=['light','dark','system'].map(mode=>({
+      label:mode.charAt(0).toUpperCase()+mode.slice(1), checked:st.theme===mode?'true':'false', color:st.theme===mode?'var(--primary)':'var(--text-secondary)',
+      icon:this.themeIcon(mode), onPick:()=>this.set('theme',mode),
+      style:{ appearance:'none',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:'8px',padding:'12px 18px',borderRadius:'12px',background:st.theme===mode?'color-mix(in srgb,var(--primary) 10%,transparent)':'var(--surface-sunken)',border:'1px solid '+(st.theme===mode?'var(--primary)':'var(--border-subtle)'),color:'var(--text-primary)',minHeight:'46px' },
+    }));
+    const textSizes=[['small','A-'],['default','A'],['large','A+'],['xl','A++']].map(t=>({ label:t[1], checked:st.textSize===t[0]?'true':'false', onPick:()=>this.set('textSize',t[0]), style:this.radioPill(st.textSize===t[0]) }));
+    const textZoom = { small:0.9, default:1, large:1.15, xl:1.3 }[st.textSize] || 1;
+
+    // learned
+    const learnedDefs=[
+      { icon:this.ico('action.charge',18), text:'You usually leave around 7:30am, so we finish EV charging by 7am with a buffer.' },
+      { icon:this.ico('action.precool',18), text:'Your home holds cool well — pre-cooling to 71° at 3pm covers the evening peak.' },
+      { icon:this.ico('device.hub',18), text:'Weekends run warmer and later. We shift your schedule about 90 minutes on Sat/Sun.' },
+    ];
+    const learned=learnedDefs.map(l=>Object.assign({}, l, { onCorrect:()=>this.toastMsg('Thanks — Iona will adjust this pattern.') }));
+
+    // personalization removed in v5 (revision A)
+
+    // privacy
+    const privacyDefs=[
+      { key:'analytics', label:'Product analytics', desc:'Anonymous usage to improve PIF' },
+      { key:'personalization', label:'Personalized recommendations', desc:'Use your data to tailor tips' },
+      { key:'thirdparty', label:'Share with partners', desc:'Off — we never sell your data' },
+    ];
+    const privacyToggles=privacyDefs.map(p=>{ const on=st.privacy[p.key]; return { label:p.label, desc:p.desc, on:on?'true':'false', style:this.sw(on), knob:this.swKnob(on), onToggle:()=>this.setState(s=>({ privacy:Object.assign({},s.privacy,{[p.key]:!on}) })) }; });
+
+    // security sessions
+    const sessions=[
+      { icon:this.ico('phone',18), device:'iPhone 15 · PIF app', meta:'Richmond, VA · now', current:true },
+      { icon:this.ico('monitor',18), device:'Chrome · Mac', meta:'Richmond, VA · 2h ago', current:false },
+      { icon:this.ico('monitor',18), device:'Safari · iPad', meta:'Richmond, VA · 3d ago', current:false },
+    ];
+
+    // help
+    const hq=(st.helpQuery||'').trim().toLowerCase();
+    const helpDefs=[
+      { title:'Getting started', icon:'sparkles', qs:[
+        {q:'What does PIF actually do?', a:'PIF watches your rates and your home, then shifts flexible loads — EV charging, pre-cooling, battery — into cheaper, cleaner windows. You keep comfort; PIF moves the timing.'},
+        {q:'How do I set up my home?', a:'The onboarding quiz collects the essentials. You can revise any answer later in Settings → My home & devices — each fact has its own edit screen.'},
+        {q:'Does connecting a device mean PIF controls it?', a:'No. Connecting lets PIF see a device; control is a separate, explicit grant per device. Everything starts visible-but-not-controlled.'},
+      ]},
+      { title:'Savings & the ledger', icon:'banked', qs:[
+        {q:'How are my savings calculated?', a:'Each action is timed and metered: the kWh we shifted, multiplied by the gap between your peak and off-peak rate. The dollar figure is derived from those two facts and always carries its evidence tier.'},
+        {q:'What do Banked, Measured and Modeled mean?', a:'Banked = real money received (VPP payments, bill credits). Measured = metered kWh × your published tariff. Modeled = runtime × class-typical, an estimate that carries the asterisk and footnote.'},
+        {q:'Why is a figure marked as an estimate?', a:'A modeled figure hasn\u2019t been metered directly — it\u2019s calculated from typical behaviour. It carries \u201c≈\u201d and the estimates footnote until it can be measured or bill-checked.'},
+      ]},
+      { title:'Devices & control', icon:'smart-plug', qs:[
+        {q:'What does “connecting isn’t controlling” mean?', a:'Connecting a device lets PIF see it. Control is a separate, explicit grant per device — visible-but-not-controlled is the default until you allow it.'},
+        {q:'How do I add or classify a device?', a:'Settings → My home & devices → Add a device opens the connect flow. Each device starts Protected; you classify it Controllable or Critical afterwards.'},
+        {q:'Can I skip a planned action tonight?', a:'Yes — every item in Tonight\u2019s plan has a one-off \u201cSkip tonight\u201d that shows the cost or deadline impact before you confirm, and stops at your safety limits.'},
+      ]},
+      { title:'Billing & plans', icon:'card', qs:[
+        {q:'What’s the difference between the tiers?', a:'Basic is advisory-only; Optimum adds automatic control; Premium adds arbitrage and priority. A full side-by-side comparison is coming in a later batch.'},
+        {q:'How does auto-renewal work?', a:'Your plan renews automatically each month at $15 until you cancel. You\u2019re told this at the consent moment, and can cancel anytime in Settings → Billing.'},
+        {q:'How do I cancel?', a:'Settings → Account → Cancel subscription. Cancel anytime — your plan runs to the end of the paid month (no refund for the current month).'},
+      ]},
+      { title:'Privacy & your data', icon:'shield', qs:[
+        {q:'What data does PIF collect?', a:'Your home facts, connected-device readings, and (if you link it) your utility statements. It\u2019s used to plan savings — never sold. See Settings → Privacy & data.'},
+        {q:'Can I export or delete everything?', a:'Yes. Settings → Privacy & data lets you export a full copy or delete your account and data. Deletion needs a passkey confirmation and can\u2019t be undone.'},
+        {q:'Who can see my utility bills?', a:'Only PIF\u2019s bill-checking uses them, read-only, to verify our savings math. You can disconnect the utility at any time.'},
+      ]},
+    ];
+    const openFaq=st.openFaq;
+    let helpTopics=helpDefs;
+    if(hq) helpTopics=helpDefs.map(t=>Object.assign({},t,{qs:t.qs.filter(x=>x.q.toLowerCase().indexOf(hq)>=0 || x.a.toLowerCase().indexOf(hq)>=0)})).filter(t=>t.qs.length>0);
+    const helpTopicsVM=helpTopics.map(t=>({ title:t.title, icon:this.ico(t.icon,18), qs:t.qs.map(x=>({ q:x.q, a:x.a, open: openFaq===x.q, onToggle:()=>this.setState(s=>({ openFaq: s.openFaq===x.q?'':x.q })) })) }));
+    const helpNo = hq.length>0 && helpTopicsVM.length===0;
+
+    // ask iona
+    const ionaSendDisabled = st.ionaQuestion.trim().length===0 ? 'true':'false';
+    const ionaCan = st.ionaQuestion.trim().length>0;
+
+    // C — focused home-fact edit screens (reuse quiz chips/steppers/time-presets)
+    const cfgSet=(k,v)=>this.setState(s=>({ cfg:Object.assign({},s.cfg,{[k]:v}) }));
+    const heatOpts=['Heat pump','Gas furnace','Electric baseboard'];
+    const coolOpts=['Central AC','Heat pump','None'];
+    const homeVM={
+      adults:cfg.adults,
+      adultsDec:{ onClick:()=>cfgSet('adults',Math.max(1,(cfg.adults||1)-1)), style:this.iconBtn(cfg.adults>1), dis:cfg.adults>1?'false':'true' },
+      adultsInc:{ onClick:()=>cfgSet('adults',Math.min(8,(cfg.adults||1)+1)), style:this.iconBtn(cfg.adults<8), dis:cfg.adults<8?'false':'true' },
+      sqft:cfg.sqft, built:cfg.built,
+      onEditSqft:()=>this.setState({ editField:'sqft', editLabel:'Square feet', editVal:String(cfg.sqft) }),
+      onEditBuilt:()=>this.setState({ editField:'built', editLabel:'Year built', editVal:String(cfg.built) }),
+      heat:heatOpts.map(o=>({ label:o, checked:cfg.heat===o?'true':'false', onPick:()=>this.setState(s=>({ cfg:Object.assign({},s.cfg,{ heat:o, hvacElectric:(o!=='Gas furnace') }) })), style:this.radioPill(cfg.heat===o) })),
+      cool:coolOpts.map(o=>({ label:o, checked:cfg.cool===o?'true':'false', onPick:()=>cfgSet('cool',o), style:this.radioPill(cfg.cool===o) })),
+      controllable:cfg.thermostatControllable, onToggleCtrl:()=>this.setState(s=>({ cfg:Object.assign({},s.cfg,{ thermostatControllable:!s.cfg.thermostatControllable }) })),
+      ctrlSwStyle:this.sw(cfg.thermostatControllable), ctrlSwKnob:this.swKnob(cfg.thermostatControllable),
+      crossShow:cfg.thermostatControllable, onCross:()=>{ try{ window.location.href='PIF-Devices-Connect-Batch4.dc.html'; }catch(e){} },
+    };
+    const solarVM={
+      solar:cfg.solar,
+      solarChips:[['Yes',true],['No',false]].map(o=>({ label:o[0], checked:cfg.solar===o[1]?'true':'false', onPick:()=>cfgSet('solar',o[1]), style:this.radioPill(cfg.solar===o[1]) })),
+      solarKw:cfg.solarKw, onEditSolarKw:()=>this.setState({ editField:'solarKw', editLabel:'Solar system size', editVal:String(cfg.solarKw) }),
+      battery:cfg.battery,
+      batteryChips:[['Yes',true],['No',false]].map(o=>({ label:o[0], checked:cfg.battery===o[1]?'true':'false', onPick:()=>cfgSet('battery',o[1]), style:this.radioPill(cfg.battery===o[1]) })),
+      batteryKwh:cfg.batteryKwh, onEditBatteryKwh:()=>this.setState({ editField:'batteryKwh', editLabel:'Battery capacity', editVal:String(cfg.batteryKwh) }),
+      crossShow:cfg.battery, onCross:()=>{ try{ window.location.href='PIF-Devices-Connect-Batch4.dc.html'; }catch(e){} },
+    };
+    const evDollar = tier!=='basic';
+    const evVM={
+      ev:cfg.ev,
+      evChips:[['Yes',true],['No',false]].map(o=>({ label:o[0], checked:cfg.ev===o[1]?'true':'false', onPick:()=>cfgSet('ev',o[1]), style:this.radioPill(cfg.ev===o[1]) })),
+      evModel:cfg.evModel||'—', onEditModel:()=>this.setState({ editField:'evModel', editLabel:'EV make & model', editVal:cfg.evModel||'' }),
+      evKwh:cfg.evKwh, onEditKwh:()=>this.setState({ editField:'evKwh', editLabel:'EV battery size', editVal:String(cfg.evKwh) }),
+      departChips:['6am','7am','8am'].map(o=>({ label:o, checked:st.comfort.ev===o?'true':'false', onPick:()=>this.setState(s=>({ comfort:Object.assign({},s.comfort,{ev:o}) })), style:this.radioPill(st.comfort.ev===o) })),
+      arbImpact: this.wrapApprox(evDollar ? 'Overnight charging ≈ −$14/mo vs peak charging.' : 'Arbitrage needs Optimum — Basic can\u2019t earn from off-peak charging yet.'),
+      arbColor: evDollar?'var(--accent)':'var(--text-secondary)', arbIcon:this.ico(evDollar?'tier.measured':'tier.advisory',15),
+      crossShow:cfg.ev, onCross:()=>{ try{ window.location.href='PIF-Devices-Connect-Batch4.dc.html'; }catch(e){} },
+    };
+
+    return {
+      theme:st.theme, rmFlag: rm?'1':'0', rmOn:rm,
+      segScreen, segTier, segState, segUtil, segMeter, segHome, segUnread, segTheme, rmBtnStyle, rmBtnLabel: rm?'On':'Off',
+      onToggleRm:()=>this.set('rm',!rm),
+      ionaMark:this.ionaEl(30), ionaBig:this.ionaEl(72),
+      navActiveStyle:this.navStyle(true), navInactiveStyle:this.navStyle(false),
+
+      // avatar menu (mutual exclusivity)
+      acctOpen:st.acctOpen,
+      onAvatar:()=>this.setState(s=>({ acctOpen:!s.acctOpen, fanOpen:false })),
+      onAvatarSettings:()=>this.setState(Object.assign(this.resetView(),{ acctOpen:false, screen:'s1' })),
+      onAvatarSignout:()=>{ this.setState({ acctOpen:false }); try{ window.location.href='PIF-Auth-Batch1.dc.html'; }catch(e){} },
+
+      // banners / overlays
+      banner, isLoading, isOffline, showContent, skeleton:[1,2,3,4,5],
+      icoOffline:this.ico('status.offline',30),
+
+      // screen flags
+      isS1:S('s1'),isS2:S('s2'),isS3:S('s3'),isS4:S('s4'),isS5:S('s5'),isS6:S('s6'),isS7:S('s7'),isS8:S('s8'),isS10:S('s10'),isS11:S('s11'),isS12:S('s12'),isS13:S('s13'),isS14:S('s14'),isS15:S('s15'),isS16:S('s16'),isS17:S('s17'),
+
+      // shared icons
+      icoSearch:this.ico('search',18), icoChevron:this.ico('chevron',18), icoChevronR:this.ico('chevronR',16),
+      icoBack:this.ico('back',16), icoEv:this.ico('device.ev-charger',18), icoGear:this.ico('gear',17), icoLogout:this.ico('logout',17),
+      icoDoc:this.ico('doc',18), icoClock:this.ico('clock',18), icoInfo:this.ico('info',18), icoArrow:this.ico('arrow',18),
+      icoCheck:this.ico('check',16), icoBigCheck:this.ico('check',26), icoCross:this.ico('cross',26), icoLock:this.ico('lock',15),
+      icoDownload:this.ico('download',20), icoTrash:this.ico('trash',20), icoKey:this.ico('key',18), icoRefresh:this.ico('refresh',16),
+      icoGrip:this.ico('grip',18), icoTiers:this.ico('tiers',16), icoIonaSmall:this.ico('sparkles',16),
+      icoPlus:this.ico('plus',16), icoMinus:this.ico('minus',16), icoThermo:this.ico('device.thermostat',18), icoHub:this.ico('device.hub',18), icoSolar:this.ico('device.solar',18), icoBattery:this.ico('device.home-battery',18),
+      backBtnStyle:'appearance:none;border:none;background:transparent;cursor:pointer;color:var(--text-secondary);font:600 13px Inter,system-ui,sans-serif;padding:8px 0;min-height:24px;display:inline-flex;align-items:center;gap:6px;margin-bottom:14px',
+
+      // S1
+      query:st.query, onSearch:(e)=>this.set('query',e.target.value),
+      meter: meterVM,
+      groups:groupsVM, search:{ noResults:searchNo, showGroups:!searchNo },
+      messages:{ count: st.unread?3:0, hasUnread: !!st.unread }, onMessages:()=>{ try{ window.location.href='PIF-Messages-Batch8.dc.html#h1'; }catch(e){} },
+      icoBell:this.ico('bell',18),
+      onAskIona:()=>this.setState({ screen:'s13', ionaSent:false, ionaQuestion:'' }),
+
+      // S2/S3
+      profileFields, serviceArea, icoHome:this.ico('home',18), comfortFields, comfortAdvisory, onEdit:()=>{}, onBackSettings:()=>this.setState(Object.assign(this.resetView(),{ screen:'s1' })),
+      editOpen: !!st.editField, editLabel: st.editLabel, editVal: st.editVal, editNote, editSaveLabel,
+      onEditInput:(e)=>this.set('editVal', e.target.value),
+      onEditSave:()=>{ const k=st.editField; if(!k) return;
+        if(k==='email'){ this.setState({ editField:null }); this.toastMsg('Passkey confirmed — confirmation links sent to your old and new address.'); return; }
+        if(k==='plan'){ this.setState(s=>({ rate:Object.assign({},s.rate,{plan:s.editVal}), editField:null })); this.toastMsg('Rate plan updated.'); return; }
+        if(['sqft','built','solarKw','batteryKwh','evKwh','evModel'].indexOf(k)>=0){ this.setState(s=>({ cfg:Object.assign({},s.cfg,{[k]:s.editVal}), editField:null })); this.toastMsg('Saved.'); return; }
+        this.setState(s=>({ profileVals:Object.assign({},s.profileVals,{[k]:s.editVal}), editField:null })); this.toastMsg('Saved.'); },
+      onEditCancel:()=>this.set('editField',null),
+
+      // C — focused edit screens
+      homeVM, solarVM, evVM,
+
+      // S4/S5
+      utilCard, recon, rate:st.rate, changeOpen:st.changeOpen,
+      onConnectUtility:()=>this.setState({ screen:'s5', utilStep: st.util==='linked'?'already':'provider', utilOrigin:'settings' }),
+      onChangeUtility:()=>this.set('changeOpen', !st.changeOpen),
+      onChangeManual:()=>this.setState({ changeOpen:false, editField:'plan', editLabel:'Rate plan', editVal:st.rate.plan }),
+      onReconnect:()=>this.setState({ changeOpen:false, screen:'s5', utilStep: st.util==='linked'?'already':'provider', utilOrigin:'settings' }),
+      tzLabel:st.tz, tzPickerOpen:st.tzPickerOpen, onTzChange:()=>this.set('tzPickerOpen',!st.tzPickerOpen),
+      tzZones:['Eastern Time','Central Time','Mountain Time','Mountain Time (Arizona, no DST)','Pacific Time'].map(z=>({ label:z, checked:st.tz===z?'true':'false', onPick:()=>this.setState({tz:z, tzPickerOpen:false}), style:this.radioPill(st.tz===z) })),
+      utilProviders, utilScopes, utilFlow,
+      onUtilBack:()=>{ if(st.utilOrigin==='ledger'){ try{ window.location.href='PIF-Dashboard-Ledger-Batch3.dc.html'; }catch(e){} return; } this.setState({ screen:'s4', utilStep:'provider' }); },
+
+      // S6
+      notifRows,
+      quietOn:st.quietOn, quietSwStyle:this.sw(st.quietOn), quietSwKnob:this.swKnob(st.quietOn), onQuietToggle:()=>this.set('quietOn',!st.quietOn),
+      quietFrom:st.quietFrom, quietTo:st.quietTo, onQuietFrom:(e)=>this.set('quietFrom',e.target.value), onQuietTo:(e)=>this.set('quietTo',e.target.value),
+      planTierName: tier.charAt(0).toUpperCase()+tier.slice(1), planCanUpgrade: tier!=='premium', planCanDowngrade: tier!=='basic',
+      icoCard:this.ico('card',18), icoDown:this.ico('down',18),
+      invoices:[{date:'Jul 1, 2026', amt:'$15.00'},{date:'Jun 1, 2026', amt:'$15.00'},{date:'May 1, 2026', amt:'$15.00'}],
+
+      // S7
+      themeCards, textSizes, textZoom, rmSwitchStyle:this.sw(rm), rmSwitchKnob:this.swKnob(rm),
+
+      // S8/S9/S10/S11
+      learned, privacyToggles, sessions,
+      onResetLearned:()=>this.askConfirm({ title:'Reset everything PIF learned?', body:'PIF forgets your learned routines — departure times, pre-cool behaviour, weekend shifts — and starts observing from scratch. Your savings may dip while it re-learns. This can\u2019t be undone.', confirmLabel:'Reset learning', danger:true, act:()=>this.toastMsg('Learning reset — PIF will start observing fresh.') }),
+      onExport:()=>this.askConfirm({ title:'Request your data export?', body:'We\u2019ll email a download link to alex@home.com within 24 hours. The file includes your profile, devices and full ledger.', confirmLabel:'Request export', danger:false, act:()=>this.toastMsg('Export requested — check your email within 24 hours.') }),
+      onDelete:()=>this.askConfirm({ title:'Delete your account and all data?', body:'This permanently erases your profile, devices, ledger and savings history, and stops all scheduled savings immediately. Your plan is cancelled at end of period. This cannot be undone.', confirmLabel:'Confirm with passkey', danger:true, passkey:true, act:()=>this.toastMsg('Passkey confirmed — deletion scheduled. You\u2019ll get a confirmation email.') }),
+      onManagePasskeys:()=>this.askConfirm({ title:'Manage passkeys', body:'This device has 1 passkey (added Jun 12) plus an authenticator app as backup. You can add another passkey or remove one here.', confirmLabel:'Add a passkey', danger:false, act:()=>this.toastMsg('Follow your device prompt to add a passkey.') }),
+      onSignoutAll:()=>this.askConfirm({ title:'Plug out everywhere?', body:'This plugs you out of every active session except this one — ending every session on your other devices. You\u2019ll need to plug in again there.', confirmLabel:'Plug out everywhere', danger:true, act:()=>this.toastMsg('Plugged out of all other sessions.') }),
+
+      // S12
+      helpQuery:st.helpQuery, onHelpSearch:(e)=>this.set('helpQuery',e.target.value),
+      help:{ noResults:helpNo, showTopics:!helpNo }, helpTopics:helpTopicsVM,
+      onCompareTiers:()=>this.goBatch7(), onBackHelp:()=>this.set('screen','s12'),
+      onUpgradeFlow:()=>this.goBatch7(),
+      onUpdatePay:()=>this.goBatch6('f2'),
+      onInvoice:()=>this.goBatch6('f3'),
+      onDowngrade:()=>this.goBatch6('f4'),
+      onCancelSub:()=>this.goBatch6('f7'),
+      onMoving:()=>this.goBatch6('f10'),
+
+      // S13
+      ionaSent:st.ionaSent, ionaNotSent:!st.ionaSent, ionaQuestion:st.ionaQuestion,
+      onIonaInput:(e)=>this.set('ionaQuestion',e.target.value),
+      ionaSendDisabled, onIonaSend:()=>{ if(ionaCan) this.set('ionaSent',true); },
+      ionaSendStyle:{ appearance:'none',border:'none',cursor:ionaCan?'pointer':'not-allowed',width:'100%',font:'700 15px Inter,system-ui,sans-serif',padding:'13px',borderRadius:'12px',background:ionaCan?'var(--primary)':'var(--border-strong)',color:'var(--text-onfill)',minHeight:'50px',opacity:ionaCan?1:.6 },
+
+      // launcher (mutual exclusivity)
+      fanOpen:st.fanOpen, fanTabs:this.fanTabs(rm), launcherEl:this.launcherEl(),
+      onLauncher:()=>this.setState(s=>({ fanOpen:!s.fanOpen, acctOpen:false })),
+      overlayOpen: st.acctOpen || st.fanOpen,
+      onOverlayClose: ()=>this.setState({ acctOpen:false, fanOpen:false }),
+
+      // global overlays: confirm modal + toast
+      confirm: st.confirm, confirmOpen: !!st.confirm,
+      confirmTitle: st.confirm?st.confirm.title:'', confirmBody: st.confirm?st.confirm.body:'', confirmLabel: st.confirm?st.confirm.confirmLabel:'',
+      confirmDanger: st.confirm?!!st.confirm.danger:false, confirmTyped: st.confirmTyped,
+      confirmNeedsType: st.confirm?!!st.confirm.typed:false,
+      confirmPasskey: st.confirm?!!st.confirm.passkey:false,
+      confirmCanRun: st.confirm ? (!st.confirm.typed || (st.confirmTyped||'')==='DELETE') : false,
+      confirmBtnStyle:{ appearance:'none',border:'none',cursor:'pointer',font:'700 13px Inter,system-ui,sans-serif',padding:'11px 18px',borderRadius:'11px',minHeight:'46px',color:'var(--text-onfill)',background: st.confirm&&st.confirm.danger?'var(--danger)':'var(--primary)', opacity: (st.confirm && st.confirm.typed && (st.confirmTyped||'')!=='DELETE')?.5:1 },
+      onConfirmType:(e)=>this.set('confirmTyped', e.target.value),
+      onConfirmRun:()=>{ const c=st.confirm; if(c && c.typed && (st.confirmTyped||'')!=='DELETE') return; this.setState({confirm:null, confirmTyped:''}); if(c&&c.act) c.act(); },
+      onConfirmCancel:()=>this.setState({confirm:null, confirmTyped:''}),
+      toast: st.toast, toastShow: !!st.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>
