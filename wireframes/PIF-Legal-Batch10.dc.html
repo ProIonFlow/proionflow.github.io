@@ -9,7 +9,7 @@
 </head>
 <body>
 <x-dc>
-<!-- PIF-Legal-Batch10 v2 — 26 Jul, DSR button gated to signed-in; signed-out gets "Plug in to manage" link -->
+<!-- PIF-Legal-Batch10 v4 — 27 Jul, visitor-nav hamburger + legal TOC hidden on mobile -->
 <helmet data-dc-atomics>
 <meta name="design_doc_mode" content="canvas">
 <meta name="omelette-owns-print" content="1">
@@ -69,14 +69,18 @@
   .pif-col-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   .pif-col-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
   .pif-nav{display:flex;gap:4px}
+  .pif-hamburger{display:none;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:1px solid var(--border-subtle);background:var(--surface-raised);color:var(--text-primary);cursor:pointer;flex:none}
   @media (max-width:768px){
     .pif-page{padding:16px 14px 56px}
     .pif-col-2,.pif-col-3{grid-template-columns:1fr}
-    .pif-nav{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+    .pif-nav{display:none}
+    .pif-nav.open{display:flex;flex-direction:column;gap:2px;position:absolute;top:calc(100% + 4px);left:12px;right:12px;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:12px;box-shadow:var(--elev-3);padding:6px;z-index:60}
+    .pif-nav.open a, .pif-nav.open button{width:100%;justify-content:flex-start}
+    .pif-hamburger{display:inline-flex}
     .pif-btn-full{width:100%}
   }
   @media (max-width:480px){ .pif-page{padding:14px 12px 48px} }
-  @media (max-width:768px){ .pif-legalgrid{grid-template-columns:1fr} }
+  @media (max-width:768px){ .pif-legalgrid{grid-template-columns:1fr !important} .pif-legalnav{display:none !important} .pif-mktcta{margin-left:auto} }
   .pif-drawer{position:fixed;top:0;bottom:0;left:0;width:min(360px,90vw);z-index:65;background:var(--surface-base);border-right:1px solid var(--border-subtle);box-shadow:var(--elev-3);overflow-y:auto;padding:18px 16px;transform:translateX(-100%);transition:transform .2s ease}
   .pif-drawer.open{transform:translateX(0)}
   @media (prefers-reduced-motion:reduce){ .pif-drawer{transition:none} }
@@ -108,28 +112,34 @@
 
   <!-- ============ TOP BAR — MARKETING (signed out) ============ -->
   <sc-if value="{{ signedOut }}" hint-placeholder-val="{{ true }}">
-    <div class="pif-noprint" style="display:flex;align-items:center;gap:14px;padding:0 4px 20px;border-bottom:1px solid var(--border-subtle);margin-bottom:28px;flex-wrap:wrap">
+    <div class="pif-noprint" style="position:relative;display:flex;align-items:center;gap:14px;padding:0 4px 20px;border-bottom:1px solid var(--border-subtle);margin-bottom:28px;flex-wrap:wrap">
+      <button class="pif-hamburger" aria-label="Menu" aria-haspopup="true" aria-expanded="{{ navOpen }}" aria-controls="pif-visitor-nav" onClick="{{ onNav }}">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
       <div style="display:flex;align-items:center;gap:9px">
         <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
         <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
       </div>
-      <nav aria-label="Primary" style="margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <nav aria-label="Primary" id="pif-visitor-nav" class="pif-nav {{ navCls }}" style="margin-left:auto">
         <a href="PIF-Acquisition-Batch7.dc.html#a12" style="{{ navInactiveStyle }}">How it works</a>
         <a href="PIF-Acquisition-Batch7.dc.html#a11" style="{{ navInactiveStyle }}">Pricing</a>
         <a href="PIF-Auth-Batch1.dc.html" style="{{ navInactiveStyle }}">Plug in</a>
-        <a href="PIF-Onboarding-Quiz-Batch2.dc.html" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font:700 14px Inter,system-ui,sans-serif;padding:9px 18px;border-radius:11px;background:var(--accent);color:var(--text-onfill);min-height:40px" style-hover="background:var(--accent-bright);text-decoration:none">Get started</a>
       </nav>
+      <a class="pif-mktcta" href="PIF-Onboarding-Quiz-Batch2.dc.html" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font:700 14px Inter,system-ui,sans-serif;padding:9px 18px;border-radius:11px;background:var(--accent);color:var(--text-onfill);min-height:40px" style-hover="background:var(--accent-bright);text-decoration:none">Get started</a>
     </div>
   </sc-if>
 
   <!-- ============ TOP BAR — SIGNED IN (app shell) ============ -->
   <sc-if value="{{ signedIn }}" hint-placeholder-val="{{ false }}">
     <div class="pif-noprint" style="display:flex;align-items:center;gap:14px;padding:0 4px 20px;border-bottom:1px solid var(--border-subtle);margin-bottom:24px;position:relative">
+      <button class="pif-hamburger" aria-label="Menu" aria-haspopup="true" aria-expanded="{{ navOpen }}" aria-controls="pif-primary-nav" onClick="{{ onNav }}">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
       <div style="display:flex;align-items:center;gap:9px">
         <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
         <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
       </div>
-      <nav aria-label="Primary" class="pif-nav" style="margin-left:8px">
+      <nav aria-label="Primary" id="pif-primary-nav" class="pif-nav {{ navCls }}" style="margin-left:8px">
         <a href="PIF-Dashboard-Ledger-Batch3.dc.html" style="{{ navInactiveStyle }}">Dashboard</a>
         <a href="PIF-Dashboard-Ledger-Batch3.dc.html#ledger" style="{{ navInactiveStyle }}">Ledger</a>
         <a href="PIF-Devices-Connect-Batch4.dc.html" style="{{ navInactiveStyle }}">Devices</a>
@@ -223,7 +233,7 @@
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:1200},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;auth&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;signedOut&quot;,&quot;signedIn&quot;],&quot;default&quot;:&quot;signedOut&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:1200},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;auth&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;signedOut&quot;,&quot;signedIn&quot;],&quot;default&quot;:&quot;signedIn&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;}}">
 class Component extends DCLogic {
   constructor(props){
     super(props);
@@ -233,11 +243,11 @@ class Component extends DCLogic {
       rm: !!props.previewReducedMotion,
       screen: hs || 'tos',
       auth: props.auth || 'signedOut',
-      fanOpen:false, acctOpen:false
+      navOpen:false, fanOpen:false, acctOpen:false
     };
   }
   set(k,v){ const p={}; p[k]=v; this.setState(p); }
-  componentDidMount(){ this._esc=(e)=>{ if(e.key==='Escape') this.setState({acctOpen:false,fanOpen:false,harnessOpen:false}); }; try{ window.addEventListener('keydown', this._esc); }catch(e){} }
+  componentDidMount(){ this._esc=(e)=>{ if(e.key==='Escape') this.setState({acctOpen:false,fanOpen:false,harnessOpen:false,navOpen:false}); }; try{ window.addEventListener('keydown', this._esc); }catch(e){} }
   componentWillUnmount(){ try{ window.removeEventListener('keydown', this._esc); }catch(e){} }
 
   ico(name,size){
@@ -361,8 +371,10 @@ class Component extends DCLogic {
       onLauncher:()=>this.setState(s=>({ fanOpen:!s.fanOpen, acctOpen:false })),
       harnessOpen: st.harnessOpen, drawerCls: st.harnessOpen ? 'open' : '',
       onHarness: ()=>this.setState(s=>({ harnessOpen:!s.harnessOpen, acctOpen:false, fanOpen:false })),
-      overlayOpen: st.acctOpen || st.fanOpen || st.harnessOpen,
-      onOverlayClose: ()=>this.setState({ acctOpen:false, fanOpen:false, harnessOpen:false })
+      navOpen: st.navOpen, navCls: st.navOpen ? 'open' : '',
+      onNav: ()=>this.setState(s=>({ navOpen:!s.navOpen, acctOpen:false, fanOpen:false, harnessOpen:false })),
+      overlayOpen: st.acctOpen || st.fanOpen || st.harnessOpen || st.navOpen,
+      onOverlayClose: ()=>this.setState({ acctOpen:false, fanOpen:false, harnessOpen:false, navOpen:false })
     };
   }
 }

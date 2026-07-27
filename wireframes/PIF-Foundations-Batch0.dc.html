@@ -73,10 +73,14 @@
   .pif-col-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   .pif-col-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
   .pif-nav{display:flex;gap:4px}
+  .pif-hamburger{display:none;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:1px solid var(--border-subtle);background:var(--surface-raised);color:var(--text-primary);cursor:pointer;flex:none}
   @media (max-width:768px){
     .pif-page{padding:16px 14px 56px}
     .pif-col-2,.pif-col-3{grid-template-columns:1fr}
-    .pif-nav{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+    .pif-nav{display:none}
+    .pif-nav.open{display:flex;flex-direction:column;gap:2px;position:absolute;top:calc(100% + 4px);left:12px;right:12px;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:12px;box-shadow:var(--elev-3);padding:6px;z-index:60}
+    .pif-nav.open a, .pif-nav.open button{width:100%;justify-content:flex-start}
+    .pif-hamburger{display:inline-flex}
     .pif-btn-full{width:100%}
   }
   @media (max-width:480px){ .pif-page{padding:14px 12px 48px} }
@@ -883,6 +887,7 @@
         <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 17px;box-shadow:var(--elev-1)">
           <div style="font-size:13px;font-weight:700;margin-bottom:5px">Top-nav</div>
           <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0">Five items — <b style="color:var(--text-primary)">Dashboard · Ledger · Devices · Settings · Billing</b> — as real cross-file <code style="font-family:'JetBrains Mono',monospace;font-size:11px">&lt;a href&gt;</code> links. The current file’s own item(s) render active; in-file screens switch via handlers rather than navigation.</p>
+          <p style="font-size:12px;line-height:17px;color:var(--text-secondary);margin:8px 0 0"><b style="color:var(--text-primary)">Mobile (≤768px):</b> the primary nav collapses to a hamburger placed left of the brand lockup; it opens the items as a dropdown card and dismisses on outside-click / Escape (same overlay system as the account &amp; launcher menus). Applies to <b style="color:var(--text-primary)">both the signed-in app nav and the signed-out marketing nav</b> — on marketing, the primary "Set up" CTA stays visible outside the menu (only the nav links fold). Long-form / legal pages also hide their "On this page" TOC on mobile and go single-column.</p>
         </div>
         <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 17px;box-shadow:var(--elev-1)">
           <div style="font-size:13px;font-weight:700;margin-bottom:5px">Floating Iona launcher</div>
@@ -923,7 +928,7 @@
       <div style="display:flex;flex-direction:column;gap:12px">
         <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 17px;box-shadow:var(--elev-1)">
           <div style="font-size:13px;font-weight:700;margin-bottom:5px">Breakpoints</div>
-          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0">Two stops, mobile-tolerant desktop-first. <b style="color:var(--text-primary)">≤768px</b> — tablet/phone: columns stack to one, nav scrolls horizontally, primary buttons go full-width. <b style="color:var(--text-primary)">≤480px</b> — tightens shell padding only. No horizontal page scroll at 390px is the acceptance test.</p>
+          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0">Two stops, mobile-tolerant desktop-first. <b style="color:var(--text-primary)">≤768px</b> — tablet/phone: columns stack to one, the primary nav collapses to a <b style="color:var(--text-primary)">hamburger dropdown</b> (<code style="font-family:'JetBrains Mono',monospace;font-size:11px">.pif-hamburger</code> + <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.pif-nav.open</code>), primary buttons go full-width. <b style="color:var(--text-primary)">≤480px</b> — tightens shell padding only. No horizontal page scroll at 390px is the acceptance test. <b style="color:var(--text-primary)">Source order matters:</b> the <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.pif-hamburger</code> base (display:none) must be declared <i>before</i> the <code style="font-family:'JetBrains Mono',monospace;font-size:11px">@media (max-width:768px)</code> block — equal specificity means the later-declared rule wins, so a base placed after the media query would keep the hamburger hidden at all widths.</p>
         </div>
         <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 17px;box-shadow:var(--elev-1)">
           <div style="font-size:13px;font-weight:700;margin-bottom:5px">Helper classes</div>
@@ -938,13 +943,21 @@
 .pif-col-3{display:grid;
   grid-template-columns:1fr 1fr 1fr;gap:16px}
 .pif-nav{display:flex;gap:4px}
+.pif-hamburger{display:none;align-items:center;
+  justify-content:center;width:40px;height:40px;
+  border-radius:10px;border:1px solid var(--border-subtle);
+  background:var(--surface-raised);cursor:pointer;flex:none}
 @media (max-width:768px){
   .pif-page{padding:16px 14px 56px}
   .pif-col-2,.pif-col-3{
     grid-template-columns:1fr}   /* stack */
-  .pif-nav{overflow-x:auto;
-    -webkit-overflow-scrolling:touch;
-    flex-wrap:nowrap}
+  .pif-nav{display:none}        /* base rule ABOVE this @media */
+  .pif-nav.open{display:flex;flex-direction:column;
+    position:absolute;top:calc(100% + 4px);
+    left:12px;right:12px;background:var(--surface-base);
+    border:1px solid var(--border-subtle);border-radius:12px;
+    box-shadow:var(--elev-3);padding:6px;z-index:60}
+  .pif-hamburger{display:inline-flex}
   .pif-btn-full{width:100%}
 }
 @media (max-width:480px){
