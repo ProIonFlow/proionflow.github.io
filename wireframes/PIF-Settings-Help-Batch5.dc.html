@@ -9,7 +9,7 @@
 </head>
 <body>
 <x-dc>
-<!-- PIF-Settings-Help-Batch5 v18 — 27 Jul, mobile hamburger nav (≤768px) -->
+<!-- PIF-Settings-Help-Batch5 v23 — 28 Jul, Free trial & billing + guarantee FAQ -->
 <!-- BUILD NOTE — cross-file navigation: launcher/avatar tabs, top-nav, and the bill-check "Connect your utility"
      button use URL-hash deep-links between these wireframe files (e.g. #s5, #s12). In the real app
      these are IN-APP client-side route transitions, NOT full page loads. The hash approach is a
@@ -88,6 +88,8 @@
   .pif-drawer.open{transform:translateX(0)}
   @media (prefers-reduced-motion:reduce){ .pif-drawer{transition:none} }
   [data-rm="1"] .pif-drawer{transition:none}
+  /* §16 — wordmark capital-I legibility */
+  .pif-wordmark .pif-cap-i{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:normal;font-size:1.03em;margin:0 -.03em;padding:0}
 </style>
 </helmet>
 
@@ -127,7 +129,7 @@
     </button>
     <div style="display:flex;align-items:center;gap:9px">
       <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
-      <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+      <span class="pif-wordmark" style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">Pro<span class="pif-cap-i">I</span>onFlow</span>
     </div>
     <nav aria-label="Primary" id="pif-primary-nav" class="pif-nav {{ navCls }}" style="margin-left:8px">
       <a href="PIF-Dashboard-Ledger-Batch3.dc.html" style="{{ navInactiveStyle }}">Dashboard</a>
@@ -271,9 +273,9 @@
         </sc-for>
       </div>
       <sc-if value="{{ comfortAdvisory }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,var(--warning) 8%,var(--surface-raised));border:1px solid var(--warning);border-radius:14px;padding:13px 15px;margin-top:14px"><span style="color:var(--warning);flex:none;margin-top:1px">{{ icoInfo }}</span><div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)"><b style="color:var(--text-primary)">Advisory only.</b> Your heating/cooling isn't electric &amp; controllable, so PIF suggests these settings but can't act on them — no dollar impact is shown.</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,var(--warning) 8%,var(--surface-raised));border:1px solid var(--warning);border-radius:14px;padding:13px 15px;margin-top:14px"><span style="color:var(--warning);flex:none;margin-top:1px">{{ icoInfo }}</span><div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)"><b style="color:var(--text-primary)">Advisory only.</b> Your heating/cooling isn't electric &amp; controllable, so ProIonFlow suggests these settings but can't act on them — no dollar impact is shown.</div></div>
       </sc-if>
-      <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:14px 2px 0"><b style="color:var(--text-primary)">≈</b> marks an estimate — modeled from typical behaviour and shown with the <b style="color:var(--text-primary)">estimates footnote</b> until it's metered or bill-checked. Figures update as PIF learns your home.</p>
+      <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:14px 2px 0"><b style="color:var(--text-primary)">≈</b> marks an estimate — modeled from typical behaviour and shown with the <b style="color:var(--text-primary)">estimates footnote</b> until it's metered or bill-checked. Figures update as ProIonFlow learns your home.</p>
     </div>
   </sc-if>
 
@@ -296,7 +298,7 @@
           <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
             <button onClick="{{ onChangeManual }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:12px;background:var(--surface-base);border:1px solid var(--border-subtle);color:inherit"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoDoc }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:700">Change plan or rate manually</span><span style="display:block;font-size:12px;color:var(--text-secondary)">Pick a different rate plan without re-authorizing — for when only your tariff changed.</span></span></button>
             <button onClick="{{ onReconnect }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:12px;background:var(--surface-base);border:1px solid var(--border-subtle);color:inherit"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoRefresh }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:700">Switch provider (re-connect)</span><span style="display:block;font-size:12px;color:var(--text-secondary)">Sign in to a different utility — full provider connection.</span></span></button>
-            <button onClick="{{ onMoving }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:12px;background:var(--surface-base);border:1px solid var(--secondary);color:inherit"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoHome }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:700">I&rsquo;m moving home</span><span style="display:block;font-size:12px;color:var(--text-secondary)">Moving? Check if PIF comes with you and re-point your service.</span></span></button>
+            <button onClick="{{ onMoving }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:12px;background:var(--surface-base);border:1px solid var(--secondary);color:inherit"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoHome }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:700">I&rsquo;m moving home</span><span style="display:block;font-size:12px;color:var(--text-secondary)">Moving? Check if ProIonFlow comes with you and re-point your service.</span></span></button>
           </div>
         </sc-if>
       </div>
@@ -357,8 +359,8 @@
         <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:24px;box-shadow:var(--elev-2)">
           <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:18px"><span style="width:44px;height:44px;border-radius:11px;display:block"><img src="assets/pif-tile.png" alt="ProIonFlow" style="width:44px;height:44px;border-radius:11px;display:block"></span><span style="color:var(--text-secondary)">{{ icoArrow }}</span><span style="width:44px;height:44px;border-radius:11px;background:var(--surface-sunken);border:1px solid var(--border-subtle);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px">DE</span></div>
           <h1 style="font-family:'Space Grotesk',system-ui;font-size:20px;font-weight:700;margin:0 0 6px;text-align:center">Continue to Dominion Energy</h1>
-          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);text-align:center;margin:0 0 18px">You'll sign in on your utility's own page. PIF never sees your password.</p>
-          <div style="background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:14px 16px;margin-bottom:18px"><div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:10px">PIF will read (only)</div><div style="display:flex;flex-direction:column;gap:9px"><sc-for list="{{ utilScopes }}" as="s" hint-placeholder-count="3"><div style="display:flex;align-items:flex-start;gap:9px"><span style="flex:none;margin-top:1px;color:var(--secondary)">{{ s.icon }}</span><span style="font-size:12.5px;line-height:18px"><b>{{ s.title }}</b><span style="color:var(--text-secondary)"> — {{ s.detail }}</span></span></div></sc-for></div></div>
+          <p style="font-size:13px;line-height:19px;color:var(--text-secondary);text-align:center;margin:0 0 18px">You'll sign in on your utility's own page. ProIonFlow never sees your password.</p>
+          <div style="background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:14px 16px;margin-bottom:18px"><div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:10px">ProIonFlow will read (only)</div><div style="display:flex;flex-direction:column;gap:9px"><sc-for list="{{ utilScopes }}" as="s" hint-placeholder-count="3"><div style="display:flex;align-items:flex-start;gap:9px"><span style="flex:none;margin-top:1px;color:var(--secondary)">{{ s.icon }}</span><span style="font-size:12.5px;line-height:18px"><b>{{ s.title }}</b><span style="color:var(--text-secondary)"> — {{ s.detail }}</span></span></div></sc-for></div></div>
           <button onClick="{{ utilFlow.onAuthorize }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:13px;border-radius:12px;background:var(--secondary);color:var(--text-onfill);min-height:50px">Continue to Dominion Energy</button>
         </div>
       </sc-if>
@@ -446,7 +448,7 @@
         <div style="font-size:14.5px;font-weight:700;margin-bottom:14px">Text size</div>
         <div role="radiogroup" aria-label="Text size" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ textSizes }}" as="t" hint-placeholder-count="4"><button role="radio" aria-checked="{{ t.checked }}" onClick="{{ t.onPick }}" style="{{ t.style }}">{{ t.label }}</button></sc-for></div>
         <div style="margin-top:14px;padding:12px 14px;border-radius:11px;background:var(--surface-sunken);border:1px solid var(--border-subtle)"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin-bottom:6px">Preview</div><div style="font-size:16px;line-height:1.5">The quick brown fox jumps over the lazy dog.</div></div>
-        <p style="font-size:12px;color:var(--text-secondary);margin:12px 0 0;display:flex;align-items:center;gap:7px"><span style="flex:none">{{ icoInfo }}</span><span>Text size applies across the PIF app on this device once you're signed in.</span></p>
+        <p style="font-size:12px;color:var(--text-secondary);margin:12px 0 0;display:flex;align-items:center;gap:7px"><span style="flex:none">{{ icoInfo }}</span><span>Text size applies across the ProIonFlow app on this device once you're signed in.</span></p>
       </div>
 
       <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 18px;box-shadow:var(--elev-1);display:flex;align-items:center;gap:14px">
@@ -456,12 +458,12 @@
     </div>
   </sc-if>
 
-  <!-- ============ SCREEN 8 — WHAT PIF LEARNED ============ -->
+  <!-- ============ SCREEN 8 — WHAT ProIonFlow LEARNED ============ -->
   <sc-if value="{{ isS8 }}" hint-placeholder-val="{{ false }}">
     <div style="animation:pifFadeIn .3s both;max-width:680px">
       <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
-      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">What PIF learned</h1>
-      <p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 0 20px">In plain language, here's what PIF has picked up from your home. It's yours — correct anything that's off, or reset it entirely.</p>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">What ProIonFlow learned</h1>
+      <p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 0 20px">In plain language, here's what ProIonFlow has picked up from your home. It's yours — correct anything that's off, or reset it entirely.</p>
       <div style="display:flex;flex-direction:column;gap:12px">
         <sc-for list="{{ learned }}" as="l" hint-placeholder-count="4">
           <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:16px 18px;box-shadow:var(--elev-1);display:flex;gap:13px;align-items:flex-start">
@@ -470,7 +472,7 @@
           </div>
         </sc-for>
       </div>
-      <button onClick="{{ onResetLearned }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:11px 16px;border-radius:11px;background:transparent;color:var(--danger);border:1px solid var(--danger);min-height:44px;margin-top:16px">Reset everything PIF learned</button>
+      <button onClick="{{ onResetLearned }}" style="appearance:none;cursor:pointer;font:700 13px Inter,system-ui,sans-serif;padding:11px 16px;border-radius:11px;background:transparent;color:var(--danger);border:1px solid var(--danger);min-height:44px;margin-top:16px">Reset everything ProIonFlow learned</button>
     </div>
   </sc-if>
 
@@ -661,7 +663,7 @@
     <div style="animation:pifFadeIn .3s both;max-width:680px">
       <button onClick="{{ onBackSettings }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
       <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Solar &amp; battery</h1>
-      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 18px">Your generation and storage. These shape how PIF times charging and backup.</p>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 18px">Your generation and storage. These shape how ProIonFlow times charging and backup.</p>
       <div style="display:flex;flex-direction:column;gap:14px">
         <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1)">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="color:var(--secondary)">{{ icoSolar }}</span><span style="font-size:14.5px;font-weight:700">Solar panels</span></div>
@@ -988,7 +990,7 @@ class Component extends DCLogic {
         { label:'Security', desc:'Passkeys, 2FA, active sessions', icon:'lock', screen:'s11', kw:'password pin credentials login face id touch id 2fa mfa passkey biometrics sessions' },
         { label:'Downgrade', desc:'Move to a lower tier', icon:'down', screen:'s14', anchor:'downgrade', tiers:['optimum','premium'], kw:'plan tier cheaper basic' },
         { label:'Cancel subscription', desc:'End your plan', icon:'x', color:'var(--danger)', screen:'s14', anchor:'cancel', kw:'unsubscribe stop end quit refund' },
-        { label:'Moving home or utility', desc:'Moving? Check if PIF comes with you', icon:'home', href:'PIF-Billing-Lifecycle-Batch6.dc.html#f10', kw:'moving move relocate new home new address change utility' },
+        { label:'Moving home or utility', desc:'Moving? Check if ProIonFlow comes with you', icon:'home', href:'PIF-Billing-Lifecycle-Batch6.dc.html#f10', kw:'moving move relocate new home new address change utility' },
         { label:'Profile', desc:'Name, email, address', icon:'user', screen:'s2', kw:'name email address account contact' },
         { label:'Billing', desc:'Payment method & invoices', icon:'card', href:'PIF-Billing-Lifecycle-Batch6.dc.html#f1', kw:'payment card invoice receipt visa charge billing subscription' },
         { label:'Refer friends', desc:'Give a friend 50% off — earn $5 each', icon:'sparkles', color:'var(--accent)', href:'PIF-Billing-Lifecycle-Batch6.dc.html#f8', kw:'refer referral invite friends reward share credit' },
@@ -1007,8 +1009,8 @@ class Component extends DCLogic {
         { label:'Notifications & comms', desc:'Channels, quiet hours, consent', icon:'bell', screen:'s6', kw:'notifications email push quiet hours unsubscribe marketing alerts sms' },
         { label:'Appearance & accessibility', desc:'Theme, text size, motion', icon:'gear', screen:'s7', kw:'dark mode light theme font text size motion accessibility contrast' },
       ]},
-      { key:'data', title:'Data & learning', sub:'What PIF learned and your privacy', icon:'measured', rows:[
-        { label:'What PIF learned', desc:'See and correct learned behavior', icon:'sparkles', screen:'s8', kw:'learned model routine patterns ai correct reset' },
+      { key:'data', title:'Data & learning', sub:'What ProIonFlow learned and your privacy', icon:'measured', rows:[
+        { label:'What ProIonFlow learned', desc:'See and correct learned behavior', icon:'sparkles', screen:'s8', kw:'learned model routine patterns ai correct reset' },
         { label:'Privacy & data', desc:'Export, delete, opt-outs', icon:'shield', screen:'s10', kw:'privacy export download delete gdpr data opt out analytics' },
       ]},
     ];
@@ -1107,7 +1109,7 @@ class Component extends DCLogic {
     const evImp={'6am':'6am · less off-peak used','7am':'7am ≈ −$3/mo vs 6am','8am':'8am ≈ −$5/mo vs 6am'};
     const resImp={'20%':'20% held ≈ +$5/mo vs 50%','30%':'30% held ≈ +$3/mo vs 50%','50%':'50% held · max backup'};
     const driftImp={'±1°':'Tight — fewer shift windows','±2°':'Balanced','±3°':'Wide — most off-peak windows'};
-    const awayImp={'Home all day':'PIF acts conservatively','9–5 away':'Daytime free to optimize','Custom':'Set your own hours'};
+    const awayImp={'Home all day':'ProIonFlow acts conservatively','9–5 away':'Daytime free to optimize','Custom':'Set your own hours'};
     const comfortDefs=[
       {field:'floor', label:'Comfort floor (heating)', icon:'device.thermostat', opts:['66°','68°','70°'], dollar:hvacDollar, imp:hvacDollar?dollarImp.floor:advImp.floor},
       {field:'ceil', label:'Comfort ceiling (cooling)', icon:'device.thermostat', opts:['74°','76°','78°'], dollar:hvacDollar, imp:hvacDollar?dollarImp.ceil:advImp.ceil},
@@ -1191,7 +1193,7 @@ class Component extends DCLogic {
 
     // privacy
     const privacyDefs=[
-      { key:'analytics', label:'Product analytics', desc:'Anonymous usage to improve PIF' },
+      { key:'analytics', label:'Product analytics', desc:'Anonymous usage to improve ProIonFlow' },
       { key:'personalization', label:'Personalized recommendations', desc:'Use your data to tailor tips' },
       { key:'thirdparty', label:'Share with partners', desc:'Off — we never sell your data' },
     ];
@@ -1199,7 +1201,7 @@ class Component extends DCLogic {
 
     // security sessions
     const sessions=[
-      { icon:this.ico('phone',18), device:'iPhone 15 · PIF app', meta:'Richmond, VA · now', current:true },
+      { icon:this.ico('phone',18), device:'iPhone 15 · ProIonFlow app', meta:'Richmond, VA · now', current:true },
       { icon:this.ico('monitor',18), device:'Chrome · Mac', meta:'Richmond, VA · 2h ago', current:false },
       { icon:this.ico('monitor',18), device:'Safari · iPad', meta:'Richmond, VA · 3d ago', current:false },
     ];
@@ -1208,9 +1210,9 @@ class Component extends DCLogic {
     const hq=(st.helpQuery||'').trim().toLowerCase();
     const helpDefs=[
       { title:'Getting started', icon:'sparkles', qs:[
-        {q:'What does PIF actually do?', a:'PIF watches your rates and your home, then shifts flexible loads — EV charging, pre-cooling, battery — into cheaper, cleaner windows. You keep comfort; PIF moves the timing.'},
+        {q:'What does ProIonFlow actually do?', a:'ProIonFlow watches your rates and your home, then shifts flexible loads — EV charging, pre-cooling, battery — into cheaper, cleaner windows. You keep comfort; ProIonFlow moves the timing.'},
         {q:'How do I set up my home?', a:'The onboarding quiz collects the essentials. You can revise any answer later in Settings → My home & devices — each fact has its own edit screen.'},
-        {q:'Does connecting a device mean PIF controls it?', a:'No. Connecting lets PIF see a device; control is a separate, explicit grant per device. Everything starts visible-but-not-controlled.'},
+        {q:'Does connecting a device mean ProIonFlow controls it?', a:'No. Connecting lets ProIonFlow see a device; control is a separate, explicit grant per device. Everything starts visible-but-not-controlled.'},
       ]},
       { title:'Savings & the ledger', icon:'banked', qs:[
         {q:'How are my savings calculated?', a:'Each action is timed and metered: the kWh we shifted, multiplied by the gap between your peak and off-peak rate. The dollar figure is derived from those two facts and always carries its evidence tier.'},
@@ -1218,9 +1220,18 @@ class Component extends DCLogic {
         {q:'Why is a figure marked as an estimate?', a:'A modeled figure hasn\u2019t been metered directly — it\u2019s calculated from typical behaviour. It carries \u201c≈\u201d and the estimates footnote until it can be measured or bill-checked.'},
       ]},
       { title:'Devices & control', icon:'smart-plug', qs:[
-        {q:'What does “connecting isn’t controlling” mean?', a:'Connecting a device lets PIF see it. Control is a separate, explicit grant per device — visible-but-not-controlled is the default until you allow it.'},
+        {q:'What does “connecting isn’t controlling” mean?', a:'Connecting a device lets ProIonFlow see it. Control is a separate, explicit grant per device — visible-but-not-controlled is the default until you allow it.'},
         {q:'How do I add or classify a device?', a:'Settings → My home & devices → Add a device opens the connect flow. Each device starts Protected; you classify it Controllable or Critical afterwards.'},
         {q:'Can I skip a planned action tonight?', a:'Yes — every item in Tonight\u2019s plan has a one-off \u201cSkip tonight\u201d that shows the cost or deadline impact before you confirm, and stops at your safety limits.'},
+      ]},
+      { title:'Free trial & billing', icon:'card', qs:[
+        {q:'How does the 14-day trial work?', a:"You get 14 days with ProIonFlow before any monthly charge. On Basic and Optimum the trial is free \u2014 we save your card at signup but don\u2019t charge it. When the trial ends, your first monthly payment begins and renews monthly until you cancel."},
+        {q:'When will I be charged?', a:"Not during your 14-day trial. Your first monthly charge lands the day the trial ends, and we\u2019ll remind you a couple of days before. After that it\u2019s monthly on that same date until you cancel."},
+        {q:'Can I cancel during the trial?', a:"Yes. Cancel anytime before your trial ends and you won\u2019t be charged on Basic or Optimum \u2014 your service runs through the end of the trial, then stops. Cancel from Settings \u2192 Plan & billing."},
+        {q:'Why does Premium have a $10 trial when Basic and Optimum are free?', a:"Basic and Optimum start with advice and smart scheduling, so a free trial is easy to offer. Premium is different \u2014 from day one it actively manages your highest-value equipment: home battery, solar export, and grid-event (VPP) participation, which we set up and run for you during the trial. The $10 covers that hands-on trial. If you\u2019d rather try ProIonFlow at no cost first, start on Basic or Optimum free and upgrade to Premium anytime once you\u2019ve seen it work."},
+        {q:'Is the $10 Premium trial fee refundable?', a:"No. The $10 covers your 14-day Premium trial and isn\u2019t refundable \u2014 even if the savings during your trial don\u2019t add up to $10. The savings guarantee applies only to paid monthly billing, not the trial. If you cancel before the trial ends, you simply won\u2019t be charged the $25 monthly fee."},
+        {q:'Do you guarantee I\u2019ll save money?', a:"We guarantee that the savings ProIonFlow measurably generates will beat what you pay us. You pay your fee as normal each month; if in any paid billing cycle our measured savings \u2014 the metered kWh we shifted plus any banked credits, from your ledger \u2014 fall short of your fee, we refund the difference, up to your full fee, within 30 days of that cycle closing. We can\u2019t promise your total bill will drop, because weather, your own usage, and rate changes are outside our control \u2014 this is about our measured savings beating our fee, not your overall bill. It covers the loads you let us control: it applies to a paid cycle when your qualifying flexible devices stayed connected and controllable for most of that cycle (time offline or set to Critical is excluded; if too little of your home was controllable, the guarantee is skipped for that cycle). It doesn\u2019t apply to the trial period."},
+        {q:'What keeps my guarantee active?', a:"Keeping your qualifying flexible devices connected and controllable. If one goes offline or you set it to Critical, ProIonFlow can\u2019t act on it, so that time is excluded and your guarantee can be skipped for the cycle. Your dashboard shows whether the guarantee is active, at risk, or skipped, so you can reconnect in time and keep it live."},
       ]},
       { title:'Billing & plans', icon:'card', qs:[
         {q:'What’s the difference between the tiers?', a:'Basic is advisory-only; Optimum adds automatic control; Premium adds arbitrage and priority. A full side-by-side comparison is coming in a later batch.'},
@@ -1228,9 +1239,9 @@ class Component extends DCLogic {
         {q:'How do I cancel?', a:'Settings → Account → Cancel subscription. Cancel anytime — your plan runs to the end of the paid month (no refund for the current month).'},
       ]},
       { title:'Privacy & your data', icon:'shield', qs:[
-        {q:'What data does PIF collect?', a:'Your home facts, connected-device readings, and (if you link it) your utility statements. It\u2019s used to plan savings — never sold. See Settings → Privacy & data.'},
+        {q:'What data does ProIonFlow collect?', a:'Your home facts, connected-device readings, and (if you link it) your utility statements. It\u2019s used to plan savings — never sold. See Settings → Privacy & data.'},
         {q:'Can I export or delete everything?', a:'Yes. Settings → Privacy & data lets you export a full copy or delete your account and data. Deletion needs a passkey confirmation and can\u2019t be undone.'},
-        {q:'Who can see my utility bills?', a:'Only PIF\u2019s bill-checking uses them, read-only, to verify our savings math. You can disconnect the utility at any time.'},
+        {q:'Who can see my utility bills?', a:'Only ProIonFlow\u2019s bill-checking uses them, read-only, to verify our savings math. You can disconnect the utility at any time.'},
       ]},
     ];
     const openFaq=st.openFaq;
@@ -1357,7 +1368,7 @@ class Component extends DCLogic {
 
       // S8/S9/S10/S11
       learned, privacyToggles, sessions,
-      onResetLearned:()=>this.askConfirm({ title:'Reset everything PIF learned?', body:'PIF forgets your learned routines — departure times, pre-cool behaviour, weekend shifts — and starts observing from scratch. Your savings may dip while it re-learns. This can\u2019t be undone.', confirmLabel:'Reset learning', danger:true, act:()=>this.toastMsg('Learning reset — PIF will start observing fresh.') }),
+      onResetLearned:()=>this.askConfirm({ title:'Reset everything ProIonFlow learned?', body:'ProIonFlow forgets your learned routines — departure times, pre-cool behaviour, weekend shifts — and starts observing from scratch. Your savings may dip while it re-learns. This can\u2019t be undone.', confirmLabel:'Reset learning', danger:true, act:()=>this.toastMsg('Learning reset — ProIonFlow will start observing fresh.') }),
       onExport:()=>this.askConfirm({ title:'Request your data export?', body:'We\u2019ll email a download link to alex@home.com within 24 hours. The file includes your profile, devices and full ledger.', confirmLabel:'Request export', danger:false, act:()=>this.toastMsg('Export requested — check your email within 24 hours.') }),
       onDelete:()=>this.askConfirm({ title:'Delete your account and all data?', body:'This permanently erases your profile, devices, ledger and savings history, and stops all scheduled savings immediately. Your plan is cancelled at end of period. This cannot be undone.', confirmLabel:'Confirm with passkey', danger:true, passkey:true, act:()=>this.toastMsg('Passkey confirmed — deletion scheduled. You\u2019ll get a confirmation email.') }),
       onManagePasskeys:()=>this.askConfirm({ title:'Manage passkeys', body:'This device has 1 passkey (added Jun 12) plus an authenticator app as backup. You can add another passkey or remove one here.', confirmLabel:'Add a passkey', danger:false, act:()=>this.toastMsg('Follow your device prompt to add a passkey.') }),

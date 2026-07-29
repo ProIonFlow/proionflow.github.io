@@ -9,7 +9,7 @@
 </head>
 <body>
 <x-dc>
-<!-- PIF-Onboarding-Quiz-Batch2 v11 — 27 Jul, resultDemo default → off (loads on welcome) -->
+<!-- PIF-Onboarding-Quiz-Batch2 v18 — 28 Jul, reframe subscribe as 14-day trial start -->
 <!-- §15 icon source: every option glyph resolves from the canonical Foundations §15 registry (same names + geometry). piggy/sofa are the two slider end-caps, quiz-only, not part of §15. -->
 <!-- BUILD NOTE — the Iona global launcher is intentionally absent here. During the quiz Iona is the
      guide (in-flow), so a corner launcher would be a confusing second Iona, and most launcher tabs are
@@ -81,6 +81,8 @@
     .pif-btn-full{width:100%}
   }
   @media (max-width:480px){ .pif-page{padding:14px 12px 48px} }
+  /* §16 — wordmark capital-I legibility */
+  .pif-wordmark .pif-cap-i{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:normal;font-size:1.03em;margin:0 -.03em;padding:0}
 </style>
 </helmet>
 
@@ -90,7 +92,7 @@
   <div style="width:100%;max-width:600px;display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
     <div style="display:inline-flex;align-items:center;gap:9px">
       <img src="assets/pif-tile.png" alt="" aria-hidden="true" style="height:26px;width:auto;display:block;border-radius:6px">
-      <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+      <span class="pif-wordmark" style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">Pro<span class="pif-cap-i">I</span>onFlow</span>
     </div>
     <div role="radiogroup" aria-label="Theme" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px">
       <sc-for list="{{ segs }}" as="s" hint-placeholder-count="3">
@@ -124,7 +126,7 @@
     <div style="display:flex;justify-content:center;margin-bottom:6px">{{ welcomeFace }}</div>
     <h1 style="font-family:'Space Grotesk',system-ui;font-size:28px;line-height:36px;font-weight:700;letter-spacing:-.02em;margin:0 0 12px">Hi, I'm Iona 👋</h1>
     <p style="font-size:16px;line-height:24px;color:var(--text-secondary);margin:0 auto 8px;max-width:440px">Ready to build your savings? I'm your partner here — we're going to piece together the best plan to maximize what you save. It's tap-first — the only typing is your ZIP, or a name if yours isn't on the list.</p>
-    <p style="font-size:14px;line-height:20px;color:var(--text-primary);font-weight:600;margin:0 auto;max-width:440px">PIF optimizes one home right now — the place you live in most.</p>
+    <p style="font-size:14px;line-height:20px;color:var(--text-primary);font-weight:600;margin:0 auto;max-width:440px">ProIonFlow optimizes one home right now — the place you live in most.</p>
     <div style="display:inline-flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:16px 0 26px">
       <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;padding:6px 12px">9 quick sets</span>
       <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-secondary);background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;padding:6px 12px">~3 minutes</span>
@@ -158,7 +160,16 @@
       </sc-if>
     </div>
 
-    <h2 style="font-size:22px;line-height:30px;font-weight:600;margin:0 0 18px;text-wrap:pretty">{{ qTitle }}</h2>
+    <div style="display:flex;align-items:flex-start;gap:10px;margin:0 0 18px">
+      <h2 style="font-size:22px;line-height:30px;font-weight:600;margin:0;text-wrap:pretty;flex:1;min-width:0">{{ qTitle }}</h2>
+      <sc-if value="{{ qHasHelp }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ onToggleHelp }}" aria-label="What does this mean?" aria-expanded="{{ qHelpOpen }}" aria-controls="pif-q-help" style="flex:none;margin-top:3px;position:relative;z-index:45;appearance:none;cursor:pointer;width:26px;height:26px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface-sunken);color:var(--text-secondary);font:700 14px 'Space Grotesk',system-ui;display:inline-flex;align-items:center;justify-content:center" style-hover="border-color:var(--primary);color:var(--text-primary)">?</button>
+      </sc-if>
+    </div>
+    <sc-if value="{{ qHelpOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ onCloseHelp }}" aria-hidden="true" style="position:fixed;inset:0;z-index:40"></div>
+      <div id="pif-q-help" role="note" style="position:relative;z-index:45;margin:-6px 0 18px;padding:12px 14px;border-radius:12px;background:var(--surface-sunken);border:1px solid var(--border-subtle);font-size:13px;line-height:19px;color:var(--text-secondary);text-wrap:pretty">{{ qHelp }}</div>
+    </sc-if>
 
     <!-- ZIP -->
     <sc-if value="{{ isZip }}" hint-placeholder-val="{{ false }}">
@@ -363,7 +374,7 @@
       <a href="#" onClick="{{ onCompare }}" style="font-size:14px;font-weight:600">Compare all three</a>
       <button onClick="{{ onContinuePay }}" class="pif-btn-full" style="appearance:none;border:none;cursor:pointer;font:600 15px Inter,system-ui,sans-serif;padding:13px 28px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:48px" style-hover="filter:brightness(1.06)">Continue to payment →</button>
     </div>
-    <p id="pif-savings-note" style="font-size:12px;line-height:18px;color:var(--text-secondary);margin:20px 0 0;padding-top:16px;border-top:1px solid var(--border-subtle)"><span style="font-weight:700;color:var(--text-primary)">* Est. = estimate.</span> These are estimates, not promises. Real savings vary with your utility rates, your devices, the weather, and your daily habits. Once PIF is running, your ledger shows every dollar we actually save you — itemized.</p>
+    <p id="pif-savings-note" style="font-size:12px;line-height:18px;color:var(--text-secondary);margin:20px 0 0;padding-top:16px;border-top:1px solid var(--border-subtle)"><span style="font-weight:700;color:var(--text-primary)">* Est. = estimate.</span> These are estimates, not promises. Real savings vary with your utility rates, your devices, the weather, and your daily habits. Once ProIonFlow is running, your ledger shows every dollar we actually save you — itemized.</p>
   </div>
   </sc-if>
 
@@ -412,7 +423,7 @@
         </sc-if>
         <button role="checkbox" aria-checked="{{ capConsent }}" onClick="{{ onCaptureConsent }}" style="appearance:none;background:transparent;border:none;cursor:pointer;display:flex;align-items:flex-start;gap:12px;text-align:left;padding:2px 0">
           <span style="{{ consentBoxStyle }}"><sc-if value="{{ capConsentOn }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="var(--text-onfill)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></sc-if></span>
-          <span style="font-size:13.5px;line-height:19px;color:var(--text-primary)"><sc-if value="{{ captureReq }}" hint-placeholder-val="{{ false }}">Email me when PIF becomes a fit for my home — nothing else.</sc-if><sc-if value="{{ captureMulti }}" hint-placeholder-val="{{ true }}">Email me when multi-home / business support launches. <span style="color:var(--text-secondary)">Required to send you the notification — nothing else.</span></sc-if></span>
+          <span style="font-size:13.5px;line-height:19px;color:var(--text-primary)"><sc-if value="{{ captureReq }}" hint-placeholder-val="{{ false }}">Email me when ProIonFlow becomes a fit for my home — nothing else.</sc-if><sc-if value="{{ captureMulti }}" hint-placeholder-val="{{ true }}">Email me when multi-home / business support launches. <span style="color:var(--text-secondary)">Required to send you the notification — nothing else.</span></sc-if></span>
         </button>
         <button onClick="{{ onCaptureSubmit }}" aria-disabled="{{ capSubmitDisabled }}" style="{{ capSubmitStyle }}">{{ capSubmitLabel }}</button>
         <sc-if value="{{ captureReq }}" hint-placeholder-val="{{ false }}"><button onClick="{{ onCaptureBack }}" style="appearance:none;cursor:pointer;background:transparent;border:1px solid var(--border-strong);color:var(--text-primary);font:600 15px Inter,system-ui,sans-serif;padding:13px 22px;border-radius:999px;min-height:50px;width:100%" style-hover="background:var(--surface-sunken)"><span aria-hidden="true">←</span> Back</button></sc-if>
@@ -519,14 +530,15 @@
       </div>
     </div>
     <sc-if value="{{ csErr }}" hint-placeholder-val="{{ false }}"><div id="pe-card" role="alert" style="font-size:12px;color:var(--danger);margin-top:6px">{{ csErr }}</div></sc-if>
-    <div style="font-size:11px;line-height:15px;color:var(--text-secondary);margin:8px 0 20px">These fields are hosted by Stripe — card data never touches PIF servers. Brand, expiry and security-code checks run inside Stripe.</div>
+    <div style="font-size:11px;line-height:15px;color:var(--text-secondary);margin:8px 0 12px">These fields are hosted by Stripe — card data never touches ProIonFlow servers. Brand, expiry and security-code checks run inside Stripe.</div>
+    <div style="display:flex;gap:8px;align-items:flex-start;background:color-mix(in srgb,var(--info) 9%,transparent);border:1px solid var(--info);border-radius:12px;padding:11px 14px;margin-bottom:20px;font-size:13px;line-height:18px;color:var(--text-primary);font-weight:600"><span style="color:var(--info);flex:none;margin-top:1px">{{ icoTrialInfo }}</span><span><sc-if value="{{ freeTrial }}" hint-placeholder-val="{{ true }}">{{ payPrice }}/mo after your 14-day free trial. Cancel anytime.</sc-if><sc-if value="{{ paidTrial }}" hint-placeholder-val="{{ false }}">$10 today, then $25/mo after 14 days. Cancel anytime.</sc-if></span></div>
 
     <div style="display:flex;gap:8px;align-items:flex-start;background:var(--surface-sunken);border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:13px;line-height:18px;color:var(--text-secondary)">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex:none;margin-top:1px"><path d="M8 2l5 2v4c0 3.2-2.1 5.2-5 6-2.9-.8-5-2.8-5-6V4z" stroke="var(--info)" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 8l1.5 1.5L10.5 6" stroke="var(--info)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <span>Savings vary by home, devices, and utility rates. See every dollar itemized in your <a href="#" onClick="{{ onLedger }}" style="font-weight:600">ledger</a> and how we calculate it in our <a href="#" onClick="{{ onMethodology }}" style="font-weight:600">methodology</a>. Cancel anytime — your plan runs to the end of the paid month.</span>
     </div>
 
-    <div id="pif-renew-note" style="font-size:14px;line-height:20px;color:var(--text-primary);background:var(--surface-sunken);border-radius:12px;padding:14px 16px;margin-bottom:14px">You're subscribing to <b>PIF {{ payTierShort }}</b> at <b>{{ payPrice }}/month</b>. It renews automatically each month until you cancel. Cancel anytime in Settings → Billing — your plan runs to the end of the paid month.</div>
+    <div id="pif-renew-note" style="font-size:14px;line-height:20px;color:var(--text-primary);background:var(--surface-sunken);border-radius:12px;padding:14px 16px;margin-bottom:14px"><sc-if value="{{ freeTrial }}" hint-placeholder-val="{{ true }}">Your <b>14-day free trial</b> starts today — you won't be charged now. On <b>{{ trialEndDate }}</b> your card is charged <b>{{ payPrice }}/month</b>, then monthly until you cancel. Cancel anytime before {{ trialEndDate }} in Settings → Billing and you won't be charged.</sc-if><sc-if value="{{ paidTrial }}" hint-placeholder-val="{{ false }}">You'll be charged <b>$10 today</b> for your 14-day trial. On <b>{{ trialEndDate }}</b> billing moves to <b>$25/month</b>. The $10 trial fee isn't refundable; cancel before {{ trialEndDate }} and you won't be charged the monthly fee.</sc-if></div>
     <label style="display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:19px;color:var(--text-secondary);margin-bottom:18px;cursor:pointer">
       <input type="checkbox" checked="{{ agreed }}" onChange="{{ onToggleAgree }}" aria-describedby="pif-renew-note" style="margin-top:1px;width:18px;height:18px;accent-color:var(--accent);flex:none;cursor:pointer">
       <span>I agree to the <a href="#" onClick="{{ onTerms }}" style="font-weight:600">Terms of Service</a> and <a href="#" onClick="{{ onPrivacy }}" style="font-weight:600">Privacy Policy</a>, and I authorize this recurring monthly charge until I cancel.</span>
@@ -535,7 +547,7 @@
       <button onClick="{{ onPayBack }}" style="appearance:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px" style-hover="background:var(--surface-sunken)"><span aria-hidden="true">←</span> Back</button>
       <button onClick="{{ onPay }}" disabled="{{ payDisabled }}" aria-busy="{{ csBusy }}" style="{{ payBtnStyle }}" style-hover="filter:brightness(1.06)">
         <sc-if value="{{ csBusy }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:9px"><span style="width:15px;height:15px;border-radius:999px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;display:inline-block;animation:pifSpin .7s linear infinite"></span>Processing…</span></sc-if>
-        <sc-if value="{{ notBusy }}" hint-placeholder-val="{{ true }}">Pay {{ payPrice }}/month</sc-if>
+        <sc-if value="{{ notBusy }}" hint-placeholder-val="{{ true }}"><sc-if value="{{ freeTrial }}" hint-placeholder-val="{{ true }}">Start 14-day free trial</sc-if><sc-if value="{{ paidTrial }}" hint-placeholder-val="{{ false }}">Pay $10 &amp; start trial</sc-if></sc-if>
       </button>
     </div>
   </div>
@@ -545,10 +557,10 @@
   <sc-if value="{{ isComplete }}" hint-placeholder-val="{{ false }}">
   <div class="pif-step" style="width:100%;max-width:600px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:24px;padding:44px 32px;box-shadow:var(--glow-accent),var(--elev-3);text-align:center;animation:pifStepIn .4s cubic-bezier(.2,0,0,1) both">
     <div style="display:flex;justify-content:center;margin-bottom:6px">{{ completeFace }}</div>
-    <h1 style="font-family:'Space Grotesk',system-ui;font-size:28px;line-height:34px;font-weight:700;margin:0 0 10px">You're all set! ⚡</h1>
-    <p style="font-size:16px;line-height:24px;color:var(--text-secondary);margin:0 auto 24px;max-width:400px">Welcome to <b style="color:var(--text-primary)">{{ payTierName }}</b>. Tonight PIF starts shifting your energy to the cheapest hours — you'll wake up to your first savings.</p>
+    <h1 style="font-family:'Space Grotesk',system-ui;font-size:28px;line-height:34px;font-weight:700;margin:0 0 10px">Your 14-day trial has started ⚡</h1>
+    <p style="font-size:16px;line-height:24px;color:var(--text-secondary);margin:0 auto 24px;max-width:400px">You're on <b style="color:var(--text-primary)">{{ payTierName }}</b>. Tonight ProIonFlow starts shifting your energy to the cheapest hours.<sc-if value="{{ freeTrial }}" hint-placeholder-val="{{ true }}"> We won't charge you until <b style="color:var(--text-primary)">{{ trialEndDate }}</b>.</sc-if><sc-if value="{{ paidTrial }}" hint-placeholder-val="{{ false }}"> Your $10 trial is active; monthly billing starts <b style="color:var(--text-primary)">{{ trialEndDate }}</b>.</sc-if></p>
     <div style="display:flex;flex-direction:column;gap:10px;text-align:left;max-width:400px;margin:0 auto 26px">
-      <div style="display:flex;gap:11px;align-items:center;background:var(--surface-sunken);border-radius:12px;padding:13px 15px"><span style="width:28px;height:28px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;flex:none;font-weight:700">1</span><span style="font-size:14px">Connect your devices so PIF can start optimizing</span></div>
+      <div style="display:flex;gap:11px;align-items:center;background:var(--surface-sunken);border-radius:12px;padding:13px 15px"><span style="width:28px;height:28px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;flex:none;font-weight:700">1</span><span style="font-size:14px">Connect your devices so ProIonFlow can start optimizing</span></div>
       <div style="display:flex;gap:11px;align-items:center;background:var(--surface-sunken);border-radius:12px;padding:13px 15px"><span style="width:28px;height:28px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;flex:none;font-weight:700">2</span><span style="font-size:14px">Watch your savings land in the receipt-level ledger</span></div>
     </div>
     <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px">
@@ -579,9 +591,12 @@ class Component extends DCLogic {
       capture: { zip:'', email:'', interest:null, homes:2, consent:false },
       captureMode: 'multihome',
       captureSent: props.captureState==='sent',
+      helpFor: null,
     };
   }
   componentDidMount(){
+    this._esc=(e)=>{ if(e.key==='Escape' && this.state.helpFor) this.setState({helpFor:null}); };
+    document.addEventListener('keydown', this._esc);
     try {
       this._mq = window.matchMedia('(prefers-color-scheme: dark)');
       this._mqh = ()=>{ if(this.state.theme==='system') this.forceUpdate(); };
@@ -590,6 +605,7 @@ class Component extends DCLogic {
   }
   componentWillUnmount(){
     if(this._mq && this._mqh) this._mq.removeEventListener('change', this._mqh);
+    if(this._esc) document.removeEventListener('keydown', this._esc);
     clearTimeout(this._adv);
   }
   reduceMotion(){
@@ -696,7 +712,7 @@ class Component extends DCLogic {
       { title:'Location & utility', qs:[
         {id:'zip', kind:'zip', q:"What's your ZIP code?"},
         {id:'utility', kind:'single', q:'Confirm your utility', opts:[{k:'domin',label:'Dominion Energy',brand:1},{k:'duke',label:'Duke Energy',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'}], otherList:['Pacific Gas & Electric','Southern California Edison','Con Edison','National Grid','Xcel Energy','Georgia Power','DTE Energy','Ameren','Entergy','PECO','Florida Power & Light','Puget Sound Energy'], otherPrompt:'we can’t price a utility we can’t name'},
-        {id:'rate', kind:'single', q:'What kind of rate plan?', showIf:a=>!(a.utility==='domin'||a.utility==='duke'), opts:[{k:'tou',label:'Time-of-use',icon:'clock'},{k:'flat',label:'Flat rate',icon:'minus'},{k:'ns',label:'Not sure',icon:'help'}]},
+        {id:'rate', kind:'single', q:'What kind of rate plan?', help:"'Time-of-use' means your price changes by time of day \u2014 usually cheaper overnight, pricier late afternoon. If unsure, pick Not sure.", showIf:a=>!(a.utility==='domin'||a.utility==='duke'), opts:[{k:'tou',label:'Time-of-use',icon:'clock'},{k:'flat',label:'Flat rate',icon:'minus'},{k:'ns',label:'Not sure',icon:'help'}]},
       ]},
       { title:'Home basics', qs:[
         {id:'hometype', kind:'single', q:'What type of home?', opts:[{k:'house',label:'House',icon:'home'},{k:'town',label:'Townhome',icon:'building'},{k:'condo',label:'Condo',icon:'building'},{k:'apt',label:'Apartment',icon:'door'}]},
@@ -704,13 +720,13 @@ class Component extends DCLogic {
         {id:'occupancy', kind:'single', q:'When is someone usually home?', opts:[{k:'day',label:'Most of the day',icon:'sun'},{k:'work',label:'Away on workdays',icon:'briefcase'},{k:'varies',label:'Varies',icon:'shuffle'}]},
       ]},
       { title:'Heating & cooling', qs:[
-        {id:'cooling', kind:'single', q:'How do you cool your home?', opts:[{k:'central',label:'Central AC',icon:'snow'},{k:'hp',label:'Heat pump',icon:'thermo'},{k:'window',label:'Window units',icon:'fan'},{k:'none',label:'None',icon:'ban'}]},
-        {id:'thermostat', kind:'multi', q:'What thermostat do you have?', opts:[{k:'nest',label:'Nest',brand:1},{k:'ecobee',label:'Ecobee',brand:1},{k:'honeywell',label:'Honeywell',brand:1},{k:'other',search:1,label:'Other smart ▸ search',icon:'help'},{k:'prog',label:'Programmable',icon:'clock'},{k:'manual',label:'Manual dial',icon:'disc'},{k:'none',label:'None',icon:'ban',exclusive:true}], otherList:['Emerson Sensi','Wyze','Amazon Smart Thermostat','Mysa','tado°','Bosch','Sinopé','Lux/GEO'], otherPrompt:'it seeds our thermostat adapters'},
-        {id:'fuel', kind:'single', q:'What heats your home?', opts:[{k:'elec',label:'Electric',icon:'zap'},{k:'hp',label:'Heat pump',icon:'thermo'},{k:'gas',label:'Gas',icon:'flame'},{k:'ns',label:'Not sure',icon:'help'}]},
+        {id:'cooling', kind:'single', q:'How do you cool your home?', help:'A heat pump both cools and heats with electricity (no gas burner).', opts:[{k:'central',label:'Central AC',icon:'snow'},{k:'hp',label:'Heat pump',icon:'thermo'},{k:'window',label:'Window units',icon:'fan'},{k:'none',label:'None',icon:'ban'}]},
+        {id:'thermostat', kind:'multi', q:'What thermostat do you have?', help:"'Smart' thermostats connect to WiFi and an app (Nest, Ecobee, Honeywell).", opts:[{k:'nest',label:'Nest',brand:1},{k:'ecobee',label:'Ecobee',brand:1},{k:'honeywell',label:'Honeywell',brand:1},{k:'other',search:1,label:'Other smart ▸ search',icon:'help'},{k:'prog',label:'Programmable',icon:'clock'},{k:'manual',label:'Manual dial',icon:'disc'},{k:'none',label:'None',icon:'ban',exclusive:true}], otherList:['Emerson Sensi','Wyze','Amazon Smart Thermostat','Mysa','tado°','Bosch','Sinopé','Lux/GEO'], otherPrompt:'it seeds our thermostat adapters'},
+        {id:'fuel', kind:'single', q:'What heats your home?', help:'Heat pump = electric heating & cooling in one. Dual-fuel = a heat pump that switches to a gas furnace in cold weather.', opts:[{k:'elec',label:'Electric',icon:'zap'},{k:'hp',label:'Heat pump',icon:'thermo'},{k:'dual',label:'Dual-fuel (heat pump + gas)',icon:'thermo'},{k:'gas',label:'Gas',icon:'flame'},{k:'ns',label:'Not sure',icon:'help'}]},
       ]},
       { title:'Big appliances', qs:[
-        {id:'dryer', kind:'single', q:'Do you have an electric dryer?', opts:[{k:'smart',label:'Smart, has an app',icon:'phone'},{k:'dial',label:'Dial / knob',icon:'disc'},{k:'buttons',label:'Electronic buttons',icon:'menu'},{k:'gas',label:'Gas dryer',icon:'flame'},{k:'none',label:'No dryer',icon:'ban'}]},
-        {id:'water', kind:'single', q:'What kind of water heater?', opts:[{k:'tank',label:'Electric tank',icon:'zap'},{k:'hp',label:'Heat-pump',icon:'thermo'},{k:'gas',label:'Gas',icon:'flame'},{k:'ns',label:'Not sure',icon:'help'}]},
+        {id:'dryer', kind:'single', q:'What kind of dryer do you have?', help:'Electric dryers use a large 240-volt outlet; gas dryers have a gas line behind them.', opts:[{k:'smart',label:'Electric \u2014 smart (has an app)',icon:'phone'},{k:'dial',label:'Electric \u2014 dial / knob',icon:'disc'},{k:'buttons',label:'Electric \u2014 electronic buttons',icon:'menu'},{k:'gas',label:'Gas',icon:'flame'},{k:'none',label:'No dryer',icon:'ban'}]},
+        {id:'water', kind:'single', q:'What kind of water heater?', help:"A heat-pump (or 'hybrid') water heater is a high-efficiency electric model \u2014 usually labeled on the unit.", opts:[{k:'tank',label:'Electric tank',icon:'zap'},{k:'hp',label:'Heat-pump',icon:'thermo'},{k:'gas',label:'Gas',icon:'flame'},{k:'ns',label:'Not sure',icon:'help'}]},
         {id:'loads', kind:'multi', q:'Any other large schedulable loads?', opts:[{k:'ev',label:'EV charger',icon:'plug'},{k:'well',label:'Well pump',icon:'droplet'},{k:'space',label:'Space heaters',icon:'flame'},{k:'pool',label:'Pool pump / spa',icon:'waves'}]},
       ]},
       { title:'Smart devices', qs:[
@@ -720,25 +736,25 @@ class Component extends DCLogic {
       ]},
       { title:'Electric vehicle', qs:[
         {id:'ev', kind:'single', q:'Do you have an electric vehicle?', opts:[{k:'0',label:'None',icon:'ban'},{k:'1',label:'1',icon:'car'},{k:'2',label:'2 or more',icon:'car'}]},
-        {id:'charger', kind:'multi', q:'What kind of charger?', showIf:a=>a.ev&&a.ev!=='0', opts:[{k:'smart',label:'Smart charger / EVSE',icon:'plug'},{k:'l2',label:'Standard Level 2',icon:'plug'},{k:'l1',label:'Level 1 outlet',icon:'zap'},{k:'public',label:'Public only',icon:'map'}]},
+        {id:'charger', kind:'multi', q:'What kind of charger?', help:"Your EV charger \u2014 the technical name is EVSE (Electric Vehicle Supply Equipment). Smart charger = a 240-volt charger that connects to WiFi/an app (Tesla Wall Connector, Wallbox, ChargePoint). Standard Level 2 = a 240-volt charger with no app. Level 1 outlet = charging from a regular 120-volt household wall plug (slowest). Public only = you charge just at public stations, with no charger at home.", showIf:a=>a.ev&&a.ev!=='0', opts:[{k:'smart',label:'Smart charger / EVSE',icon:'plug'},{k:'l2',label:'Standard Level 2',icon:'plug'},{k:'l1',label:'Level 1 outlet',icon:'zap'},{k:'public',label:'Public only',icon:'map'}]},
         {id:'chargerbrand', kind:'multi', q:'Which smart charger?', showIf:a=>a.ev&&a.ev!=='0'&&!!(a.charger||{}).smart, opts:[{k:'tesla',label:'Tesla',brand:1},{k:'chargepoint',label:'ChargePoint',brand:1},{k:'wallbox',label:'Wallbox',brand:1},{k:'emporia',label:'Emporia',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'}], otherList:['Grizzl-E','JuiceBox / Enel X','Autel','Lectron','ClipperCreek','Enphase IQ','Pod Point'], otherPrompt:'it seeds our EVSE adapters'},
         {id:'needby', kind:'single', q:'Car usually needed by?', showIf:a=>a.ev&&a.ev!=='0', opts:[{k:'6',label:'6am',icon:'clock'},{k:'7',label:'7am',icon:'clock'},{k:'8',label:'8am',icon:'clock'},{k:'flex',label:'Flexible',icon:'shuffle'}]},
       ]},
       { title:'Solar', qs:[
         {id:'solar', kind:'single', q:'Do you have rooftop solar?', opts:[{k:'yes',label:'Yes',icon:'sun'},{k:'no',label:'No',icon:'ban'},{k:'planned',label:'Planned',icon:'calendar'}]},
-        {id:'solarsize', kind:'single', q:'How big is the system?', showIf:a=>a.solar==='yes', opts:[{k:'s',label:'Under 5 kW',icon:'sun'},{k:'m',label:'5–10 kW',icon:'sun'},{k:'l',label:'10 kW+',icon:'sun'},{k:'dk',label:"Don't know",icon:'help'}]},
-        {id:'inverter', kind:'single', q:'Which solar inverter?', showIf:a=>a.solar==='yes', opts:[{k:'enphase',label:'Enphase',brand:1},{k:'solaredge',label:'SolarEdge',brand:1},{k:'tesla',label:'Tesla',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'},{k:'dk',label:"Don't know",icon:'help'}], otherList:['SMA','Fronius','Solis','Generac','APsystems','GoodWe','Sol-Ark'], otherPrompt:'it seeds inverter support'},
+        {id:'solarsize', kind:'single', q:'How big is the system?', help:"Roughly your system's rated size in kilowatts (kW) \u2014 check your install paperwork or app. A rough guess is fine.", showIf:a=>a.solar==='yes', opts:[{k:'s',label:'Under 5 kW',icon:'sun'},{k:'m',label:'5–10 kW',icon:'sun'},{k:'l',label:'10 kW+',icon:'sun'},{k:'dk',label:"Don't know",icon:'help'}]},
+        {id:'inverter', kind:'single', q:'Which solar inverter?', help:"The box that converts your panels' power for your home \u2014 brand is usually on a label on it (Enphase, SolarEdge, etc.).", showIf:a=>a.solar==='yes', opts:[{k:'enphase',label:'Enphase',brand:1},{k:'solaredge',label:'SolarEdge',brand:1},{k:'tesla',label:'Tesla',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'},{k:'dk',label:"Don't know",icon:'help'}], otherList:['SMA','Fronius','Solis','Generac','APsystems','GoodWe','Sol-Ark'], otherPrompt:'it seeds inverter support'},
       ]},
       { title:'Battery & grid', qs:[
         {id:'battery', kind:'single', q:'Do you have a home battery?', opts:[{k:'yes',label:'Yes',icon:'battery'},{k:'no',label:'No',icon:'ban'},{k:'planned',label:'Planned',icon:'calendar'}]},
         {id:'batbrand', kind:'single', q:'Which home battery?', showIf:a=>a.battery==='yes', opts:[{k:'powerwall',label:'Tesla Powerwall',brand:1},{k:'enphase',label:'Enphase',brand:1},{k:'franklin',label:'Franklin',brand:1},{k:'other',search:1,label:'Other ▸ search',icon:'help'},{k:'dk',label:"Don't know",icon:'help'}], otherList:['LG','Generac PWRcell','SolarEdge','sonnen','Panasonic','FranklinWH','SunPower SunVault'], otherPrompt:'this is our highest-value lever, so worth capturing precisely'},
         {id:'reserve', kind:'single', q:'Backup reserve preference?', showIf:a=>a.battery==='yes', opts:[{k:'lot',label:'Keep a lot for outages',icon:'shield'},{k:'bal',label:'Balanced',icon:'scale'},{k:'max',label:'Maximize savings',icon:'up'}]},
-        {id:'vpp', kind:'single', q:'Utility VPP / demand-response?', opts:[{k:'enrolled',label:'Already enrolled',icon:'check'},{k:'interested',label:'Interested in earning',icon:'dollar'},{k:'no',label:'Not interested',icon:'ban'},{k:'ns',label:'Not sure',icon:'help'}]},
+        {id:'vpp', kind:'single', q:'Utility VPP / demand-response?', help:"Programs where your utility pays you to cut usage during grid stress (a 'virtual power plant' or 'demand-response' program). You'd know if you'd enrolled.", opts:[{k:'enrolled',label:'Already enrolled',icon:'check'},{k:'interested',label:'Interested in earning',icon:'dollar'},{k:'no',label:'Not interested',icon:'ban'},{k:'ns',label:'Not sure',icon:'help'}]},
       ]},
       { title:'Goals & consent', qs:[
         {id:'priority', kind:'slider', q:'What matters most to you?', leftLabel:'Max savings', rightLabel:'Max comfort', leftIcon:'piggy', rightIcon:'sofa'},
         {id:'drift', kind:'single', q:"Comfort drift you'll accept?", opts:[{k:'barely',label:'Barely any',icon:'snow'},{k:'little',label:'A little',icon:'thermo'},{k:'max',label:'Whatever saves most',icon:'sun'}]},
-        {id:'control', kind:'single', q:'Let PIF control your devices?', opts:[{k:'yes',label:'Yes, optimize for me',icon:'sparkles'},{k:'suggest',label:"Suggest first, I'll approve",icon:'hand'}]},
+        {id:'control', kind:'single', q:'Let ProIonFlow control your devices?', opts:[{k:'yes',label:'Yes, optimize for me',icon:'sparkles'},{k:'suggest',label:"Suggest first, I'll approve",icon:'hand'}]},
       ]},
     ];
   }
@@ -1193,6 +1209,11 @@ class Component extends DCLogic {
       vm = {
         progressLabel: 'Set ' + (this.state.si+1) + ' of 9 · ' + sec.title,
         qTitle: q.q,
+        qHelp: q.help || '',
+        qHasHelp: !!q.help,
+        qHelpOpen: this.state.helpFor === q.id,
+        onToggleHelp: ()=> this.setState(s=>({ helpFor: s.helpFor===q.id ? null : q.id })),
+        onCloseHelp: ()=> this.setState({ helpFor:null }),
         stepKey: this.state.si + '-' + this.state.qi,
         pillOne: isSingle, pillAll: isMulti,
         isZip, isChips, isSlider,
@@ -1299,11 +1320,11 @@ class Component extends DCLogic {
         let reasons, nofitTitle, nofitBody, nofitShowFooter;
         if(nearMiss){
           nofitTitle = 'You\u2019re close \u2014 but not quite worth it yet.';
-          nofitBody = 'Based on your setup, I estimate PIF could save you around \u2248$'+grossEst+'/mo. But after the $'+feeBest+'/mo '+NAMES[bestIdx]+' fee, that leaves only about \u2248$'+netEst+' for you \u2014 and my estimates aren\u2019t exact. On a margin that thin, a small miss could mean you\u2019d pay more than you save, so I won\u2019t recommend it in good conscience yet. If your rate or devices change, the math can shift quickly \u2014 I\u2019ll keep an eye out and re-check whenever you like. No charge, no pressure.';
+          nofitBody = 'Based on your setup, I estimate ProIonFlow could save you around \u2248$'+grossEst+'/mo. But after the $'+feeBest+'/mo '+NAMES[bestIdx]+' fee, that leaves only about \u2248$'+netEst+' for you \u2014 and my estimates aren\u2019t exact. On a margin that thin, a small miss could mean you\u2019d pay more than you save, so I won\u2019t recommend it in good conscience yet. If your rate or devices change, the math can shift quickly \u2014 I\u2019ll keep an eye out and re-check whenever you like. No charge, no pressure.';
           reasons = secondary;
           nofitShowFooter = false;   // re-check line already in the body copy
         } else {
-          nofitTitle = 'PIF isn\u2019t a fit for your home yet';
+          nofitTitle = 'ProIonFlow isn\u2019t a fit for your home yet';
           nofitBody = "I want to be straight with you: right now I couldn't save you enough to comfortably clear even our $5 Basic fee \u2014 so I won't ask you to subscribe. Here's why:";
           reasons = [];
           if(!sp.touActive) reasons.push('Your rate has little time-of-use price spread, so shifting energy earns very little.');
@@ -1427,9 +1448,9 @@ class Component extends DCLogic {
       captureMulti: this.state.captureMode!=='requalify',
       capShowMulti: this.state.captureMode!=='requalify',
       captureTitle: this.state.captureMode==='requalify' ? "I'll keep an eye on your home." : "One home today \u2014 I'll tell you when there's more",
-      captureIntro: this.state.captureMode==='requalify' ? "You're not a fit today \u2014 but homes change. Leave your ZIP and email and I'll re-check yours as your rate and devices evolve, then reach out the moment PIF can save you enough." : "I want to be straight with you: PIF optimizes a single home right now \u2014 the one you live in most. Multiple homes and business accounts are coming. Leave your details and I'll email you the moment they launch.",
+      captureIntro: this.state.captureMode==='requalify' ? "You're not a fit today \u2014 but homes change. Leave your ZIP and email and I'll re-check yours as your rate and devices evolve, then reach out the moment ProIonFlow can save you enough." : "I want to be straight with you: ProIonFlow optimizes a single home right now \u2014 the one you live in most. Multiple homes and business accounts are coming. Leave your details and I'll email you the moment they launch.",
       capSubmitLabel: this.state.captureMode==='requalify' ? 'Keep me posted' : 'Notify me when it launches',
-      captureSentBody: this.state.captureMode==='requalify' ? "Got it \u2014 I'll re-check your home and email you the moment PIF can save you enough. No charge, no pressure." : "We'll email you the moment multi-home and business support launch.",
+      captureSentBody: this.state.captureMode==='requalify' ? "Got it \u2014 I'll re-check your home and email you the moment ProIonFlow can save you enough. No charge, no pressure." : "We'll email you the moment multi-home and business support launch.",
     };
 
     return {
@@ -1481,7 +1502,10 @@ class Component extends DCLogic {
       onPrivacy: (e)=>{ if(e&&e.preventDefault) e.preventDefault(); try{ window.location.href='PIF-Legal-Batch10.dc.html#privacy'; }catch(err){} },
       payTierName: NAMES[selForPay] + ' plan',
       payPrice: PRICES[selForPay],
+      isPaidTrial: selForPay===2, paidTrial: selForPay===2, freeTrial: selForPay!==2,
+      trialFeeToday: selForPay===2 ? '$10' : '$0', trialEndDate: 'Aug 12', firstChargeDate: 'Aug 12',
       completeFace: this.ionaEl('celebrate', 116),
+      icoTrialInfo: React.createElement('svg',{width:15,height:15,viewBox:'0 0 16 16',fill:'none',style:{flex:'none',marginTop:'1px'}},React.createElement('circle',{cx:8,cy:8,r:6.25,stroke:'currentColor',strokeWidth:1.5}),React.createElement('path',{d:'M8 7.2v3.4M8 5.2h.01',stroke:'currentColor',strokeWidth:1.6,strokeLinecap:'round'})),
       onPayBack: ()=> this.setState({ view:'result' }),
       onPay: ()=>{ if(!this.state.agreed) return; const e=this.validatePay(); if(Object.keys(e).length){ this.setState({ payErrors:e }); return; } this.setState({ view:'complete', payErrors:{} }); },
       onRestart: ()=> this.setState({ view:'welcome', si:0, qi:0, answers:{ priority:40 }, maxSection:0, selectedTier:null, editing:false }),

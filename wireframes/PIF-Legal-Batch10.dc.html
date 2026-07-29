@@ -9,7 +9,7 @@
 </head>
 <body>
 <x-dc>
-<!-- PIF-Legal-Batch10 v4 — 27 Jul, visitor-nav hamburger + legal TOC hidden on mobile -->
+<!-- PIF-Legal-Batch10 v9 — 28 Jul, trial + savings-guarantee terms copy (placeholder) -->
 <helmet data-dc-atomics>
 <meta name="design_doc_mode" content="canvas">
 <meta name="omelette-owns-print" content="1">
@@ -85,6 +85,8 @@
   .pif-drawer.open{transform:translateX(0)}
   @media (prefers-reduced-motion:reduce){ .pif-drawer{transition:none} }
   [data-rm="1"] .pif-drawer{transition:none}
+  /* §16 — wordmark capital-I legibility */
+  .pif-wordmark .pif-cap-i{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:normal;font-size:1.03em;margin:0 -.03em;padding:0}
 </style>
 </helmet>
 
@@ -118,7 +120,7 @@
       </button>
       <div style="display:flex;align-items:center;gap:9px">
         <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
-        <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+        <span class="pif-wordmark" style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">Pro<span class="pif-cap-i">I</span>onFlow</span>
       </div>
       <nav aria-label="Primary" id="pif-visitor-nav" class="pif-nav {{ navCls }}" style="margin-left:auto">
         <a href="PIF-Acquisition-Batch7.dc.html#a12" style="{{ navInactiveStyle }}">How it works</a>
@@ -137,7 +139,7 @@
       </button>
       <div style="display:flex;align-items:center;gap:9px">
         <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
-        <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+        <span class="pif-wordmark" style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">Pro<span class="pif-cap-i">I</span>onFlow</span>
       </div>
       <nav aria-label="Primary" id="pif-primary-nav" class="pif-nav {{ navCls }}" style="margin-left:8px">
         <a href="PIF-Dashboard-Ledger-Batch3.dc.html" style="{{ navInactiveStyle }}">Dashboard</a>
@@ -302,12 +304,12 @@ class Component extends DCLogic {
 
   tosData(){
     return { meta:{ version:'Terms v1.0', updated:'Jul 2026', effective:'Aug 1, 2026' }, title:'Terms of Service', sections:[
-      { id:'t-accept', label:'Acceptance & eligibility', title:'Acceptance & eligibility', body:'Covers who may use PIF: agreeing to these terms, being of age, and living at a serviceable address — a supported ZIP on a supported utility.' },
-      { id:'t-service', label:'The service', title:'The service — what PIF does', body:'Describes what PIF provides: automated load-shifting and device orchestration to run eligible devices during cheaper hours, with a savings ledger.' },
-      { id:'t-billing', label:'Subscription, billing & auto-renewal', title:'Subscription, billing & auto-renewal', body:'Explains the monthly subscription and per-tier price, that it renews automatically until cancelled (clear-and-conspicuous), and that payment is processed by Stripe.' },
-      { id:'t-cancel', label:'Cancellation & refunds', title:'Cancellation & refunds', body:'You can cancel anytime — your plan runs to the end of the paid period with no refund, and you can undo before the next cycle. The only refundable case is if PIF ends your subscription, where we refund the unused, prorated portion of your fee.' },
-      { id:'t-savings', label:'Savings — no guarantee', title:'Savings — no guarantee', body:'States that savings vary by home, devices and rates; figures are estimates, not guarantees; there is no make-good for a shortfall; and links to the Methodology for how figures are derived.' },
-      { id:'t-safety', label:'Device control & safety', title:'Device control & safety', body:'Covers the safety envelope PIF operates within, graceful hand-back of control on suspend or cancel, your always-present manual override, and that PIF is not liable for third-party device behavior or utility rates.' },
+      { id:'t-accept', label:'Acceptance & eligibility', title:'Acceptance & eligibility', body:'Covers who may use ProIonFlow: agreeing to these terms, being of age, and living at a serviceable address — a supported ZIP on a supported utility.' },
+      { id:'t-service', label:'The service', title:'The service — what ProIonFlow does', body:'Describes what ProIonFlow provides: automated load-shifting and device orchestration to run eligible devices during cheaper hours, with a savings ledger.' },
+      { id:'t-billing', label:'Subscription, billing & auto-renewal', title:'Subscription, billing & auto-renewal', body:'Explains the monthly subscription and per-tier price, that it renews automatically until cancelled (clear-and-conspicuous), and that payment is processed by Stripe. Also covers the 14-day trial that precedes billing \u2014 free on Basic and Optimum, with a $10 non-refundable trial fee on Premium \u2014 that the payment method is collected at signup and first charged when the trial ends, and that we send a reminder before that first charge.' },
+      { id:'t-cancel', label:'Cancellation & refunds', title:'Cancellation & refunds', body:'During your 14-day trial you can cancel with no monthly charge; the Premium $10 trial fee is non-refundable in all cases. Your service runs to the end of the trial. You can cancel anytime \u2014 your plan runs to the end of the paid period with no refund, and you can undo before the next cycle. The only refundable case is if ProIonFlow ends your subscription, where we refund the unused, prorated portion of your fee. (A separate refund applies under the savings guarantee \u2014 see Savings.)' },
+      { id:'t-savings', label:'Savings & the guarantee', title:'Savings & the guarantee', body:'[PLACEHOLDER — attorney to finalize] States that savings vary by home, devices and rates, and that no specific savings amount or bill reduction is guaranteed \u2014 figures are modeled estimates, not promises. However, ProIonFlow offers a \u201cwe beat our fee or it\u2019s free\u201d guarantee: for each paid billing cycle, its measured savings (Banked + Measured ledger value) will exceed your subscription fee, or the shortfall is refunded within 30 days of the cycle close. The guarantee is conditional on your qualifying flexible devices remaining connected and controllable for the majority of the cycle \u2014 time a device is offline or set to Critical is excluded, and a cycle with insufficient controllable coverage is skipped (not guaranteed). It does not apply to the trial, including the non-refundable $10 Premium trial fee. Links to the Methodology for how figures are derived.' },
+      { id:'t-safety', label:'Device control & safety', title:'Device control & safety', body:'Covers the safety envelope ProIonFlow operates within, graceful hand-back of control on suspend or cancel, your always-present manual override, and that ProIonFlow is not liable for third-party device behavior or utility rates.' },
       { id:'t-security', label:'Account security & responsibilities', title:'Account security & your responsibilities', body:'Your responsibilities: keep credentials confidential, use a strong password/passkey, notify us of unauthorized access, and step-up verification for sensitive actions.' },
       { id:'t-referral', label:'Referral program terms', title:'Referral program terms', body:'Terms of the referral program: eligibility, how invites and rewards work, and anti-abuse conditions.' },
       { id:'t-acceptable', label:'Acceptable use', title:'Acceptable use', body:'What you may not do: misuse, reverse-engineer, resell, or interfere with the service or others’ use of it.' },
@@ -319,17 +321,17 @@ class Component extends DCLogic {
   }
   privData(){
     return { meta:{ version:'Privacy v1.0', updated:'Jul 2026', effective:'Aug 1, 2026' }, title:'Privacy Policy', sections:[
-      { id:'p-collect', label:'What we collect', title:'What we collect', body:'The data PIF collects: energy and device telemetry, learned behavior patterns, a utility-derived service address, and your account email.' },
+      { id:'p-collect', label:'What we collect', title:'What we collect', body:'The data ProIonFlow collects: energy and device telemetry, learned behavior patterns, a utility-derived service address, and your account email.' },
       { id:'p-use', label:'How we use it', title:'How we use it', body:'How that data is used: to plan and run savings, verify results against your bill, and operate your account.' },
       { id:'p-minimize', label:'Data minimization', title:'Data minimization', body:'How we minimize data: discarding a bill image after reading it, and processing photos on-device where possible.' },
       { id:'p-comms', label:'Marketing vs transactional', title:'Marketing vs transactional communications', body:'The difference between transactional messages you always receive and marketing messages, which are opt-in and off by default (CAN-SPAM compliant).' },
-      { id:'p-learning', label:'Automated behavior learning', title:'Automated behavior learning', body:'How PIF learns your routines to improve scheduling, and your ability to see, correct or reset what it learned.' },
+      { id:'p-learning', label:'Automated behavior learning', title:'Automated behavior learning', body:'How ProIonFlow learns your routines to improve scheduling, and your ability to see, correct or reset what it learned.' },
       { id:'p-rights', label:'Your rights (DSR)', title:'Your rights — access, export, correct, delete, opt-out', body:'Your data-subject rights and how to exercise them: access, export, correct, delete, and opt out — all from Privacy & data in Settings.', hasDsr:true },
       { id:'p-retention', label:'Data retention', title:'Data retention', body:'How long we keep data: the Messages feed is kept for about two months, while financial and security records are retained longer where required by law.' },
       { id:'p-security', label:'Security', title:'Security', body:'How we protect data: encryption in transit and at rest, a post-quantum-ready posture, and card details going straight to Stripe so they never touch our servers — described without absolute guarantees.' },
       { id:'p-processors', label:'Third-party processors', title:'Third-party processors', body:'The processors we rely on: Stripe for payments, device OEMs for control, and infrastructure providers.' },
       { id:'p-referral', label:'Referral data', title:'Referral data', body:'How referral data is handled: a friend’s email is used only to send the invite, and the referrer’s name is shared with the friend so they know who invited them.' },
-      { id:'p-children', label:'Children / age', title:'Children / age', body:'PIF is not directed to children; the minimum age to hold an account.' },
+      { id:'p-children', label:'Children / age', title:'Children / age', body:'ProIonFlow is not directed to children; the minimum age to hold an account.' },
       { id:'p-changes', label:'Changes & contact', title:'Changes & contact', body:'How we notify you of policy changes and how to contact us with privacy questions.' }
     ]};
   }

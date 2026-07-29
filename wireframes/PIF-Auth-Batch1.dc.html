@@ -9,7 +9,7 @@
 </head>
 <body>
 <x-dc>
-<!-- PIF-Auth-Batch1 v4 — 26 Jul, consent Terms/Privacy → Batch 10 -->
+<!-- PIF-Auth-Batch1 v8 — 28 Jul, rebrand visible "PIF" → "ProIonFlow" -->
 <!-- §15 icon re-sync: no shared-registry icons here (auth chrome uses bespoke theme/Google/passkey/eye SVGs) — nothing to canonicalize. -->
 <helmet data-dc-atomics>
 <meta name="design_doc_mode" content="canvas">
@@ -66,6 +66,8 @@
     .pif-btn-full{width:100%}
   }
   @media (max-width:480px){ .pif-page{padding:14px 12px 48px} }
+  /* §16 — wordmark capital-I legibility */
+  .pif-wordmark .pif-cap-i{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:normal;font-size:1.03em;margin:0 -.03em;padding:0}
 </style>
 </helmet>
 
@@ -88,14 +90,14 @@
       <div style="position:relative;display:inline-flex;align-items:center;gap:13px">
         <img src="assets/pif-tile.png" alt="" aria-hidden="true" style="height:54px;width:auto;display:block;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.4)">
         <div style="display:flex;flex-direction:column;gap:4px;line-height:1">
-          <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:22px;letter-spacing:-.01em">ProIonFlow</span>
+          <span class="pif-wordmark" style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:22px;letter-spacing:-.01em">Pro<span class="pif-cap-i">I</span>onFlow</span>
           <span style="font-family:Inter,system-ui;font-weight:600;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#2FE39A">Optimize. Save. Flow.</span>
         </div>
       </div>
 
       <div style="margin-top:auto;position:relative">
         <h1 style="font-family:'Space Grotesk',system-ui;font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.02em;margin:0 0 12px">Your home, working while you sleep.</h1>
-        <p style="font-size:15px;line-height:22px;color:#A2AEC4;margin:0 0 24px;max-width:340px">PIF quietly shifts your energy to the cheapest hours and banks the savings — you just watch the number go up.</p>
+        <p style="font-size:15px;line-height:22px;color:#A2AEC4;margin:0 0 24px;max-width:340px">ProIonFlow quietly shifts your energy to the cheapest hours and banks the savings — you just watch the number go up.</p>
         <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px">
           <li style="display:flex;align-items:center;gap:10px;font-size:14px;color:#E9EEF7">
             <span style="width:22px;height:22px;border-radius:999px;background:rgba(47,227,154,.16);display:inline-flex;align-items:center;justify-content:center;flex:none"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="#2FE39A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -153,7 +155,7 @@
           <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;appearance:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:12px;border-radius:12px;background:var(--surface-base);color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px" style-hover="background:var(--surface-sunken)">{{ passkeyIcon }}Use a device passkey</button>
         </div>
 
-        <p style="text-align:center;font-size:14px;color:var(--text-secondary);margin:26px 0 0">New to PIF? <a href="#" onClick="{{ goSetup }}" style="font-weight:600">Set up an account</a></p>
+        <p style="text-align:center;font-size:14px;color:var(--text-secondary);margin:26px 0 0">New to ProIonFlow? <a href="#" onClick="{{ goSetup }}" style="font-weight:600">Set up an account</a></p>
       </div>
       </sc-if>
 

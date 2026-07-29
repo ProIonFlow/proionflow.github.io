@@ -9,7 +9,7 @@
 </head>
 <body>
 <x-dc>
-<!-- PIF-Dashboard-Ledger-Batch3 v34 — 27 Jul, fix hamburger CSS source order -->
+<!-- PIF-Dashboard-Ledger-Batch3 v41 — 28 Jul, guarantee chip auto-hide when savings clear the fee -->
 <helmet data-dc-atomics>
 <meta name="design_doc_mode" content="canvas">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -84,6 +84,8 @@
   .pif-drawer.open{transform:translateX(0)}
   @media (prefers-reduced-motion:reduce){ .pif-drawer{transition:none} }
   [data-rm="1"] .pif-drawer{transition:none}
+  /* §16 — wordmark capital-I legibility */
+  .pif-wordmark .pif-cap-i{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:normal;font-size:1.03em;margin:0 -.03em;padding:0}
 </style>
 </helmet>
 
@@ -110,6 +112,8 @@
       <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Screen</div><div role="tablist" aria-label="Screen" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segScreen }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
       <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Data state</div><div role="tablist" aria-label="Data state" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segState }}" as="s" hint-placeholder-count="5"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
       <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Billing state</div><div role="tablist" aria-label="Billing state" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segBilling }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Savings guarantee</div><div role="tablist" aria-label="Savings guarantee" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segGuarantee }}" as="s" hint-placeholder-count="4"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Cycle savings vs fee</div><div role="tablist" aria-label="Cycle savings vs fee" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segSavingsMet }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
       <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Time window</div><div role="tablist" aria-label="Time window" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap;max-width:100%"><sc-for list="{{ segWinReview }}" as="s" hint-placeholder-count="7"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
       <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Bill connection</div><div role="tablist" aria-label="Bill connection" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segBillState }}" as="s" hint-placeholder-count="3"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
       <div><div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Bill due</div><div role="tablist" aria-label="Bill due" style="display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:999px;flex-wrap:wrap"><sc-for list="{{ segBillDue }}" as="s" hint-placeholder-count="2"><button role="tab" aria-selected="{{ s.active }}" onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</button></sc-for></div></div>
@@ -136,7 +140,7 @@
       </button>
       <div style="display:flex;align-items:center;gap:9px">
         <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;border-radius:6px">
-        <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+        <span class="pif-wordmark" style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">Pro<span class="pif-cap-i">I</span>onFlow</span>
       </div>
       <nav aria-label="Primary" id="pif-primary-nav" class="pif-nav {{ navCls }}" style="margin-left:6px">
         <sc-for list="{{ navTabs }}" as="n" hint-placeholder-count="5"><sc-if value="{{ n.isLink }}" hint-placeholder-val="{{ false }}"><a href="{{ n.href }}" style="{{ n.style }}">{{ n.label }}</a></sc-if><sc-if value="{{ n.isBtn }}" hint-placeholder-val="{{ true }}"><button aria-current="{{ n.active }}" onClick="{{ n.onSelect }}" style="{{ n.style }}">{{ n.label }}</button></sc-if></sc-for>
@@ -174,7 +178,7 @@
       <sc-if value="{{ stError }}" hint-placeholder-val="{{ false }}">
         <div role="alert" style="background:var(--surface-raised);border:1px solid var(--danger);border-radius:18px;padding:26px 22px;text-align:center;animation:pifFadeIn .3s both">
           <span style="display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:999px;background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger);margin-bottom:12px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 22 20H2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v4.5M12 16.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-          <div style="font-size:18px;font-weight:700;margin-bottom:6px">Can't reach PIF right now</div>
+          <div style="font-size:18px;font-weight:700;margin-bottom:6px">Can't reach ProIonFlow right now</div>
           <p style="font-size:14px;line-height:20px;color:var(--text-secondary);margin:0 auto 18px;max-width:300px">You're offline or our service is unreachable. Your savings keep accruing — we'll sync the moment you're back.</p>
           <button onClick="{{ onRetry }}" class="pif-btn-full" style="appearance:none;border:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:11px 22px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:44px" style-hover="filter:brightness(1.06)">Try again</button>
         </div>
@@ -184,7 +188,7 @@
       <sc-if value="{{ stEmpty }}" hint-placeholder-val="{{ false }}">
         <div style="text-align:center;padding:12px 6px;animation:pifFadeIn .3s both">
           <div style="display:flex;justify-content:center;margin-bottom:10px">{{ ionaFace }}</div>
-          <div style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin-bottom:6px">Welcome to PIF ⚡</div>
+          <div style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin-bottom:6px">Welcome to ProIonFlow ⚡</div>
           <p style="font-size:14px;line-height:21px;color:var(--text-secondary);margin:0 auto 20px;max-width:320px">No devices yet and nothing saved — that's about to change. Connect a device and I'll start finding you cheaper hours tonight.</p>
           <div style="display:flex;flex-direction:column;gap:10px;text-align:left;margin-bottom:20px">
             <div style="display:flex;gap:11px;align-items:center;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:14px 15px"><span style="width:30px;height:30px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;flex:none"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M8 3v4M12 3v4M6 7h8v2a4 4 0 0 1-8 0zM10 13v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><div style="font-size:14px;font-weight:600">Connect your first device</div><div style="font-size:12px;color:var(--text-secondary)">EV charger, thermostat, battery…</div></div></div>
@@ -198,11 +202,18 @@
       <sc-if value="{{ stContent }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;flex-direction:column;gap:20px">
 
+          <sc-if value="{{ billingBanner.showTrial }}" hint-placeholder-val="{{ false }}">
+            <div role="status" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:color-mix(in srgb,var(--info) 9%,var(--surface-raised));border:1px solid var(--info);border-radius:16px;padding:14px 16px"><span style="color:var(--info);flex:none"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M10 6.2V10l2.6 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div style="flex:1;min-width:150px"><div style="font-size:14px;font-weight:700">{{ trialTitle }}</div><div style="font-size:13px;line-height:18px;color:var(--text-secondary)">{{ trialSub }}</div></div><a href="PIF-Billing-Lifecycle-Batch6.dc.html#f1" style="flex:none;text-decoration:none;font:700 12.5px Inter,system-ui,sans-serif;padding:10px 16px;border-radius:999px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:40px;display:inline-flex;align-items:center">Manage</a></div>
+          </sc-if>
           <sc-if value="{{ billingBanner.showFail }}" hint-placeholder-val="{{ false }}">
             <div role="alert" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:color-mix(in srgb,var(--warning) 9%,var(--surface-raised));border:1px solid var(--warning);border-radius:16px;padding:14px 16px"><span style="color:var(--warning);flex:none"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 6h14v8H3zM3 9h14" stroke="currentColor" stroke-width="1.6"/></svg></span><div style="flex:1;min-width:150px"><div style="font-size:14px;font-weight:700">Your payment didn&rsquo;t go through</div><div style="font-size:13px;line-height:18px;color:var(--text-secondary)">Update your card to keep your plan — we&rsquo;ll keep retrying in the meantime.</div></div><a href="PIF-Billing-Lifecycle-Batch6.dc.html#f5" style="flex:none;text-decoration:none;font:700 12.5px Inter,system-ui,sans-serif;padding:10px 16px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:40px;display:inline-flex;align-items:center">Update card</a></div>
           </sc-if>
           <sc-if value="{{ billingBanner.showSuspend }}" hint-placeholder-val="{{ false }}">
-            <div role="alert" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:color-mix(in srgb,var(--danger) 10%,var(--surface-raised));border:1px solid var(--danger);border-radius:16px;padding:16px 18px"><span style="color:var(--danger);flex:none"><svg width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 5v10M12.5 5v10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><div style="flex:1;min-width:150px"><div style="font-size:15px;font-weight:700">Your plan is paused</div><div style="font-size:13px;line-height:18px;color:var(--text-secondary)">A payment couldn&rsquo;t be collected, so PIF is paused. Your devices have handed control back to your own defaults — nothing stranded. Reactivate to resume savings.</div></div><a href="PIF-Billing-Lifecycle-Batch6.dc.html#f6" style="flex:none;text-decoration:none;font:700 13px Inter,system-ui,sans-serif;padding:11px 18px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:44px;display:inline-flex;align-items:center">Reactivate</a></div>
+            <div role="alert" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:color-mix(in srgb,var(--danger) 10%,var(--surface-raised));border:1px solid var(--danger);border-radius:16px;padding:16px 18px"><span style="color:var(--danger);flex:none"><svg width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 5v10M12.5 5v10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><div style="flex:1;min-width:150px"><div style="font-size:15px;font-weight:700">Your plan is paused</div><div style="font-size:13px;line-height:18px;color:var(--text-secondary)">A payment couldn&rsquo;t be collected, so ProIonFlow is paused. Your devices have handed control back to your own defaults — nothing stranded. Reactivate to resume savings.</div></div><a href="PIF-Billing-Lifecycle-Batch6.dc.html#f6" style="flex:none;text-decoration:none;font:700 13px Inter,system-ui,sans-serif;padding:11px 18px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:44px;display:inline-flex;align-items:center">Reactivate</a></div>
+          </sc-if>
+
+          <sc-if value="{{ guaranteeShow }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ guaranteeHref }}" role="status" aria-label="{{ guaranteeAria }}" style="{{ guaranteeChipStyle }}"><span aria-hidden="true" style="{{ guaranteeIconStyle }}">{{ guaranteeIcon }}</span><span style="{{ guaranteeTextStyle }}">{{ guaranteeLabel }}</span><sc-if value="{{ guaranteeHasReason }}" hint-placeholder-val="{{ false }}"><span style="{{ guaranteeReasonStyle }}">{{ guaranteeReason }}</span></sc-if></a>
           </sc-if>
 
           <div style="{{ homeGateStyle }}">
@@ -240,7 +251,7 @@
             </div>
           </sc-if>
           <sc-if value="{{ dashNoHistory }}" hint-placeholder-val="{{ false }}">
-            <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 20px;box-shadow:var(--elev-1)"><p style="font-size:12px;line-height:18px;color:var(--text-secondary);margin:0;text-wrap:pretty"><b style="color:var(--text-primary)">Savings trend</b> appears after your first full billing cycle. Tonight's plan below shows what PIF does now.</p></div>
+            <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:16px 20px;box-shadow:var(--elev-1)"><p style="font-size:12px;line-height:18px;color:var(--text-secondary);margin:0;text-wrap:pretty"><b style="color:var(--text-primary)">Savings trend</b> appears after your first full billing cycle. Tonight's plan below shows what ProIonFlow does now.</p></div>
           </sc-if>
 
           <div class="pif-col-2" style="align-items:start">
@@ -253,7 +264,7 @@
             <sc-if value="{{ mechShow }}" hint-placeholder-val="{{ true }}">
               <figure style="margin:0 0 14px;background:var(--surface-sunken);border:1px solid var(--border-subtle);border-radius:12px;padding:12px 12px 8px">
                 <figcaption style="font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:6px">Tonight's prices &amp; your loads · one day</figcaption>
-                <svg viewBox="0 0 320 118" width="100%" role="img" aria-label="A 24-hour view: electricity price is lowest overnight and midday and peaks in the evening; PIF runs the water heater and EV overnight and pre-cools HVAC in the midday dip — all in the cheapest hours." style="display:block">
+                <svg viewBox="0 0 320 118" width="100%" role="img" aria-label="A 24-hour view: electricity price is lowest overnight and midday and peaks in the evening; ProIonFlow runs the water heater and EV overnight and pre-cools HVAC in the midday dip — all in the cheapest hours." style="display:block">
                   <defs><linearGradient id="b3mech" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--primary)" stop-opacity="0.16"></stop><stop offset="1" stop-color="var(--primary)" stop-opacity="0"></stop></linearGradient></defs>
                   <rect x="8" y="30" width="63" height="86" fill="var(--accent)" opacity="0.08"></rect>
                   <rect x="147" y="30" width="51" height="86" fill="var(--accent)" opacity="0.08"></rect>
@@ -419,7 +430,7 @@
         <div role="alert" style="background:var(--surface-raised);border:1px solid var(--danger);border-radius:16px;padding:22px;text-align:center"><div style="font-size:16px;font-weight:700;margin-bottom:6px;color:var(--danger)">Ledger unavailable</div><p style="font-size:13px;color:var(--text-secondary);margin:0 auto 16px;max-width:280px">We couldn't load your statement. Nothing is lost — try again in a moment.</p><button onClick="{{ onRetry }}" style="appearance:none;border:none;cursor:pointer;font:600 14px Inter,system-ui,sans-serif;padding:10px 20px;border-radius:999px;background:var(--primary);color:var(--text-onfill);min-height:44px">Try again</button></div>
       </sc-if>
       <sc-if value="{{ stEmpty }}" hint-placeholder-val="{{ false }}">
-        <div style="text-align:center;padding:36px 14px"><span style="display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:999px;background:var(--surface-sunken);color:var(--text-secondary);margin-bottom:12px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h11l3 3v13H5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 11h8M8 15h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div style="font-size:17px;font-weight:700;margin-bottom:6px">No entries yet</div><p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0 auto;max-width:280px">Once PIF makes its first move tonight, every dollar it saves shows up here — itemized like a receipt.</p></div>
+        <div style="text-align:center;padding:36px 14px"><span style="display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:999px;background:var(--surface-sunken);color:var(--text-secondary);margin-bottom:12px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h11l3 3v13H5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 11h8M8 15h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div style="font-size:17px;font-weight:700;margin-bottom:6px">No entries yet</div><p style="font-size:13px;line-height:19px;color:var(--text-secondary);margin:0 auto;max-width:280px">Once ProIonFlow makes its first move tonight, every dollar it saves shows up here — itemized like a receipt.</p></div>
       </sc-if>
 
       <sc-if value="{{ stContent }}" hint-placeholder-val="{{ false }}">
@@ -565,7 +576,7 @@
               <p style="font-size:12px;line-height:18px;color:var(--text-secondary);margin:9px 0 0">{{ devDetail.meter }}</p>
             </div>
             <div>
-              <div style="font-size:13px;font-weight:700;margin-bottom:8px">Constraints PIF respected</div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:8px">Constraints ProIonFlow respected</div>
               <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px">
                 <sc-for list="{{ devDetail.constraints }}" as="c" hint-placeholder-count="2"><li style="display:flex;gap:7px;align-items:flex-start;font-size:12px;line-height:17px;color:var(--text-secondary)"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true" style="color:var(--success);flex:none;margin-top:1px"><path d="M4 10.5 8 14.5 16 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ c }}</li></sc-for>
               </ul>
@@ -697,7 +708,7 @@
 </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1160,&quot;height&quot;:1180},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;system&quot;,&quot;tsType&quot;:&quot;'light'|'dark'|'system'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;ledger&quot;,&quot;detail&quot;,&quot;bill&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;'home'|'ledger'|'detail'|'bill'&quot;,&quot;section&quot;:&quot;Demo: screen&quot;},&quot;billing&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;payfail&quot;,&quot;suspended&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Billing&quot;},&quot;dataState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;empty&quot;,&quot;loading&quot;,&quot;error&quot;,&quot;stale&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;'normal'|'empty'|'loading'|'error'|'stale'&quot;,&quot;section&quot;:&quot;Demo: data state&quot;},&quot;window&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;1d&quot;,&quot;7d&quot;,&quot;30d&quot;,&quot;90d&quot;,&quot;1y&quot;,&quot;bill&quot;,&quot;all&quot;],&quot;default&quot;:&quot;30d&quot;,&quot;tsType&quot;:&quot;'1d'|'7d'|'30d'|'90d'|'1y'|'bill'|'all'&quot;,&quot;section&quot;:&quot;Demo: savings&quot;},&quot;pctMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;whole&quot;,&quot;managed&quot;],&quot;default&quot;:&quot;whole&quot;,&quot;tsType&quot;:&quot;'whole'|'managed'&quot;,&quot;section&quot;:&quot;Demo: savings&quot;},&quot;periodData&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;rolling30&quot;,&quot;inprogress&quot;,&quot;insufficient&quot;,&quot;firstcycle&quot;],&quot;default&quot;:&quot;rolling30&quot;,&quot;tsType&quot;:&quot;'rolling30'|'inprogress'|'insufficient'|'firstcycle'&quot;,&quot;section&quot;:&quot;Demo: savings&quot;},&quot;billState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;unchecked&quot;,&quot;nudge&quot;,&quot;checked&quot;],&quot;default&quot;:&quot;unchecked&quot;,&quot;tsType&quot;:&quot;'unchecked'|'nudge'|'checked'&quot;,&quot;section&quot;:&quot;Demo: savings&quot;},&quot;pending&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;scheduled&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;'none'|'scheduled'&quot;,&quot;section&quot;:&quot;Demo: account&quot;},&quot;launcherUnread&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: account&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1160,&quot;height&quot;:1180},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;system&quot;,&quot;tsType&quot;:&quot;'light'|'dark'|'system'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;previewReducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;ledger&quot;,&quot;detail&quot;,&quot;bill&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;'home'|'ledger'|'detail'|'bill'&quot;,&quot;section&quot;:&quot;Demo: screen&quot;},&quot;billing&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;payfail&quot;,&quot;suspended&quot;,&quot;trial&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Billing&quot;},&quot;guarantee&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;active&quot;,&quot;atrisk&quot;,&quot;skipped&quot;,&quot;hidden&quot;],&quot;default&quot;:&quot;active&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Billing&quot;},&quot;savingsMetFee&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Billing&quot;},&quot;dataState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;empty&quot;,&quot;loading&quot;,&quot;error&quot;,&quot;stale&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;'normal'|'empty'|'loading'|'error'|'stale'&quot;,&quot;section&quot;:&quot;Demo: data state&quot;},&quot;window&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;1d&quot;,&quot;7d&quot;,&quot;30d&quot;,&quot;90d&quot;,&quot;1y&quot;,&quot;bill&quot;,&quot;all&quot;],&quot;default&quot;:&quot;30d&quot;,&quot;tsType&quot;:&quot;'1d'|'7d'|'30d'|'90d'|'1y'|'bill'|'all'&quot;,&quot;section&quot;:&quot;Demo: savings&quot;},&quot;pctMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;whole&quot;,&quot;managed&quot;],&quot;default&quot;:&quot;whole&quot;,&quot;tsType&quot;:&quot;'whole'|'managed'&quot;,&quot;section&quot;:&quot;Demo: savings&quot;},&quot;periodData&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;rolling30&quot;,&quot;inprogress&quot;,&quot;insufficient&quot;,&quot;firstcycle&quot;],&quot;default&quot;:&quot;rolling30&quot;,&quot;tsType&quot;:&quot;'rolling30'|'inprogress'|'insufficient'|'firstcycle'&quot;,&quot;section&quot;:&quot;Demo: savings&quot;},&quot;billState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;unchecked&quot;,&quot;nudge&quot;,&quot;checked&quot;],&quot;default&quot;:&quot;unchecked&quot;,&quot;tsType&quot;:&quot;'unchecked'|'nudge'|'checked'&quot;,&quot;section&quot;:&quot;Demo: savings&quot;},&quot;pending&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;scheduled&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;'none'|'scheduled'&quot;,&quot;section&quot;:&quot;Demo: account&quot;},&quot;launcherUnread&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo: account&quot;}}">
 class Component extends DCLogic {
   constructor(props){
     super(props);
@@ -706,6 +717,8 @@ class Component extends DCLogic {
       screen: props.screen || 'home',
       dataState: props.dataState || 'normal',
       billing: props.billing || 'none',
+      guarantee: props.guarantee || 'active',
+      savingsMetFee: props.savingsMetFee || false,
       scope: props.scope || 'month',
       pending: props.pending || 'none',
       unread: !!props.launcherUnread,
@@ -757,7 +770,7 @@ class Component extends DCLogic {
     const head=['Date','Time','Device','Action','kWh','Evidence tier','Calculation','Amount (USD)','Source'];
     const line=(a)=>a.map(esc).join(',');
     const body=rows.map(r=>line([r.date, r.time||'', this.deviceProfile(r.dev)&&(r.dev), r.action, r.kwh, r.tier, r.mathText||'', r.val.toFixed(2), r.meter||'']));
-    const csv=[ '# PIF savings ledger \u2014 '+W.head, line(head) ].concat(body).join('\n');
+    const csv=[ '# ProIonFlow savings ledger \u2014 '+W.head, line(head) ].concat(body).join('\n');
     try{
       const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
       const url=URL.createObjectURL(blob);
@@ -816,6 +829,8 @@ class Component extends DCLogic {
       battery:()=>[P('M3 7h11v6H3zM14 9h2v2h-2'),P('M8.4 8l-1.2 2.3h1.5L8 12.4')],
       solar:()=>[C(10,9.6,3),P('M10 3.2V4.8M10 14.4V16M3.4 9.6H5M15 9.6h1.6M5.4 5l1.1 1.1M13.5 13.1l1.1 1.1M14.6 5l-1.1 1.1M6.5 13.1l-1.1 1.1')],
       check:()=>[P('M4 10.5 8 14.5 16 5.5')],
+      active:()=>[C(10,10,6.8),P('M6.8 10.2 9 12.4 13.4 7.8')],
+      blocked:()=>[C(10,10,6.8),P('M5.9 5.9l8.2 8.2')],
       pause:()=>[P('M7.6 5v10M12.4 5v10')],
       alert:()=>[P('M7 3.2h6L16.8 7v6L13 16.8H7L3.2 13V7z'),P('M10 6.6v4.2'),D(10,13.2,0.6)],
       clock:()=>[C(10,10,7),P('M10 6.4V10l2.4 1.6')],
@@ -950,7 +965,7 @@ class Component extends DCLogic {
     return [
       { date:'Jul 18', time:'11:04pm\u20134:52am', ago:1, val:5.44, kwh:34, action:'Shifted EV charge', detail:'ran 11pm\u20135am instead of your usual 6pm', inputs:'34 kWh moved off-peak \u00b7 off-peak 8\u00a2 vs peak 24\u00a2', mathText:'34 kWh \u00d7 ($0.24 \u2212 $0.08) = $5.44', meter:'Emporia CT \u2014 metered', amount:'\u2248 $5.44 lower cost', tier:'measured', assume:'Assumes your usual 6pm start.', dev:'ev', kind:'ev', lever:'charging' },
       { date:'Jul 17', time:'6:12pm\u20138:40pm', ago:2, val:0.98, kwh:6.1, action:'Battery arbitrage', detail:'discharged into the 6\u20139pm peak', inputs:'6.1 kWh from storage \u00b7 peak 24\u00a2 vs charge 8\u00a2', mathText:'6.1 kWh \u00d7 ($0.24 \u2212 $0.08) = $0.98', meter:'Inverter telemetry \u2014 metered', amount:'\u2248 $0.98 lower cost', tier:'measured', assume:'From battery telemetry; assumes peak-hour use.', dev:'battery', kind:'battery', lever:'arbitrage' },
-      { date:'Jul 16', time:'5:30pm\u20136:00pm', ago:3, val:3.60, kwh:2.0, action:'VPP grid event', detail:'you let PIF dispatch your battery', inputs:'2.0 kWh dispatched \u00b7 program pays $1.80/kWh', mathText:'2.0 kWh \u00d7 $1.80/kWh = $3.60', meter:'Program settlement \u2014 banked', amount:'$3.60 earned', tier:'banked', assume:'Credited on your next bill.', dev:'battery', kind:'battery', lever:'vpp' },
+      { date:'Jul 16', time:'5:30pm\u20136:00pm', ago:3, val:3.60, kwh:2.0, action:'VPP grid event', detail:'you let ProIonFlow dispatch your battery', inputs:'2.0 kWh dispatched \u00b7 program pays $1.80/kWh', mathText:'2.0 kWh \u00d7 $1.80/kWh = $3.60', meter:'Program settlement \u2014 banked', amount:'$3.60 earned', tier:'banked', assume:'Credited on your next bill.', dev:'battery', kind:'battery', lever:'vpp' },
       { date:'Jul 15', time:'2:40pm\u20133:55pm', ago:4, val:0.86, kwh:1.9, action:'Pre-cooled before peak', detail:'cooled to 71\u00b0 before the 4pm block', inputs:'~1.9 kWh shifted \u00b7 class-typical HVAC load', mathText:'1.9 kWh \u00d7 ($0.24 \u2212 $0.08) = $0.86 (modeled)', meter:'Runtime \u00d7 class-typical load \u2014 modeled', amount:'\u2248 $0.86 lower cost', tier:'modeled', assume:'Modeled from runtime; HVAC is not sub-metered.', dev:'hp', kind:'hp', lever:'precool' },
       { date:'Jul 02', time:'9:10pm\u201310:20pm', ago:17, val:0.54, kwh:3.4, action:'Delayed water heating', detail:'reheated after 9pm off-peak', inputs:'3.4 kWh moved \u00b7 off-peak 8\u00a2 vs peak 24\u00a2', mathText:'3.4 kWh \u00d7 ($0.24 \u2212 $0.08) = $0.54', meter:'Circuit meter \u2014 metered', amount:'\u2248 $0.54 lower cost', tier:'measured', assume:'Metered circuit; assumes an evening draw.', dev:'water', kind:'water', lever:'shift' },
       { date:'Jun 08', time:'10:02pm\u201310:58pm', ago:41, val:0.18, kwh:1.1, action:'You ran the dishwasher late', detail:'started it at 10pm after our nudge', inputs:'1.1 kWh off-peak \u00b7 off-peak 8\u00a2 vs peak 24\u00a2', mathText:'1.1 kWh \u00d7 ($0.24 \u2212 $0.08) = $0.18', meter:'Whole-home model \u2014 advisory', amount:'\u2248 $0.18 lower cost', tier:'advisory', assume:'You did this \u2014 nice.', dev:'other', kind:'clock', lever:'shift' },
@@ -1007,10 +1022,10 @@ class Component extends DCLogic {
       { key:'ev', kind:'ev', title:'EV charging', text:'Charging your EV 1\u20135am, the cheapest window tonight.',
         opensAt:'1am', conseq:{ type:'deadline', text:'Your car may not be fully charged by 8am.' },
         result:{ amount:'\u2248 $2.10', tier:'measured', text:'Charged to 80% on off-peak power.' },
-        missed:'PIF couldn\u2019t reach your EV \u2014 nothing ran tonight.' },
+        missed:'ProIonFlow couldn\u2019t reach your EV \u2014 nothing ran tonight.' },
       { key:'hp', kind:'hp', title:'Pre-cooling', text:'Pre-cooling the house at 4pm before the peak-price block.',
         opensAt:'4pm', conseq:{ type:'cost', text:'you\u2019ll likely pay about $2.40 more.' },
-        safety:{ note:'Skip stops at your 68\u00b0F comfort floor \u2014 PIF won\u2019t let the house get warmer than that.' },
+        safety:{ note:'Skip stops at your 68\u00b0F comfort floor \u2014 ProIonFlow won\u2019t let the house get warmer than that.' },
         result:{ amount:'\u2248 $0.86', tier:'modeled', text:'Pre-cooled to 71\u00b0 before the peak block.' },
         missed:'Your thermostat was offline \u2014 pre-cool didn\u2019t run.' },
       { key:'battery', kind:'battery', title:'Battery peak sell', text:'Holding a 30% reserve, then selling into the 6\u20139pm peak.',
@@ -1165,7 +1180,9 @@ class Component extends DCLogic {
     // harness segments
     const segScreen = this.seg([{k:'home',label:'Home'},{k:'ledger',label:'Ledger'},{k:'devdetail',label:'Device'},{k:'bill',label:'Bill'}], st.screen, 'screen');
     const segState = this.seg([{k:'normal',label:'Normal'},{k:'empty',label:'Empty'},{k:'loading',label:'Loading'},{k:'error',label:'Error'},{k:'stale',label:'Stale'}], st.dataState, 'dataState');
-    const segBilling = this.seg([{k:'none',label:'None'},{k:'payfail',label:'Payment failed'},{k:'suspended',label:'Suspended'}], st.billing, 'billing');
+    const segBilling = this.seg([{k:'none',label:'None'},{k:'payfail',label:'Payment failed'},{k:'suspended',label:'Suspended'},{k:'trial',label:'Trial'}], st.billing, 'billing');
+    const segGuarantee = this.seg([{k:'active',label:'Active'},{k:'atrisk',label:'At risk'},{k:'skipped',label:'Skipped'},{k:'hidden',label:'Hidden'}], st.guarantee, 'guarantee');
+    const segSavingsMet = [{k:false,label:'Below fee'},{k:true,label:'Savings ≥ fee'}].map(o=>({ label:o.label, active:st.savingsMetFee===o.k, onSelect:()=>this.set('savingsMetFee',o.k), style:this.segStyle(st.savingsMetFee===o.k) }));
     const segWinReview = this.winSeg(['1d','7d','30d','90d','1y','all']);
     const segBillConn = this.seg([{k:'unlinked',label:'Unlinked'},{k:'linked',label:'Linked'}], st.billConn, 'billConn');
     const billKey = st.billConn==='linked' ? 'linked' : (st.billBills==='some' ? 'unlinked-bills' : 'unlinked-none');
@@ -1193,7 +1210,7 @@ class Component extends DCLogic {
     const effPctMode = wholeAvailable ? pctMode : 'managed';
     const pctValue = effPctMode==='managed' ? 62 : 38;
     const pctPhrase = effPctMode==='managed'
-      ? ('PIF moved ' + pctValue + '% of the energy it manages into cheap hours')
+      ? ('ProIonFlow moved ' + pctValue + '% of the energy it manages into cheap hours')
       : (pctValue + '% of your home\u2019s energy ran in cheap hours');
     const hw = this.win('winHome');
     let heroRows = this.ledgerData().filter(r=> r.ago <= hw.days);
@@ -1215,7 +1232,7 @@ class Component extends DCLogic {
     const dashTrendShow = !firstCycle && !dashTrend.empty;
     const dashNoHistory = firstCycle || dashTrend.empty;
     const offPct = 38, offFrom = 12;
-    const mechCalloutNode = this.amt('≈ '+offPct+'% of your usage ran in the cheap window'+(billChecked?(' · up from '+offFrom+'% before PIF'):''));
+    const mechCalloutNode = this.amt('≈ '+offPct+'% of your usage ran in the cheap window'+(billChecked?(' · up from '+offFrom+'% before ProIonFlow'):''));
     const mechShow = (st.planComp!=='offline' && st.planComp!=='empty');
     const tonight = this.tonightModel();
     const LOADS=[
@@ -1303,7 +1320,7 @@ class Component extends DCLogic {
       billsList: 'July, June',
       totalNode: this.amt((billAllBanked?'$':'\u2248 $') + billTotal.toFixed(2)),
       totalSuffix: stateUnlinkedNone ? 'saved \u00b7 modeled estimate' : (stateUnlinkedBills ? 'saved \u00b7 checked through Jun 30' : 'saved \u00b7 Jul 12 \u2013 Aug 11'),
-      shift: stateUnlinkedNone ? ('About ' + billMeta.pct + '% of the energy PIF managed ran in cheap hours.') : (billMeta.pct + '% of your usage ran off-peak on your last bill.'),
+      shift: stateUnlinkedNone ? ('About ' + billMeta.pct + '% of the energy ProIonFlow managed ran in cheap hours.') : (billMeta.pct + '% of your usage ran off-peak on your last bill.'),
       badgeIcon: this.tierBadge(billChecked?'billchecked':'modeled').icon,
       badgeStyle: this.tierBadge(billChecked?'billchecked':'modeled').style,
     };
@@ -1370,8 +1387,32 @@ class Component extends DCLogic {
       skeletonRows: [1,2,3,4,5,6],
 
       isHome: st.screen==='home', isLedger: st.screen==='ledger', isDevDetail: st.screen==='devdetail', isBill: st.screen==='bill',
-      segBilling,
-      billingBanner: { showFail: st.billing==='payfail', showSuspend: st.billing==='suspended' },
+      segBilling, segGuarantee, segSavingsMet,
+      billingBanner: { showFail: st.billing==='payfail', showSuspend: st.billing==='suspended', showTrial: st.billing==='trial' },
+      ...(function(){
+        var g=st.guarantee, show=(g!=='hidden' && st.billing!=='trial' && !st.savingsMetFee);
+        var MAP={
+          active:{ icon:'active', color:'var(--success)', label:'Savings guarantee \u00b7 active this cycle.', reason:'', aria:'Savings guarantee: active this cycle.' },
+          atrisk:{ icon:'alert', color:'var(--warning)', label:'Savings guarantee \u00b7 at risk', reason:'Reconnect your EV charger in time to keep it \u2014 offline or Critical devices don\u2019t count.', aria:'Savings guarantee: at risk. Reconnect your EV charger to keep it.' },
+          skipped:{ icon:'blocked', color:'var(--danger)', label:'Savings guarantee \u00b7 skipped this cycle', reason:'Too little of your home was controllable this cycle. Reconnect your devices to protect next cycle.', aria:'Savings guarantee: skipped this cycle. Too little of your home was controllable.' }
+        };
+        var m=MAP[g]||MAP.active;
+        return {
+          guaranteeShow: show,
+          guaranteeIcon: React.cloneElement(this.gi(m.icon),{width:17,height:17}),
+          guaranteeIconStyle: 'display:inline-flex;flex:none;color:'+m.color,
+          guaranteeLabel: m.label,
+          guaranteeReason: m.reason, guaranteeHasReason: !!m.reason,
+          guaranteeAria: m.aria,
+          guaranteeHref: 'PIF-Settings-Help-Batch5.dc.html#s12',
+          guaranteeChipStyle: 'display:inline-flex;align-items:center;gap:9px;flex-wrap:wrap;text-decoration:none;background:color-mix(in srgb,'+m.color+' 9%,var(--surface-raised));border:1px solid '+m.color+';border-radius:12px;padding:10px 14px',
+          guaranteeTextStyle: 'font-size:13px;font-weight:600;color:var(--text-primary)',
+          guaranteeReasonStyle: 'font-size:12.5px;color:var(--text-secondary)'
+        };
+      }).call(this),
+      trialDaysLeft: '11', trialEndDate: 'Aug 12',
+      trialTitle: (st.tier==='premium') ? 'Trial — 11 days left · $25/mo starts Aug 12' : 'Free trial — 11 days left',
+      trialSub: (st.tier==='premium') ? 'Cancel anytime before Aug 12.' : 'Billing starts Aug 12. Cancel anytime before then.',
       homeGateStyle: st.billing==='suspended' ? 'opacity:.4;pointer-events:none;filter:saturate(.55);display:flex;flex-direction:column;gap:20px' : 'display:flex;flex-direction:column;gap:20px',
       screenTitle: titleMap[st.screen] || 'Home', navTabs,
       stLoading: st.dataState==='loading', stError: st.dataState==='error', stEmpty: st.dataState==='empty',

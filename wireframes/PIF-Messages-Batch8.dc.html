@@ -9,7 +9,7 @@
 </head>
 <body>
 <x-dc>
-<!-- PIF-Messages-Batch8 v5 — 27 Jul, mobile hamburger nav (≤768px) -->
+<!-- PIF-Messages-Batch8 v10 — 28 Jul, trial-ending reminder feed item (m0) -->
 <helmet data-dc-atomics>
 <meta name="design_doc_mode" content="canvas">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -77,6 +77,8 @@
   .pif-drawer.open{transform:translateX(0)}
   @media (prefers-reduced-motion:reduce){ .pif-drawer{transition:none} }
   [data-rm="1"] .pif-drawer{transition:none}
+  /* §16 — wordmark capital-I legibility */
+  .pif-wordmark .pif-cap-i{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:normal;font-size:1.03em;margin:0 -.03em;padding:0}
 </style>
 </helmet>
 
@@ -112,7 +114,7 @@
     </button>
     <div style="display:flex;align-items:center;gap:9px">
       <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
-      <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+      <span class="pif-wordmark" style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">Pro<span class="pif-cap-i">I</span>onFlow</span>
     </div>
     <nav aria-label="Primary" id="pif-primary-nav" class="pif-nav {{ navCls }}" style="margin-left:8px">
       <a href="PIF-Dashboard-Ledger-Batch3.dc.html" style="{{ navInactiveStyle }}">Dashboard</a>
@@ -241,7 +243,7 @@
       </a>
       <button onClick="{{ onAskIona }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:14px;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:16px;padding:18px 20px;box-shadow:var(--elev-1);width:100%" style-hover="background:var(--surface-raised)">
         <span style="display:inline-flex;flex:none">{{ ionaSmall }}</span>
-        <span style="flex:1"><span style="display:block;font-size:15px;font-weight:700;color:var(--text-primary)">Ask Iona</span><span style="display:block;font-size:13px;color:var(--text-secondary);margin-top:2px">Get an instant answer from your PIF assistant.</span></span>
+        <span style="flex:1"><span style="display:block;font-size:15px;font-weight:700;color:var(--text-primary)">Ask Iona</span><span style="display:block;font-size:13px;color:var(--text-secondary);margin-top:2px">Get an instant answer from your ProIonFlow assistant.</span></span>
         <span style="color:var(--text-secondary)">{{ icoChevron }}</span>
       </button>
       <a href="mailto:support@proionflow.com" style="display:flex;align-items:center;gap:14px;text-decoration:none;background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:16px;padding:18px 20px;box-shadow:var(--elev-1)" style-hover="background:var(--surface-raised)">
@@ -314,6 +316,7 @@ class Component extends DCLogic {
       star:()=>[P('M10 3.5l1.9 3.9 4.3.6-3.1 3 .7 4.3L10 13.3 6.3 15.3l.7-4.3-3.1-3 4.3-.6z')],
       plug:()=>[P('M8 3v4M12 3v4M6 7h8v2a4 4 0 0 1-8 0zM10 13v4')],
       card:()=>[P('M3 6h14v8H3zM3 9h14')],
+      clock:()=>[C(10,10,7),P('M10 6.2V10l2.6 1.6')],
       pause:()=>[P('M7.6 5v10M12.4 5v10')],
       shield:()=>[P('M10 3 4.7 5.1v4.1c0 3.3 2.2 5.4 5.3 6.8 3.1-1.4 5.3-3.5 5.3-6.8V5.1z')],
       lock:()=>[P('M6.4 9.2V7a3.6 3.6 0 0 1 7.2 0v2.2'),P('M5.4 9.2h9.2v6.6H5.4z'),D(10,12.2,.8)],
@@ -364,9 +367,13 @@ class Component extends DCLogic {
   }
 
   messages(){
+    const _prem = this.state.tier==='premium';
+    const _price = ({basic:'$5',optimum:'$15',premium:'$25'})[this.state.tier] || '$15';
+    const _trialSnip = _prem ? "Your card moves to $25/mo on Aug 12 — cancel anytime before then." : "You'll be charged "+_price+"/mo on Aug 12 — cancel anytime before then.";
     return [
+      { id:'m0', type:'alert', group:'new', icon:'clock', color:'var(--info)', title:'Your free trial ends in 2 days', snippet:_trialSnip, time:'1h', unread:true, href:'PIF-Billing-Lifecycle-Batch6.dc.html#f1' },
       { id:'m1', type:'alert', group:'new', icon:'card', color:'var(--danger)', title:'Payment failed', snippet:"We couldn't process your July payment — update your card to avoid a pause.", time:'2h', unread:true, href:'PIF-Billing-Lifecycle-Batch6.dc.html#f5' },
-      { id:'m2', type:'nudge', group:'new', icon:'sparkles', color:'var(--accent)', title:'38% of usage ran in cheap hours', snippet:'Up from 12% before PIF this week — nice work.', tier:'Measured', tierColor:'var(--info)', time:'5h', unread:true, href:'PIF-Dashboard-Ledger-Batch3.dc.html' },
+      { id:'m2', type:'nudge', group:'new', icon:'sparkles', color:'var(--accent)', title:'38% of usage ran in cheap hours', snippet:'Up from 12% before ProIonFlow this week — nice work.', tier:'Measured', tierColor:'var(--info)', time:'5h', unread:true, href:'PIF-Dashboard-Ledger-Batch3.dc.html' },
       { id:'m3', type:'nudge', group:'new', icon:'bolt', color:'var(--accent)', title:'Add your EV to unlock arbitrage', snippet:'Premium homes with a battery earn ≈ $9/mo (Modeled).', tier:'Modeled', tierColor:'var(--warning)', time:'1d', unread:false, href:'PIF-Acquisition-Batch7.dc.html#a11' },
       { id:'m4', type:'alert', group:'earlier', icon:'plug', color:'var(--warning)', title:'Device offline', snippet:"Your smart thermostat hasn't reported in 3 days.", time:'2d', unread:false, href:'PIF-Devices-Connect-Batch4.dc.html' },
       { id:'m5', type:'alert', group:'earlier', icon:'pause', color:'var(--text-secondary)', title:'Subscription paused', snippet:'Automations are on hold until payment is resolved.', time:'3d', unread:false, href:'PIF-Billing-Lifecycle-Batch6.dc.html#f6' },

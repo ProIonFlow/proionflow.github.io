@@ -9,7 +9,7 @@
 </head>
 <body>
 <x-dc>
-<!-- PIF-Acquisition-Batch7 v10 — 27 Jul, visitor-nav hamburger (Set up stays visible) -->
+<!-- PIF-Acquisition-Batch7 v15 — 28 Jul, 14-day trial CTA framing + disclosure -->
 <helmet data-dc-atomics>
 <meta name="design_doc_mode" content="canvas">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -80,6 +80,8 @@
   .pif-drawer.open{transform:translateX(0)}
   @media (prefers-reduced-motion:reduce){ .pif-drawer{transition:none} }
   [data-rm="1"] .pif-drawer{transition:none}
+  /* §16 — wordmark capital-I legibility */
+  .pif-wordmark .pif-cap-i{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:normal;font-size:1.03em;margin:0 -.03em;padding:0}
 </style>
 </helmet>
 
@@ -119,7 +121,7 @@
       </sc-if>
       <div style="display:flex;align-items:center;gap:9px">
         <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
-        <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+        <span class="pif-wordmark" style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">Pro<span class="pif-cap-i">I</span>onFlow</span>
       </div>
       <nav aria-label="Primary" id="pif-visitor-nav" class="pif-nav {{ navCls }}" style="margin-left:auto">
         <sc-if value="{{ signedOut }}" hint-placeholder-val="{{ true }}">
@@ -129,7 +131,7 @@
         </sc-if>
       </nav>
       <sc-if value="{{ signedOut }}" hint-placeholder-val="{{ true }}">
-        <a class="pif-mktcta" href="PIF-Onboarding-Quiz-Batch2.dc.html" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font:700 14px Inter,system-ui,sans-serif;padding:9px 18px;border-radius:11px;background:var(--accent);color:var(--text-onfill);min-height:40px" style-hover="background:var(--accent-bright);text-decoration:none">Get started</a>
+        <a class="pif-mktcta" href="PIF-Onboarding-Quiz-Batch2.dc.html" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font:700 14px Inter,system-ui,sans-serif;padding:9px 18px;border-radius:11px;background:var(--accent);color:var(--text-onfill);min-height:40px" style-hover="background:var(--accent-bright);text-decoration:none">Start free trial</a>
       </sc-if>
       <sc-if value="{{ signedIn }}" hint-placeholder-val="{{ false }}">
         <a class="pif-mktcta" href="PIF-Dashboard-Ledger-Batch3.dc.html" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font:700 14px Inter,system-ui,sans-serif;padding:9px 18px;border-radius:11px;background:var(--accent);color:var(--text-onfill);min-height:40px" style-hover="background:var(--accent-bright);text-decoration:none">Open dashboard</a>
@@ -145,7 +147,7 @@
       </button>
       <div style="display:flex;align-items:center;gap:9px">
         <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
-        <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+        <span class="pif-wordmark" style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">Pro<span class="pif-cap-i">I</span>onFlow</span>
       </div>
       <nav aria-label="Primary" id="pif-primary-nav" class="pif-nav {{ navCls }}" style="margin-left:8px">
         <a href="PIF-Dashboard-Ledger-Batch3.dc.html" style="{{ navInactiveStyle }}">Dashboard</a>
@@ -181,9 +183,9 @@
       <div style="max-width:660px">
         <span style="display:inline-flex;align-items:center;gap:6px;font:700 11px Inter,system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);border-radius:999px;padding:5px 12px;margin-bottom:18px">Automated energy savings</span>
         <h1 style="font-family:'Space Grotesk',system-ui;font-size:46px;line-height:1.05;font-weight:700;letter-spacing:-.02em;margin:0 0 16px;text-wrap:balance">Your home, working while you sleep.</h1>
-        <p style="font-size:18px;line-height:27px;color:var(--text-secondary);margin:0 0 24px;max-width:560px;text-wrap:pretty">PIF runs your devices on the cheapest hours, automatically — the real-time optimization your devices' own schedulers can't do.</p>
+        <p style="font-size:18px;line-height:27px;color:var(--text-secondary);margin:0 0 24px;max-width:560px;text-wrap:pretty">ProIonFlow runs your devices on the cheapest hours, automatically — the real-time optimization your devices' own schedulers can't do.</p>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px">
-          <sc-if value="{{ signedOut }}" hint-placeholder-val="{{ true }}"><a href="PIF-Onboarding-Quiz-Batch2.dc.html" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;font:700 15px Inter,system-ui,sans-serif;padding:14px 26px;border-radius:13px;background:var(--accent);color:var(--text-onfill);min-height:50px" style-hover="background:var(--accent-bright);text-decoration:none">Get started <span aria-hidden="true">→</span></a></sc-if>
+          <sc-if value="{{ signedOut }}" hint-placeholder-val="{{ true }}"><a href="PIF-Onboarding-Quiz-Batch2.dc.html" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;font:700 15px Inter,system-ui,sans-serif;padding:14px 26px;border-radius:13px;background:var(--accent);color:var(--text-onfill);min-height:50px" style-hover="background:var(--accent-bright);text-decoration:none">Start 14-day free trial <span aria-hidden="true">→</span></a></sc-if>
           <sc-if value="{{ signedIn }}" hint-placeholder-val="{{ false }}"><a href="PIF-Dashboard-Ledger-Batch3.dc.html" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;font:700 15px Inter,system-ui,sans-serif;padding:14px 26px;border-radius:13px;background:var(--accent);color:var(--text-onfill);min-height:50px" style-hover="background:var(--accent-bright);text-decoration:none">Open dashboard <span aria-hidden="true">→</span></a></sc-if>
         </div>
         <p style="display:inline-flex;align-items:flex-start;gap:8px;font-size:13px;line-height:19px;color:var(--text-secondary);margin:0;text-wrap:pretty"><span style="color:var(--info);flex:none;margin-top:1px">{{ icoInfo }}</span><span>Live in select utilities across the U.S. — the 2-minute quiz checks whether we cover your area yet.</span></p>
@@ -221,7 +223,7 @@
             <text x="545" y="222" fill="var(--accent)" font-weight="700">cheap</text>
           </g>
         </svg>
-        <figcaption style="font-size:12px;line-height:18px;color:var(--text-secondary);margin-top:12px;text-wrap:pretty">Illustrative — a single day's prices for one home. Your rate, devices and troughs differ; PIF learns yours. No figure here is a savings promise.</figcaption>
+        <figcaption style="font-size:12px;line-height:18px;color:var(--text-secondary);margin-top:12px;text-wrap:pretty">Illustrative — a single day's prices for one home. Your rate, devices and troughs differ; ProIonFlow learns yours. No figure here is a savings promise.</figcaption>
       </figure>
     </div>
 
@@ -266,6 +268,7 @@
           </div>
         </sc-for>
       </div>
+      <p style="display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:19px;color:var(--text-secondary);margin:14px 0 0;text-wrap:pretty"><span style="color:var(--info);flex:none;margin-top:1px">{{ icoInfo }}</span><span>No charge for 14 days on Basic &amp; Optimum. Premium's trial is $10. We'll remind you before your first monthly charge.</span></p>
     </div>
 
     <!-- TRUST STRIP -->
@@ -307,7 +310,7 @@
     <div style="display:flex;align-items:center;gap:14px;padding:0 4px 20px;flex-wrap:wrap">
       <div style="display:flex;align-items:center;gap:9px">
         <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
-        <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+        <span class="pif-wordmark" style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">Pro<span class="pif-cap-i">I</span>onFlow</span>
       </div>
       <a href="PIF-Auth-Batch1.dc.html" style="margin-left:auto;font:600 14px Inter,system-ui,sans-serif;color:var(--text-secondary)" style-hover="color:var(--text-primary)">Plug in</a>
     </div>
@@ -343,7 +346,7 @@
           <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 14px">
             <span style="display:inline-flex;color:var(--accent);margin-bottom:9px">{{ icoBolt }}</span>
             <div style="font-size:13px;font-weight:700;margin-bottom:2px">3 · Start saving</div>
-            <div style="font-size:12px;line-height:17px;color:var(--text-secondary)">PIF runs the cheap hours.</div>
+            <div style="font-size:12px;line-height:17px;color:var(--text-secondary)">ProIonFlow runs the cheap hours.</div>
           </div>
         </div>
 
@@ -372,7 +375,7 @@
     <!-- pending-substantiation notice -->
     <div role="note" style="display:flex;align-items:flex-start;gap:10px;background:color-mix(in srgb,var(--warning) 10%,var(--surface-raised));border:1px solid var(--warning);border-radius:14px;padding:13px 16px;margin-bottom:24px;max-width:860px">
       <span style="color:var(--warning);flex:none;margin-top:1px">{{ icoInfo }}</span>
-      <p style="font-size:12.5px;line-height:19px;color:var(--text-primary);margin:0;text-wrap:pretty"><b>Draft — pending substantiation &amp; attorney review.</b> The formulas below come from PIF's evidence model and are real. Final numbers and wording are not yet locked; every example figure is illustrative.</p>
+      <p style="font-size:12.5px;line-height:19px;color:var(--text-primary);margin:0;text-wrap:pretty"><b>Draft — pending substantiation &amp; attorney review.</b> The formulas below come from ProIonFlow's evidence model and are real. Final numbers and wording are not yet locked; every example figure is illustrative.</p>
     </div>
 
     <!-- header -->
@@ -399,7 +402,7 @@
         <!-- 1. honest starting point -->
         <section id="m-start" style="margin-bottom:44px;scroll-margin-top:20px">
           <h2 style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;letter-spacing:-.01em;margin:0 0 12px">The honest starting point</h2>
-          <p style="font-size:15.5px;line-height:25px;color:var(--text-primary);margin:0 0 14px;text-wrap:pretty">Savings are <b>counterfactual</b>. We can't observe what you'd have paid without PIF — we can only model it.</p>
+          <p style="font-size:15.5px;line-height:25px;color:var(--text-primary);margin:0 0 14px;text-wrap:pretty">Savings are <b>counterfactual</b>. We can't observe what you'd have paid without ProIonFlow — we can only model it.</p>
           <p style="font-size:15.5px;line-height:25px;color:var(--text-secondary);margin:0;text-wrap:pretty">So we never assert a savings figure as fact. We derive it, show the inputs, and state the assumption — then label how confident that number is.</p>
         </section>
 
@@ -462,9 +465,9 @@
           <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:20px 22px;margin-bottom:14px">
             <div><div style="font-family:'Space Grotesk',system-ui;font-size:32px;font-weight:700;color:var(--accent);line-height:1">38%</div><div style="font-size:12.5px;color:var(--text-secondary);margin-top:4px">of usage now runs in cheap hours</div></div>
             <span style="color:var(--text-secondary);font-size:20px">←</span>
-            <div><div style="font-family:'Space Grotesk',system-ui;font-size:32px;font-weight:700;color:var(--text-secondary);line-height:1">12%</div><div style="font-size:12.5px;color:var(--text-secondary);margin-top:4px">before PIF (weather-normalized baseline)</div></div>
+            <div><div style="font-family:'Space Grotesk',system-ui;font-size:32px;font-weight:700;color:var(--text-secondary);line-height:1">12%</div><div style="font-size:12.5px;color:var(--text-secondary);margin-top:4px">before ProIonFlow (weather-normalized baseline)</div></div>
           </div>
-          <p style="font-size:13.5px;line-height:21px;color:var(--text-secondary);margin:0;text-wrap:pretty">Off-peak share = kWh in cheap hours ÷ total kWh, weather-normalized against your pre-PIF baseline. This is standard measurement-and-verification practice — the figure above is illustrative.</p>
+          <p style="font-size:13.5px;line-height:21px;color:var(--text-secondary);margin:0;text-wrap:pretty">Off-peak share = kWh in cheap hours ÷ total kWh, weather-normalized against your pre-ProIonFlow baseline. This is standard measurement-and-verification practice — the figure above is illustrative.</p>
         </section>
 
         <!-- 5. limitations -->
@@ -474,7 +477,7 @@
             <div style="display:flex;align-items:flex-start;gap:11px;font-size:14px;line-height:21px;color:var(--text-primary)"><span style="color:var(--text-secondary);flex:none;margin-top:1px">{{ icoInfo }}</span><span style="text-wrap:pretty">No per-device attribution from a utility bill — bills don't itemize by device.</span></div>
             <div style="display:flex;align-items:flex-start;gap:11px;font-size:14px;line-height:21px;color:var(--text-primary)"><span style="color:var(--text-secondary);flex:none;margin-top:1px">{{ icoInfo }}</span><span style="text-wrap:pretty">Modeled figures are estimates (≈), not measurements.</span></div>
             <div style="display:flex;align-items:flex-start;gap:11px;font-size:14px;line-height:21px;color:var(--text-primary)"><span style="color:var(--text-secondary);flex:none;margin-top:1px">{{ icoInfo }}</span><span style="text-wrap:pretty">Savings vary by home, devices, and utility rates. No guarantee, and no make-good credit for a modeled shortfall.</span></div>
-            <div style="display:flex;align-items:flex-start;gap:11px;font-size:14px;line-height:21px;color:var(--text-primary)"><span style="color:var(--accent);flex:none;margin-top:1px">{{ icoShield }}</span><span style="text-wrap:pretty">The one refundable case is if <b>PIF ends your subscription</b> — then we refund the unused part of your fee. If you cancel, your plan runs through the period you've paid for and isn't refunded (see Terms).</span></div>
+            <div style="display:flex;align-items:flex-start;gap:11px;font-size:14px;line-height:21px;color:var(--text-primary)"><span style="color:var(--accent);flex:none;margin-top:1px">{{ icoShield }}</span><span style="text-wrap:pretty">The one refundable case is if <b>ProIonFlow ends your subscription</b> — then we refund the unused part of your fee. If you cancel, your plan runs through the period you've paid for and isn't refunded (see Terms).</span></div>
           </div>
         </section>
 
@@ -506,7 +509,7 @@
   <div style="animation:pifFadeIn .3s both">
     <div style="max-width:720px;margin-bottom:22px">
       <h1 style="font-family:'Space Grotesk',system-ui;font-size:30px;font-weight:700;letter-spacing:-.01em;margin:0 0 8px">Compare plans</h1>
-      <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:0 0 10px;text-wrap:pretty">Pick the plan whose features can earn more than its fee. Not sure? Take the 2-minute quiz and we'll recommend the right one — or tell you honestly if PIF isn't a fit yet.</p>
+      <p style="font-size:15px;line-height:22px;color:var(--text-secondary);margin:0 0 10px;text-wrap:pretty">Pick the plan whose features can earn more than its fee. Not sure? Take the 2-minute quiz and we'll recommend the right one — or tell you honestly if ProIonFlow isn't a fit yet.</p>
       <p style="display:inline-flex;align-items:flex-start;gap:8px;font-size:13px;line-height:19px;color:var(--text-secondary);margin:0;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:11px;padding:9px 13px;text-wrap:pretty"><span style="color:var(--info);flex:none;margin-top:1px">{{ icoInfo }}</span><span>We're rolling out state by state across the U.S. — the quiz checks whether your utility is covered yet.</span></p>
     </div>
 
@@ -563,12 +566,14 @@
               <td style="{{ cta.tdStyle }}">
                 <sc-if value="{{ cta.isLink }}" hint-placeholder-val="{{ true }}"><a href="{{ cta.href }}" style="{{ cta.style }}">{{ cta.label }}</a></sc-if>
                 <sc-if value="{{ cta.isDisabled }}" hint-placeholder-val="{{ false }}"><button disabled aria-disabled="true" style="{{ cta.style }}">{{ cta.label }}</button></sc-if>
+                <sc-if value="{{ cta.subLabel }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;line-height:15px;color:var(--text-secondary);margin-top:6px;text-wrap:pretty">{{ cta.subLabel }}</div></sc-if>
               </td>
             </sc-for>
           </tr>
         </tbody>
       </table>
     </div>
+    <p style="display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:19px;color:var(--text-secondary);margin:16px 0 0;max-width:820px;text-wrap:pretty"><span style="color:var(--info);flex:none;margin-top:1px">{{ icoInfo }}</span><span>No charge for 14 days on Basic &amp; Optimum. Premium's trial is $10. We'll remind you before your first monthly charge.</span></p>
 
     <!-- honest evidence footer -->
     <div style="display:flex;align-items:flex-start;gap:10px;margin-top:20px;padding:14px 16px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;max-width:820px">
@@ -770,13 +775,13 @@ class Component extends DCLogic {
     // ---- A1 landing content ----
     const valueBullets = [
       { icon:this.ico('receipt',20), title:'A receipt-level ledger', body:'Every action itemized, with its evidence tier — we show the math, never a vague promise.' },
-      { icon:this.ico('plug',20), title:'Works with your devices', body:'Nest, ecobee, Tesla, Enphase and more — PIF orchestrates what you already own.' },
+      { icon:this.ico('plug',20), title:'Works with your devices', body:'Nest, ecobee, Tesla, Enphase and more — ProIonFlow orchestrates what you already own.' },
       { icon:this.ico('lock',20), title:'You stay in control', body:'An always-present manual override, safety limits that never leave you uncomfortable, cancel anytime.' }
     ];
     const steps = [
       { num:'1', icon:this.ico('sparkles',18), text:'Take the 2-minute quiz.' },
       { num:'2', icon:this.ico('link',18), text:'Connect your devices.' },
-      { num:'3', icon:this.ico('bolt',18), text:'PIF runs them on the cheapest hours — and itemizes every dollar.' }
+      { num:'3', icon:this.ico('bolt',18), text:'ProIonFlow runs them on the cheapest hours — and itemizes every dollar.' }
     ];
     const tiers = [ { name:'Basic', price:'$5' }, { name:'Optimum', price:'$15' }, { name:'Premium', price:'$25' } ];
 
@@ -822,12 +827,15 @@ class Component extends DCLogic {
     const disabled=ctaLink+';background:var(--surface-sunken);color:var(--text-secondary);border:1px dashed var(--border-strong);cursor:default';
     const ctaCells = data.cols.map(c=>{
       if(signedOut){
-        return { isLink:true, isDisabled:false, href:'PIF-Onboarding-Quiz-Batch2.dc.html', label:'Get started', style:primary, tdStyle:tdPlain(c.key) };
+        const t = c.key==='premium'
+          ? { label:'Start trial — $10', sub:'14 days, then '+c.price+'/mo · cancel anytime.' }
+          : { label:'Start 14-day free trial', sub:'then '+c.price+'/mo · cancel anytime.' };
+        return { isLink:true, isDisabled:false, href:'PIF-Onboarding-Quiz-Batch2.dc.html', label:t.label, subLabel:t.sub, style:primary, tdStyle:tdPlain(c.key) };
       }
       if(cur===c.key){
-        return { isLink:false, isDisabled:true, label:'Your plan', style:disabled, tdStyle:tdPlain(c.key) };
+        return { isLink:false, isDisabled:true, label:'Your plan', subLabel:'', style:disabled, tdStyle:tdPlain(c.key) };
       }
-      return { isLink:true, isDisabled:false, href:'PIF-Billing-Lifecycle-Batch6.dc.html#f4', label:'Switch to this plan', style:secondary, tdStyle:tdPlain(c.key) };
+      return { isLink:true, isDisabled:false, href:'PIF-Billing-Lifecycle-Batch6.dc.html#f4', label:'Switch to this plan', subLabel:'', style:secondary, tdStyle:tdPlain(c.key) };
     });
 
     // harness segments

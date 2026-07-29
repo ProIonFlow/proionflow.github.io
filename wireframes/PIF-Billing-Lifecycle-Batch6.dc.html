@@ -9,7 +9,7 @@
 </head>
 <body>
 <x-dc>
-<!-- PIF-Billing-Lifecycle-Batch6 v18 — 27 Jul, mobile hamburger nav (≤768px) -->
+<!-- PIF-Billing-Lifecycle-Batch6 v24 — 28 Jul, F1 savings-guarantee status line (3 states) -->
 <!-- §15 icon re-sync: no device/status/tier registry icons here (billing UI chrome only, drawn from the Foundations ui.* set); no rename-map keys present — nothing to canonicalize. -->
 <!-- Iona faces (Empathetic on F6/F9, Celebrating on F8) reuse the canonical Foundations §11 geometry verbatim. -->
 <!-- BUILD NOTE — money surface: trust mood throughout. Calm, premium, bank-statement legibility.
@@ -84,6 +84,8 @@
   .pif-drawer.open{transform:translateX(0)}
   @media (prefers-reduced-motion:reduce){ .pif-drawer{transition:none} }
   [data-rm="1"] .pif-drawer{transition:none}
+  /* §16 — wordmark capital-I legibility */
+  .pif-wordmark .pif-cap-i{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:normal;font-size:1.03em;margin:0 -.03em;padding:0}
 </style>
 </helmet>
 
@@ -126,7 +128,7 @@
     </button>
     <div style="display:flex;align-items:center;gap:9px">
       <img src="assets/pif-tile.png" alt="ProIonFlow" style="height:26px;width:auto;display:block;border-radius:6px">
-      <span style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">ProIonFlow</span>
+      <span class="pif-wordmark" style="font-family:'Space Grotesk',system-ui;font-weight:700;font-size:15px;letter-spacing:-.01em">Pro<span class="pif-cap-i">I</span>onFlow</span>
     </div>
     <nav aria-label="Primary" id="pif-primary-nav" class="pif-nav {{ navCls }}" style="margin-left:8px">
       <a href="PIF-Dashboard-Ledger-Batch3.dc.html" style="{{ navInactiveStyle }}">Dashboard</a>
@@ -193,13 +195,17 @@
         <!-- auto-renewal disclosure: prominent, at the money surface (ROSCA / CA-ARL) -->
         <div style="display:flex;gap:11px;align-items:flex-start;background:color-mix(in srgb,var(--info) 8%,var(--surface-base));border:1px solid var(--info);border-radius:12px;padding:13px 15px;margin-bottom:14px">
           <span style="color:var(--info);flex:none;margin-top:1px">{{ icoRefresh }}</span>
-          <div style="font-size:13px;line-height:19px"><b>Renews automatically each month at {{ plan.price }} until you cancel.</b><span style="color:var(--text-secondary)"> Cancel anytime — your plan runs to the end of the paid month; no refund for the current month.</span></div>
+          <div style="font-size:13px;line-height:19px"><sc-if value="{{ notTrialing }}" hint-placeholder-val="{{ true }}"><b>Renews automatically each month at {{ plan.price }} until you cancel.</b><span style="color:var(--text-secondary)"> Cancel anytime — your plan runs to the end of the paid month; no refund for the current month.</span></sc-if><sc-if value="{{ isTrialing }}" hint-placeholder-val="{{ false }}"><b>Free trial — {{ trialDaysLeft }} days left. First charge {{ plan.price }} on {{ trialEndDate }}.</b><sc-if value="{{ trialPremium }}" hint-placeholder-val="{{ false }}"><span style="color:var(--text-secondary)"> $10 trial fee paid.</span></sc-if><span style="color:var(--text-secondary)"> Cancel before {{ trialEndDate }} and you won't be charged.</span></sc-if></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:1px;border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden">
           <div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Next charge</span><span style="font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums">{{ plan.nextDate }} · {{ plan.price }}</span></div>
           <div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Billing cycle</span><span style="font-size:13.5px;font-weight:600">Monthly</span></div>
         </div>
       </div>
+
+      <sc-if value="{{ guaranteeLineShow }}" hint-placeholder-val="{{ false }}">
+        <div role="status" aria-label="{{ guaranteeLineText }}" style="{{ guaranteeLineStyle }}"><span aria-hidden="true" style="{{ guaranteeLineIconStyle }}">{{ guaranteeLineIcon }}</span><span style="{{ guaranteeLineTextStyle }}">{{ guaranteeLineText }}</span></div>
+      </sc-if>
 
       <!-- payment-method summary -->
       <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px 20px;box-shadow:var(--elev-1);margin-bottom:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
@@ -225,7 +231,7 @@
         </button>
         <button onClick="{{ onCancel }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:13px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:14px;padding:15px 18px;box-shadow:var(--elev-1);color:inherit" style-hover="background:var(--surface-sunken)">
           <span style="color:var(--text-secondary);flex:none">{{ icoCross }}</span>
-          <span style="flex:1;min-width:0"><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:14px;font-weight:700">Cancel subscription</span></span><span style="display:block;font-size:12.5px;color:var(--text-secondary)">Cancel anytime — your plan runs to the end of the paid month; no refund for the current month.</span></span>
+          <span style="flex:1;min-width:0"><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:14px;font-weight:700">Cancel subscription</span></span><span style="display:block;font-size:12.5px;color:var(--text-secondary)"><sc-if value="{{ notTrialing }}" hint-placeholder-val="{{ true }}">Cancel anytime — your plan runs to the end of the paid month; no refund for the current month.</sc-if><sc-if value="{{ isTrialing }}" hint-placeholder-val="{{ false }}">Cancel before {{ trialEndDate }} and you won't be charged.</sc-if></span></span>
           <span style="color:var(--text-secondary);flex:none">{{ icoChevronR }}</span>
         </button>
       </div>
@@ -260,7 +266,7 @@
           <sc-if value="{{ card.hasError }}" hint-placeholder-val="{{ false }}">
             <p role="alert" style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:18px;color:var(--danger);margin:12px 0 0;font-weight:600"><span style="flex:none;margin-top:1px">{{ icoWarnSm }}</span><span>{{ card.errorMsg }}</span></p>
           </sc-if>
-          <div style="display:flex;gap:8px;align-items:flex-start;font-size:11.5px;line-height:16px;color:var(--text-secondary);margin-top:13px;padding-top:13px;border-top:1px solid var(--border-subtle)"><span style="flex:none;margin-top:1px;color:var(--secondary)">{{ icoLockSm }}</span><span>Your card details go straight to Stripe — they never touch PIF's servers. Brand, expiry and CVC are checked by Stripe. By subscribing you agree to our <a href="PIF-Legal-Batch10.dc.html#tos" style="font-weight:600">Terms</a> and <a href="PIF-Legal-Batch10.dc.html#privacy" style="font-weight:600">Privacy Policy</a>.</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start;font-size:11.5px;line-height:16px;color:var(--text-secondary);margin-top:13px;padding-top:13px;border-top:1px solid var(--border-subtle)"><span style="flex:none;margin-top:1px;color:var(--secondary)">{{ icoLockSm }}</span><span>Your card details go straight to Stripe — they never touch ProIonFlow's servers. Brand, expiry and CVC are checked by Stripe. By subscribing you agree to our <a href="PIF-Legal-Batch10.dc.html#tos" style="font-weight:600">Terms</a> and <a href="PIF-Legal-Batch10.dc.html#privacy" style="font-weight:600">Privacy Policy</a>.</span></div>
         </div>
 
         <!-- PIF-owned fields (normal, validated) -->
@@ -394,13 +400,22 @@
   <sc-if value="{{ isF7 }}" hint-placeholder-val="{{ false }}">
     <div style="animation:pifFadeIn .3s both;max-width:560px">
       <button onClick="{{ onKeepPlanF1 }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
-      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px">Before you cancel</h1>
+      <h1 style="font-family:'Space Grotesk',system-ui;font-size:24px;font-weight:700;margin:0 0 6px"><sc-if value="{{ notTrialing }}" hint-placeholder-val="{{ true }}">Before you cancel</sc-if><sc-if value="{{ isTrialing }}" hint-placeholder-val="{{ false }}">Cancel your trial?</sc-if></h1>
       <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 18px">Here's exactly what cancelling does — no surprises.</p>
+      <sc-if value="{{ notTrialing }}" hint-placeholder-val="{{ true }}">
       <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:20px;box-shadow:var(--elev-1);margin-bottom:16px;display:flex;flex-direction:column;gap:14px">
         <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--text-secondary);flex:none;margin-top:1px">{{ icoCard }}</span><div style="font-size:13.5px;line-height:20px"><b>Unsubscribing stops next month's charge.</b><span style="color:var(--text-secondary)"> There's no refund and no proration for the current month.</span></div></div>
         <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoClock }}</span><div style="font-size:13.5px;line-height:20px">You keep full service — <b>active until {{ cancelUntil }}</b>. Nothing changes before then.</div></div>
         <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoRefresh }}</span><div style="font-size:13.5px;line-height:20px">After that it lapses and your devices <b>hand control back to your own defaults</b> — you're never left stranded.</div></div>
       </div>
+      </sc-if>
+      <sc-if value="{{ isTrialing }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:20px;box-shadow:var(--elev-1);margin-bottom:16px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoCard }}</span><div style="font-size:13.5px;line-height:20px"><b>You won't be charged.</b><span style="color:var(--text-secondary)"> Your trial runs through {{ cancelUntil }}, then your subscription ends.</span></div></div>
+        <sc-if value="{{ trialPremium }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--text-secondary);flex:none;margin-top:1px">{{ icoCard }}</span><div style="font-size:13.5px;line-height:20px">Your <b>$10 trial fee isn't refundable</b>.</div></div></sc-if>
+        <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoRefresh }}</span><div style="font-size:13.5px;line-height:20px">After that your devices <b>hand control back to your own defaults</b> — you're never left stranded.</div></div>
+      </div>
+      </sc-if>
       <button onClick="{{ onContinueCancel }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:50px;box-shadow:var(--elev-1);margin-bottom:10px">Continue to cancel</button>
       <button onClick="{{ onKeepPlanF1 }}" style="appearance:none;cursor:pointer;width:100%;font:700 14px Inter,system-ui,sans-serif;padding:12px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:46px">Never mind, keep my plan</button>
     </div>
@@ -422,13 +437,13 @@
         <div style="margin-top:14px"><label for="b6-other" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:7px">Please tell us more</label><textarea id="b6-other" value="{{ cancelOther }}" onInput="{{ onOther }}" placeholder="What made you choose Other? It helps me improve." style="width:100%;min-height:84px;resize:vertical;appearance:none;border:1px solid var(--border-strong);background:var(--surface-base);color:var(--text-primary);border-radius:12px;padding:11px 14px;font:500 14px Inter,system-ui,sans-serif" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></textarea></div>
       </sc-if>
       <sc-if value="{{ showMoveOfframp }}" hint-placeholder-val="{{ false }}">
-        <button onClick="{{ onMoveOfframp }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;width:100%;background:color-mix(in srgb,var(--secondary) 8%,var(--surface-raised));border:1px solid var(--secondary);border-radius:14px;padding:14px 16px;margin-top:16px;color:inherit" style-hover="background:color-mix(in srgb,var(--secondary) 13%,var(--surface-raised))"><span style="color:var(--secondary);flex:none">{{ icoRefresh }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:700">Moving within our area? You might keep PIF</span><span style="display:block;font-size:12.5px;color:var(--text-secondary)">Check your new address before you cancel — PIF may come with you.</span></span><span style="color:var(--secondary);flex:none">{{ icoChevronR }}</span></button>
+        <button onClick="{{ onMoveOfframp }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;width:100%;background:color-mix(in srgb,var(--secondary) 8%,var(--surface-raised));border:1px solid var(--secondary);border-radius:14px;padding:14px 16px;margin-top:16px;color:inherit" style-hover="background:color-mix(in srgb,var(--secondary) 13%,var(--surface-raised))"><span style="color:var(--secondary);flex:none">{{ icoRefresh }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:700">Moving within our area? You might keep ProIonFlow</span><span style="display:block;font-size:12.5px;color:var(--text-secondary)">Check your new address before you cancel — ProIonFlow may come with you.</span></span><span style="color:var(--secondary);flex:none">{{ icoChevronR }}</span></button>
       </sc-if>
       <div style="display:flex;gap:10px;margin-top:18px">
         <button onClick="{{ onFeedbackContinue }}" style="appearance:none;border:none;cursor:pointer;flex:1;font:700 15px Inter,system-ui,sans-serif;padding:13px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:48px">Continue</button>
         <button onClick="{{ onSkipFeedback }}" style="appearance:none;cursor:pointer;font:700 14px Inter,system-ui,sans-serif;padding:13px 20px;border-radius:12px;background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px">Skip</button>
       </div>
-      <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:14px 2px 0;text-align:center">Your feedback helps us improve — it isn't shared with anyone outside PIF.</p>
+      <p style="font-size:11.5px;line-height:16px;color:var(--text-secondary);margin:14px 2px 0;text-align:center">Your feedback helps us improve — it isn't shared with anyone outside ProIonFlow.</p>
     </div>
   </sc-if>
 
@@ -541,7 +556,7 @@
       <button onClick="{{ onBackF1 }}" style="{{ backBtnStyle }}"><span aria-hidden="true">←</span> Back</button>
 
       <sc-if value="{{ move.isEntry }}" hint-placeholder-val="{{ true }}">
-        <div style="text-align:center;margin-bottom:16px"><div style="display:flex;justify-content:center;margin-bottom:8px">{{ ionaBig }}</div><h1 style="font-family:'Space Grotesk',system-ui;font-size:23px;font-weight:700;margin:0 0 6px">Moving? PIF may come with you</h1><p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 auto;max-width:430px">Let's check your new place. Your home is anchored to its utility meter, so we just re-point it at the new address.</p></div>
+        <div style="text-align:center;margin-bottom:16px"><div style="display:flex;justify-content:center;margin-bottom:8px">{{ ionaBig }}</div><h1 style="font-family:'Space Grotesk',system-ui;font-size:23px;font-weight:700;margin:0 0 6px">Moving? ProIonFlow may come with you</h1><p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 auto;max-width:430px">Let's check your new place. Your home is anchored to its utility meter, so we just re-point it at the new address.</p></div>
         <label for="f10-zip" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:7px">New address or ZIP</label>
         <input id="f10-zip" inputmode="numeric" maxlength="5" value="{{ move.zip }}" onInput="{{ move.onZip }}" placeholder="e.g. 27701" style="width:100%;font:600 18px 'Space Grotesk',system-ui;letter-spacing:.1em;text-align:center;padding:15px;border-radius:14px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:56px;outline:none;margin-bottom:16px" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)">
         <button onClick="{{ move.onCheck }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:50px;box-shadow:var(--elev-1)">Check my new address</button>
@@ -557,13 +572,13 @@
       </sc-if>
 
       <sc-if value="{{ move.isSame }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:11px;align-items:flex-start;background:color-mix(in srgb,var(--success) 8%,var(--surface-raised));border:1px solid var(--success);border-radius:14px;padding:15px 16px;margin-bottom:16px"><span style="color:var(--success);flex:none;margin-top:1px">{{ icoCheckSm }}</span><div style="font-size:14px;line-height:20px"><b>Good news — PIF works at {{ move.newAddress }}.</b><span style="color:var(--text-secondary)"> Your plan and savings continue.</span></div></div>
+        <div style="display:flex;gap:11px;align-items:flex-start;background:color-mix(in srgb,var(--success) 8%,var(--surface-raised));border:1px solid var(--success);border-radius:14px;padding:15px 16px;margin-bottom:16px"><span style="color:var(--success);flex:none;margin-top:1px">{{ icoCheckSm }}</span><div style="font-size:14px;line-height:20px"><b>Good news — ProIonFlow works at {{ move.newAddress }}.</b><span style="color:var(--text-secondary)"> Your plan and savings continue.</span></div></div>
         <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:16px"><div style="display:flex;flex-direction:column;gap:1px;border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden"><div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">New utility</span><span style="font-size:13.5px;font-weight:600">{{ move.newUtilA }}</span></div><div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Rate plan</span><span style="font-size:13.5px;font-weight:600">{{ move.newRateA }}</span></div><div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Your plan</span><span style="font-size:13.5px;font-weight:600">{{ move.curTierName }} · unchanged</span></div></div></div>
         <button onClick="{{ move.onConfirmMove }}" style="appearance:none;border:none;cursor:pointer;width:100%;font:700 15px Inter,system-ui,sans-serif;padding:14px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:50px;box-shadow:var(--elev-1)">Move my service</button>
       </sc-if>
 
       <sc-if value="{{ move.isChange }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:11px;align-items:flex-start;background:color-mix(in srgb,var(--warning) 8%,var(--surface-raised));border:1px solid var(--warning);border-radius:14px;padding:15px 16px;margin-bottom:16px"><span style="color:var(--warning);flex:none;margin-top:1px">{{ icoWarnSm }}</span><div style="font-size:13.5px;line-height:20px"><b>PIF works at {{ move.newAddress }}, but the economics change.</b><span style="color:var(--text-secondary)"> {{ move.newUtilB }} bills a flat rate — no peak/off-peak spread — so {{ move.curTierName }} won’t earn its fee there. {{ move.recTier }} is the better fit.</span></div></div>
+        <div style="display:flex;gap:11px;align-items:flex-start;background:color-mix(in srgb,var(--warning) 8%,var(--surface-raised));border:1px solid var(--warning);border-radius:14px;padding:15px 16px;margin-bottom:16px"><span style="color:var(--warning);flex:none;margin-top:1px">{{ icoWarnSm }}</span><div style="font-size:13.5px;line-height:20px"><b>ProIonFlow works at {{ move.newAddress }}, but the economics change.</b><span style="color:var(--text-secondary)"> {{ move.newUtilB }} bills a flat rate — no peak/off-peak spread — so {{ move.curTierName }} won’t earn its fee there. {{ move.recTier }} is the better fit.</span></div></div>
         <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:16px"><div style="display:flex;flex-direction:column;gap:1px;border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden"><div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">New utility</span><span style="font-size:13.5px;font-weight:600">{{ move.newUtilB }}</span></div><div style="display:flex;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface-sunken)"><span style="font-size:13px;color:var(--text-secondary)">Rate plan</span><span style="font-size:13.5px;font-weight:600">{{ move.newRateB }}</span></div></div></div>
         <div style="display:flex;flex-direction:column;gap:10px">
           <button onClick="{{ move.onSwitchTier }}" style="appearance:none;cursor:pointer;width:100%;font:700 14px Inter,system-ui,sans-serif;padding:13px;border-radius:12px;background:var(--surface-raised);color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px">Switch to {{ move.recTier }} &amp; move</button>
@@ -573,14 +588,14 @@
       </sc-if>
 
       <sc-if value="{{ move.isOOM }}" hint-placeholder-val="{{ false }}">
-        <h1 style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin:0 0 6px">PIF isn’t live in {{ move.oomArea }} yet</h1>
+        <h1 style="font-family:'Space Grotesk',system-ui;font-size:22px;font-weight:700;margin:0 0 6px">ProIonFlow isn’t live in {{ move.oomArea }} yet</h1>
         <p style="font-size:13.5px;line-height:20px;color:var(--text-secondary);margin:0 0 16px">We can’t optimize there right now — so when you move, your service will end. I’ll be straight with you rather than pretend otherwise. Leave your details and I’ll email the moment we go live.</p>
         <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;box-shadow:var(--elev-1);margin-bottom:14px;display:flex;flex-direction:column;gap:14px">
           <div><label for="f10-oz" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:6px">New ZIP</label><input id="f10-oz" inputmode="numeric" maxlength="5" value="{{ move.zip }}" onInput="{{ move.onZip }}" placeholder="e.g. 24801" style="width:100%;font:600 15px 'Space Grotesk',system-ui;letter-spacing:.08em;padding:12px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></div>
           <div><label for="f10-em" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:6px">Email</label><input id="f10-em" type="email" value="{{ move.email }}" onInput="{{ move.onEmail }}" placeholder="you@email.com" style="width:100%;font:400 15px Inter,system-ui;padding:12px 14px;border-radius:12px;background:var(--surface-sunken);color:var(--text-primary);border:1px solid var(--border-strong);min-height:48px;outline:none" style-focus="border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)"></div>
-          <button role="checkbox" aria-checked="{{ move.consent }}" onClick="{{ move.onConsent }}" style="appearance:none;background:transparent;border:none;cursor:pointer;display:flex;align-items:flex-start;gap:12px;text-align:left;padding:0"><span style="{{ move.consentBox }}"><sc-if value="{{ move.consentOn }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="var(--text-onfill)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></sc-if></span><span style="font-size:13px;line-height:19px;color:var(--text-primary)">Email me when PIF launches in my new area. <span style="color:var(--text-secondary)">Required to send the notification — nothing else.</span></span></button>
+          <button role="checkbox" aria-checked="{{ move.consent }}" onClick="{{ move.onConsent }}" style="appearance:none;background:transparent;border:none;cursor:pointer;display:flex;align-items:flex-start;gap:12px;text-align:left;padding:0"><span style="{{ move.consentBox }}"><sc-if value="{{ move.consentOn }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="var(--text-onfill)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></sc-if></span><span style="font-size:13px;line-height:19px;color:var(--text-primary)">Email me when ProIonFlow launches in my new area. <span style="color:var(--text-secondary)">Required to send the notification — nothing else.</span></span></button>
         </div>
-        <button onClick="{{ move.onWaitlist }}" aria-disabled="{{ move.canWait }}" style="{{ move.waitStyle }}">Notify me when PIF is live there</button>
+        <button onClick="{{ move.onWaitlist }}" aria-disabled="{{ move.canWait }}" style="{{ move.waitStyle }}">Notify me when ProIonFlow is live there</button>
         <div style="display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,var(--secondary) 8%,var(--surface-base));border:1px solid var(--secondary);border-radius:12px;padding:13px 15px;margin-top:14px"><span style="color:var(--secondary);flex:none;margin-top:1px">{{ icoRefresh }}</span><div style="font-size:12.5px;line-height:18px;color:var(--text-secondary)">When you move, service ends at the end of your paid month (no refund for the current month), and your devices hand control back to your own defaults — nothing stranded.</div></div>
       </sc-if>
 
@@ -588,7 +603,7 @@
         <div style="background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:18px;padding:28px;box-shadow:var(--elev-2);text-align:center">
           <div style="width:52px;height:52px;border-radius:999px;background:color-mix(in srgb,var(--success) 13%,transparent);color:var(--success);display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px">{{ icoCheckBig }}</div>
           <h1 style="font-family:'Space Grotesk',system-ui;font-size:21px;font-weight:700;margin:0 0 6px">You're on the list</h1>
-          <p style="font-size:13px;line-height:20px;color:var(--text-secondary);margin:0 0 20px">We'll email you the moment PIF is live in your new area. Your current service continues until you move, then hands back gracefully.</p>
+          <p style="font-size:13px;line-height:20px;color:var(--text-secondary);margin:0 0 20px">We'll email you the moment ProIonFlow is live in your new area. Your current service continues until you move, then hands back gracefully.</p>
           <button onClick="{{ onBackF1 }}" style="appearance:none;border:none;cursor:pointer;font:700 14px Inter,system-ui,sans-serif;padding:12px 22px;border-radius:12px;background:var(--primary);color:var(--text-onfill);min-height:46px"><span aria-hidden="true">←</span> Back</button>
         </div>
       </sc-if>
@@ -639,7 +654,7 @@
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:1150},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;f1&quot;,&quot;f2&quot;,&quot;f3&quot;,&quot;f4&quot;,&quot;f5&quot;,&quot;f6&quot;,&quot;f8&quot;,&quot;f9&quot;,&quot;f10&quot;,&quot;f7&quot;,&quot;f7a&quot;,&quot;f7ai&quot;,&quot;f7b&quot;],&quot;default&quot;:&quot;f1&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;tier&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;basic&quot;,&quot;optimum&quot;,&quot;premium&quot;],&quot;default&quot;:&quot;optimum&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;dataState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;loading&quot;,&quot;error&quot;,&quot;offline&quot;,&quot;empty&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;pending&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;downgrade&quot;,&quot;unsubscribe&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;changeState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;browse&quot;,&quot;upgrade&quot;,&quot;downgrade&quot;,&quot;success&quot;],&quot;default&quot;:&quot;browse&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;dunning&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;first&quot;,&quot;grace&quot;,&quot;final&quot;],&quot;default&quot;:&quot;first&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;suspend&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;suspended&quot;,&quot;reactivating&quot;],&quot;default&quot;:&quot;suspended&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;ending&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;generic&quot;,&quot;exit&quot;],&quot;default&quot;:&quot;generic&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;referrals&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;populated&quot;,&quot;empty&quot;],&quot;default&quot;:&quot;populated&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;moveState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;entry&quot;,&quot;resolving&quot;,&quot;same&quot;,&quot;change&quot;,&quot;oom&quot;],&quot;default&quot;:&quot;entry&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;cardState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;addfirst&quot;,&quot;replace&quot;,&quot;saving&quot;,&quot;declined&quot;,&quot;expired&quot;,&quot;success&quot;],&quot;default&quot;:&quot;replace&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:1150},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;f1&quot;,&quot;f2&quot;,&quot;f3&quot;,&quot;f4&quot;,&quot;f5&quot;,&quot;f6&quot;,&quot;f8&quot;,&quot;f9&quot;,&quot;f10&quot;,&quot;f7&quot;,&quot;f7a&quot;,&quot;f7ai&quot;,&quot;f7b&quot;],&quot;default&quot;:&quot;f1&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;tier&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;basic&quot;,&quot;optimum&quot;,&quot;premium&quot;],&quot;default&quot;:&quot;optimum&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;dataState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;loading&quot;,&quot;error&quot;,&quot;offline&quot;,&quot;empty&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;pending&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;downgrade&quot;,&quot;unsubscribe&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;subState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;active&quot;,&quot;trialing&quot;],&quot;default&quot;:&quot;active&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;guarantee&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;active&quot;,&quot;atrisk&quot;,&quot;skipped&quot;,&quot;hidden&quot;],&quot;default&quot;:&quot;active&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;changeState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;browse&quot;,&quot;upgrade&quot;,&quot;downgrade&quot;,&quot;success&quot;],&quot;default&quot;:&quot;browse&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;dunning&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;first&quot;,&quot;grace&quot;,&quot;final&quot;],&quot;default&quot;:&quot;first&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;suspend&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;suspended&quot;,&quot;reactivating&quot;],&quot;default&quot;:&quot;suspended&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;ending&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;generic&quot;,&quot;exit&quot;],&quot;default&quot;:&quot;generic&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;referrals&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;populated&quot;,&quot;empty&quot;],&quot;default&quot;:&quot;populated&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;moveState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;entry&quot;,&quot;resolving&quot;,&quot;same&quot;,&quot;change&quot;,&quot;oom&quot;],&quot;default&quot;:&quot;entry&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;cardState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;addfirst&quot;,&quot;replace&quot;,&quot;saving&quot;,&quot;declined&quot;,&quot;expired&quot;,&quot;success&quot;],&quot;default&quot;:&quot;replace&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;}}">
 class Component extends DCLogic {
   constructor(props){
     super(props);
@@ -648,6 +663,8 @@ class Component extends DCLogic {
       theme: props.initialTheme || 'light', rm:false,
       screen: hs || props.screen || 'f1',
       tier: props.tier || 'optimum',
+      subState: props.subState || 'active',
+      guarantee: props.guarantee || 'active',
       dataState: props.dataState || 'normal',
       pending: props.pending || 'none',
       cardState: props.cardState || 'replace',
@@ -679,6 +696,8 @@ class Component extends DCLogic {
       clock:()=>[C(10,10,7),P('M10 6.4V10l2.4 1.6')],
       lock:()=>[P('M6.4 9.2V7a3.6 3.6 0 0 1 7.2 0v2.2'),P('M5.4 9.2h9.2v6.6H5.4z'),D(10,12.2,.8)],
       check:()=>[P('M4 10.5 8 14.5 16 5.5')],
+      active:()=>[C(10,10,6.8),P('M6.8 10.2 9 12.4 13.4 7.8')],
+      blocked:()=>[C(10,10,6.8),P('M5.9 5.9l8.2 8.2')],
       cross:()=>[P('M6 6l8 8M14 6l-8 8')],
       warn:()=>[P('M10 3.4 17.2 16.6H2.8z'),P('M10 8.4v3.4'),D(10,14.2,.5)],
       chevronR:()=>[P('M8 5l5 5-5 5')],
@@ -857,7 +876,7 @@ class Component extends DCLogic {
     const rankT={basic:0,optimum:1,premium:2}, keysT=['basic','optimum','premium'], priceNum={basic:5,optimum:15,premium:25};
     const cur=rankT[tier];
     const adds={ optimum:[{name:'Automatic load control',val:'≈ $18/mo'},{name:'Pre-cool & smart scheduling',val:'≈ $6/mo'}], premium:[{name:'Battery & EV arbitrage',val:'≈ $9/mo'},{name:'VPP enrollment & priority support',val:'≈ $5/mo'}] };
-    const tierBlurb={ basic:'Advisory only — PIF tells you the best move; you act on it.', optimum:'Adds automatic control — PIF shifts loads and pre-cools for you.', premium:'Adds arbitrage & VPP — your battery and EV earn, with priority support.' };
+    const tierBlurb={ basic:'Advisory only — ProIonFlow tells you the best move; you act on it.', optimum:'Adds automatic control — ProIonFlow shifts loads and pre-cools for you.', premium:'Adds arbitrage & VPP — your battery and EV earn, with priority support.' };
     const leversBetween=(a,b)=>{ let out=[]; for(let r=a+1;r<=b;r++){ const k=keysT[r]; if(adds[k]) out=out.concat(adds[k]); } return out; };
     const DOWNDATE='Aug 6, 2026';
     const f4step=st.f4step||'browse';
@@ -890,7 +909,17 @@ class Component extends DCLogic {
     };
 
     // F7 — cancellation flow (honest, empathetic, non-manipulative)
-    const CANCEL_UNTIL='Aug 1, 2026';
+    const isTrialing = st.subState==='trialing';
+    const trialPremium = isTrialing && tier==='premium';
+    const CANCEL_UNTIL = isTrialing ? 'Aug 12' : 'Aug 1, 2026';
+    const gState = st.guarantee || 'active';
+    const gShow = !isTrialing && gState!=='hidden';
+    const G_MAP = {
+      active:{ icon:'active', color:'var(--success)', text:'Savings guarantee: active this cycle.' },
+      atrisk:{ icon:'warn', color:'var(--warning)', text:'Savings guarantee: at risk — a qualifying device is offline or set to Critical.' },
+      skipped:{ icon:'blocked', color:'var(--danger)', text:'Savings guarantee: skipped this cycle — too little of your home was controllable.' }
+    };
+    const gMeta = G_MAP[gState] || G_MAP.active;
     const reasonsDef=[
       {k:'value',label:'Not saving enough',icon:'trenddown'},
       {k:'price',label:'Too expensive right now',icon:'dollar'},
@@ -926,8 +955,8 @@ class Component extends DCLogic {
     const f6={ reactivating, title: reactivating?'Reactivating your plan':'Your plan is paused', body: reactivating?'Confirm your payment method and you’ll pick up right where you left off — nothing was lost.':'A payment couldn’t be collected in time, so your subscription is paused. No charges are being made while it’s paused.', cta: reactivating?'Update payment method':'Reactivate my plan' };
     const endingExit = st.ending==='exit';
     const f9={ exit:endingExit, endDate:'Aug 1, 2026', refund:'$'+(priceNum[tier]*19/31).toFixed(2),
-      title: endingExit?'We’re winding down PIF in your area':'We’re ending PIF service',
-      reason: endingExit?'PIF is leaving your market. The local energy programs and rate structures here no longer let us deliver savings we’re confident in, so we’re responsibly winding down service in your area. This isn’t about anything you did.':'We’ve made the difficult decision to end this service and are winding PIF down responsibly. This isn’t about anything you did.' };
+      title: endingExit?'We’re winding down ProIonFlow in your area':'We’re ending ProIonFlow service',
+      reason: endingExit?'ProIonFlow is leaving your market. The local energy programs and rate structures here no longer let us deliver savings we’re confident in, so we’re responsibly winding down service in your area. This isn’t about anything you did.':'We’ve made the difficult decision to end this service and are winding ProIonFlow down responsibly. This isn’t about anything you did.' };
     const refPop = st.referrals!=='empty';
     const refItemsDef=[
       { email:'jordan.m@…', status:'$5 credited', color:'var(--success)' },
@@ -970,7 +999,7 @@ class Component extends DCLogic {
       onConfirmMove:()=>this.set('moveStep','done'),
       onKeepTier:()=>this.setState({ moveStep:'done' }, ()=>this.toastMsg('Moved — keeping your '+plan.name+' plan at the new address.')),
       onSwitchTier:()=>this.setState({ moveStep:'done', pending:'downgrade' }, ()=>this.toastMsg('Switching to Basic — scheduled for your next cycle at the new address.')),
-      onWhyRefit:()=>this.toastMsg('Your new utility bills a flat rate — no peak/off-peak spread for PIF to work with, so automatic shifting can’t beat it. Same re-fit logic as the quiz.'),
+      onWhyRefit:()=>this.toastMsg('Your new utility bills a flat rate — no peak/off-peak spread for ProIonFlow to work with, so automatic shifting can’t beat it. Same re-fit logic as the quiz.'),
       oomArea:'rural West Virginia',
       email:st.moveEmail, onEmail:(e)=>this.set('moveEmail', e.target.value),
       consent:st.moveConsent?'true':'false', consentOn:st.moveConsent, onConsent:()=>this.set('moveConsent', !st.moveConsent),
@@ -1004,7 +1033,8 @@ class Component extends DCLogic {
       onShareRef:()=>this.toastMsg('Share sheet — opens on the mobile shell.'),
       isF7:scr==='f7', isF7a:scr==='f7a', isF7ai:scr==='f7ai', isF7b:scr==='f7b',
       ionaSad:this.ionaSadEl(78), ionaSadSm:this.ionaSadEl(64), ionaBig:this.ionaEl(72),
-      cancelUntil:CANCEL_UNTIL, reasonChips, reasonCountLabel:(selCount+' selected'), reasonAny:selCount>0,
+      cancelUntil:CANCEL_UNTIL, isTrialing, notTrialing:!isTrialing, trialPremium, trialDaysLeft:'11', trialEndDate:'Aug 12',
+      reasonChips, reasonCountLabel:(selCount+' selected'), reasonAny:selCount>0,
       showMissing: !!st.cancelReasons.missing, showOther: !!st.cancelReasons.other,
       cancelMissing:st.cancelMissing, onMissing:(e)=>this.set('cancelMissing',e.target.value),
       cancelOther:st.cancelOther, onOther:(e)=>this.set('cancelOther',e.target.value),
@@ -1022,6 +1052,12 @@ class Component extends DCLogic {
       icoBack:this.ico('back',16), icoGear:this.ico('gear',17), icoLogout:this.ico('logout',17),
       icoCard:this.ico('card',22), icoDownload:this.ico('download',20), icoDoc:this.ico('doc',30),
       icoClock:this.ico('clock',18), icoRefresh:this.ico('refresh',18), icoSwap:this.ico('swap',18),
+      guaranteeLineShow: gShow,
+      guaranteeLineIcon: this.ico(gMeta.icon,17),
+      guaranteeLineIconStyle: 'display:inline-flex;flex:none;color:'+gMeta.color,
+      guaranteeLineText: gMeta.text,
+      guaranteeLineStyle: 'display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:color-mix(in srgb,'+gMeta.color+' 9%,var(--surface-raised));border:1px solid '+gMeta.color+';border-radius:12px;padding:11px 14px;margin-bottom:14px',
+      guaranteeLineTextStyle: 'font-size:13px;font-weight:600;color:var(--text-primary)',
       icoCross:this.ico('cross',18), icoChevronR:this.ico('chevronR',16), icoWarn:this.ico('warn',30),
       icoWarnSm:this.ico('warn',15), icoLock:this.ico('lock',15), icoLockSm:this.ico('lock',13),
       icoCheckBig:this.ico('check',26), icoOffline:this.ico('offline',30),
